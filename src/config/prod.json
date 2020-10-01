@@ -3,7 +3,7 @@
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
     },
     "mongo": {
-        "connectUrl": "mongodb://root:R1PDlGcd2xiDvCHD5fZEMX7gBj82BCls@127.0.0.1:54017/?authSource=admin&useUnifiedTopology=true",
+        "connectUrl": "mongodb://root:R1PDlGcd2xiDvCHD5fZEMX7gBj82BCls@mongo:27017/?authSource=admin&useUnifiedTopology=true",
         "db": "bot"
     },
     "discord": {

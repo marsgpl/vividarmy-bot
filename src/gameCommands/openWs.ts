@@ -37,7 +37,7 @@ export default function(
         },
     };
 
-    if (bot.config.game.checkProxy.required && bot.config.proxy) {
+    if (bot.config.proxy) {
         wsOptions.agent = new SocksProxyAgent(bot.config.proxy.socks5[0]) as unknown as Agent;
     }
 

@@ -102,7 +102,7 @@ export class DiscordBot {
         const browser = new Browser({
             userAgent: config.browser.userAgent,
             cookieJar,
-            socks5: config.game.checkProxy.required ? config.proxy?.socks5[0] : undefined,
+            socks5: config.proxy?.socks5[0],
         });
 
         this.state = {
