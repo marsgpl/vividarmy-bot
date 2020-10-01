@@ -1,0 +1,50 @@
+{
+    "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
+    },
+    "mongo": {
+        "connectUrl": "mongodb://root:R1PDlGcd2xiDvCHD5fZEMX7gBj82BCls@127.0.0.1:54017/?authSource=admin&useUnifiedTopology=true",
+        "db": "bot"
+    },
+    "discord": {
+        "app": {
+            "name": "G123",
+            "clientId": "760167618790555668",
+            "clientSecret": "vyjXj4m9nVHmkBldc9bODbxSeUOjYIMw",
+            "bot": {
+                "name": "G123",
+                "token": "NzYwMTY3NjE4NzkwNTU1NjY4.X3IHQw.j0hxWHPHgyoKUtmj90hXOrr0mgI"
+            },
+            "allowedChannelsIds": {
+                "760478969203130429": "g123-dev",
+                "760479029131214868": "g123"
+            },
+            "adminUsersIds": {
+                "725701621044215889": "Füriend"
+            }
+        },
+        "gameAccount": {
+            "id": "316401955417",
+            "authCode": "8Nkyb6oJW084mRMietidR5CZur7XPRjwXlj9t6WJmLpQVA0YZRARgJAUbVF2GqyL"
+        }
+    },
+    "game": {
+        "printWsPackets": false,
+        "checkProxy": {
+            "required": true,
+            "url": "https://eki.one/ipcc",
+            "expectedAnswer": "45.32.27.226 (JP)\n"
+        },
+        "urls": {
+            "shell": "https://h5.g123.jp/game/vividarmy",
+            "game": "https://knight-g123.akamaized.net/worldbattlerelease/index.html?platform=ctw&code=:code:",
+            "createAccount": "https://h5.g123.jp/api/session?appId=vividarmy&from=:from:",
+            "getClientVersion": "https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/worldbattlerelease/LatestVersion.txt?__ts__=:ts:",
+            "getClientVersion_referer": "https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/",
+            "getServerInfo": "https://knight-us.topwargame.com/serverList?__ts__=:ts:&token=:token:&pf=g123&platform=g123&channel=g123_g123&appVersion=:appVersion:&tag=1&isTest=0",
+            "getServerInfo_origin": "https://knight-g123.akamaized.net",
+            "getServerInfo_referer": "https://knight-us.topwargame.com/",
+            "gameWs_origin": "https://knight-g123.akamaized.net"
+        }
+    }
+}
