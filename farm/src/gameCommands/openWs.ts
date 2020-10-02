@@ -58,9 +58,9 @@ export default function(
 
     game.gameWsSend = (packet, onResponse, onTimeout) => {
         let tmt = onResponse ? setTimeout(() => {
-            reporter('ws packet timeout 10s');
+            reporter('ws packet timeout 30s');
             onTimeout ? onTimeout(bot) : disconnectFromGameWs(bot);
-        }, 10000) : null;
+        }, 30000) : null;
 
         onResponse && game.gameWsPushCallback(packet, async (bot, payload) => {
             tmt && clearTimeout(tmt);

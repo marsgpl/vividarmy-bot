@@ -181,7 +181,7 @@ export class DiscordBot {
                 try {
                     await cmdFu(this, msg);
                 } catch (error) {
-                    msg.reply(`Error: ${error.message}`);
+                    msg.reply(`Error: ${error.message || error}`);
                 }
             } else {
                 msg.reply(`unknown command: ${cmd}`);
