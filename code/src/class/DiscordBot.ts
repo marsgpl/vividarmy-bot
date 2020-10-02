@@ -94,6 +94,10 @@ export class DiscordBot extends BaseBot {
 
             this.state.game.reporter = reporter;
 
+            if (cmdName === 'indexTopXPlayers' && !isUserAdmin) {
+                return reporter(`only bot admin can index players`, true);
+            }
+
             if (cmdFu) {
                 try {
                     await cmdFu.call(this, msg);
