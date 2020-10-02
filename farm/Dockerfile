@@ -13,4 +13,4 @@ ENV NODE_ENV=production
 
 RUN npm ci
 
-CMD npm run discord-prod
+CMD npm run farm-prod
