@@ -47,6 +47,11 @@ export default function(
 
     const now = Math.floor(Date.now() / 1000);
 
+    if (!x || !y) {
+        console.log('🔸 playerInfoResponse:', playerInfoResponse);
+        console.log('🔸 playerPosInfoResponse:', playerPosInfoResponse);
+    }
+
     const powerFormatted = formatPower(power);
     const genderFormatted = formatGender(gender);
     const positionFormatted = `${x},${y}`;
