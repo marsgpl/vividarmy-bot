@@ -53,9 +53,9 @@ export default function(
     const fullNameFormatted = allianceTag ? `[${allianceTag}] ${name}` : name;
     const allianceFormatted = allianceId ? `${allianceName} [${allianceTag}] id=${allianceId}` : 'none';
     const avatarFormatted = avatar && avatar.indexOf('http') === 0 ? `<${avatar}>` : avatar;
-    const banFormatted = banEndTime < now ? 'no' : `BANNED UNTIL ${new Date(banEndTime)}`;
-    const shieldFormatted = shieldTime < now ? 'no' : `SHIELD UNTIL ${new Date(shieldTime)}`;
-    const fireFormatted = fireTime < now ? 'no' : `BURNING UNTIL ${new Date(fireTime)}`;
+    const banFormatted = banEndTime < now ? 'no' : `BANNED UNTIL ${new Date(banEndTime * 1000)}`;
+    const shieldFormatted = shieldTime < now ? 'no' : `SHIELD UNTIL ${new Date(shieldTime * 1000)}`;
+    const fireFormatted = fireTime < now ? 'no' : `BURNING UNTIL ${new Date(fireTime * 1000)}`;
 
     const formatted: string[] = [
         fullNameFormatted,
