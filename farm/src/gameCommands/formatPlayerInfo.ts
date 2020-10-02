@@ -49,14 +49,14 @@ export default function(
 
     const powerFormatted = formatPower(power);
     const genderFormatted = formatGender(gender);
-    const positionFormatted = x && y ? `${x},${y}` : 'removed from map';
+    const positionFormatted = x && y ? `${x},${y}` : 'missing';
     const fullNameFormatted = allianceTag ? `[${allianceTag}] ${name}` : name;
     const allianceFormatted = allianceId ? `${allianceName} [${allianceTag}] id=${allianceId}` : 'none';
     const avatarFormatted = avatar && avatar.indexOf('http') === 0 ? `<${avatar}>` : avatar;
     const banFormatted = !banEndTime || banEndTime < now ? 'no' : `BANNED UNTIL ${new Date(banEndTime * 1000)}`;
     const shieldFormatted = !shieldTime || shieldTime < now ? 'no' : `SHIELD UNTIL ${new Date(shieldTime * 1000)}`;
     const fireFormatted = !fireTime || fireTime < now ? 'no' : `BURNING UNTIL ${new Date(fireTime * 1000)}`;
-    const serverFormatted = serverId || 'removed';
+    const serverFormatted = serverId || 'missing';
 
     const formatted: string[] = [
         fullNameFormatted,
