@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "discord-dev": "NODE_PATH=src ts-node src/discord-dev.ts",
+    "discord-prod": "NODE_PATH=src ts-node src/discord-prod.ts",
     "farm-dev": "NODE_PATH=src ts-node src/farm-dev.ts",
     "farm-prod": "NODE_PATH=src ts-node src/farm-prod.ts"
   },

@@ -3,15 +3,10 @@
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
     },
     "proxy": {
-        "socks5": [
-            {
-                "host": "127.0.0.1",
-                "port": 19254
-            }
-        ]
+        "required": false
     },
     "mongo": {
-        "connectUrl": "mongodb://root:R1PDlGcd2xiDvCHD5fZEMX7gBj82BCls@127.0.0.1:54017/?authSource=admin&useUnifiedTopology=true",
+        "connectUrl": "mongodb://root:R1PDlGcd2xiDvCHD5fZEMX7gBj82BCls@mongo:27017/?authSource=admin&useUnifiedTopology=true",
         "db": "bot"
     },
     "discord": {
@@ -33,20 +28,21 @@
         },
         "gameAccount": {
             "id": "316401955417",
-            "authCode": "8Nkyb6oJW084mRMietidR5CZur7XPRjwXlj9t6WJmLpQVA0YZRARgJAUbVF2GqyL"
+            "gp_token": "TMAvncSAwiO6bCmVh6Yf9NidN0mgti6S78V7Zjggjl5rtPjh3Xzm0Bz8VYcDHP7utnmqS130tagNMisx8rW4r0Hxh9Asp51kPc0QXzTlzts6rgsWGm10LSD7slPeS5FW"
         }
     },
     "game": {
-        "printWsPackets": true,
-        "checkProxy": {
+        "printWsPackets": false,
+        "checkIp": {
             "required": true,
             "url": "https://eki.one/ipcc",
             "expectedAnswer": "45.32.27.226 (JP)\n"
         },
+        "gpTokenCookieTemplate": "gp_token=:gp_token:; domain=g123.jp",
         "urls": {
             "shell": "https://h5.g123.jp/game/vividarmy",
             "game": "https://knight-g123.akamaized.net/worldbattlerelease/index.html?platform=ctw&code=:code:",
-            "createAccount": "https://h5.g123.jp/api/session?appId=vividarmy&from=:from:",
+            "getSession": "https://h5.g123.jp/api/session?appId=vividarmy&from=:from:",
             "getClientVersion": "https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/worldbattlerelease/LatestVersion.txt?__ts__=:ts:",
             "getClientVersion_referer": "https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/",
             "getServerInfo": "https://knight-us.topwargame.com/serverList?__ts__=:ts:&token=:token:&pf=g123&platform=g123&channel=g123_g123&appVersion=:appVersion:&tag=1&isTest=0",

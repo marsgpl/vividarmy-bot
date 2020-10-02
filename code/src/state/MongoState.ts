@@ -8,6 +8,8 @@ export interface MongoState {
     client: MongoClient;
     db: MongoDb;
     collections: {
-        [key: string]: MongoCollection;
+        cookies: MongoCollection;
+        players: MongoCollection;
+        bots: MongoCollection;
     };
 }

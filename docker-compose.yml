@@ -14,13 +14,24 @@ services:
         ports:
             - 127.0.0.1:54017:27017
         command: --quiet
-    farm:
-        build: ./farm
+
+    discord:
+        build: ./code
         networks:
             - vividarmybot
         volumes:
-            - ./farm/src/:/vividarmy/bot/src/:ro
+            - ./code/src/:/vividarmy/bot/src/:ro
         restart: always
+        command: npm run discord-prod
+
+    farm:
+        build: ./code
+        networks:
+            - vividarmybot
+        volumes:
+            - ./code/src/:/vividarmy/bot/src/:ro
+        restart: always
+        command: npm run farm-prod
 
 networks:
     vividarmybot:

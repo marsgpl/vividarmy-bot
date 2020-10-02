@@ -12,5 +12,3 @@ COPY tsconfig.json .
 ENV NODE_ENV=production
 
 RUN npm ci
-
-CMD npm run farm-prod

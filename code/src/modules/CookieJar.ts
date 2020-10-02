@@ -41,6 +41,7 @@ export class CookieJar {
     protected cookies: CookieJarCookies;
     protected storageType: CookieJarStorageType;
     protected storageConfig: CookieJarStorageConfig;
+    protected wasLoadedFromStorage: boolean = false;
 
     constructor(config: CookieJarConfig) {
         this.cookies = {};
@@ -51,10 +52,15 @@ export class CookieJar {
     public async loadFromStorage(): Promise<void> {
         if (this.storageType === CookieJarStorageType.MONGO_DB) {
             await this.loadFromMongo();
+            this.wasLoadedFromStorage = true;
         }
     }
 
     public async saveToStorage(): Promise<void> {
+        if (!this.wasLoadedFromStorage) {
+            throw Error('load cookies from storage before this action');
+        }
+
         if (this.storageType === CookieJarStorageType.MONGO_DB) {
             await this.saveToMongo();
         }
@@ -67,7 +73,6 @@ export class CookieJar {
 
         if (doc) {
             this.cookies = JSON.parse(doc.cookies) as CookieJarCookies;
-console.log('🔸 cookies loaded from mongo:', this.cookies);
         }
     }
 
@@ -89,6 +94,10 @@ console.log('🔸 cookies loaded from mongo:', this.cookies);
     }
 
     public async putRawCookiesAndSave(host: string, rawCookies: string[]): Promise<void> {
+        if (!this.wasLoadedFromStorage) {
+            throw Error('load cookies from storage before this action');
+        }
+
         let added = 0;
 
         rawCookies.forEach(rawCookie => {
@@ -150,6 +159,10 @@ console.log('🔸 cookies loaded from mongo:', this.cookies);
     }
 
     public getCookiesAsHeader(host: string, date: Date): string {
+        if (!this.wasLoadedFromStorage) {
+            throw Error('load cookies from storage before this action');
+        }
+
         const result: string[] = [];
 
         Object.keys(this.cookies).forEach(key => {
