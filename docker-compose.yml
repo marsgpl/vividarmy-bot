@@ -18,6 +18,8 @@ services:
         build: .
         networks:
             - vividarmybot
+        volumes:
+            - ./src/:/vividarmy/bot/src/:ro
         restart: always
 
 networks:

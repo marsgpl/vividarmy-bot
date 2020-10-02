@@ -7,12 +7,10 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY package.json .
 COPY package-lock.json .
+COPY tsconfig.json .
 
 ENV NODE_ENV=production
 
 RUN npm ci
-
-COPY src src
-COPY tsconfig.json .
 
 CMD npm run discord-prod
