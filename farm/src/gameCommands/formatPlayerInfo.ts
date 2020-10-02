@@ -24,9 +24,9 @@ export default function(
     const avatar = String(playerInfo.headimgurl_custom || '') || String(playerInfo.headimgurl || '') || String(playerInfo.avatarurl || ''); // idstring or url
     const name = String(playerInfo.username || '') || String(playerInfo.nickname || ''); // Swenor
 
-    const x = point.x; // 354
-    const y = point.y; // 450
-    const serverId = point.k || Number(pointPlayer.w); // 601
+    const x = Number(point.x); // 354
+    const y = Number(point.y); // 450
+    const serverId = Number(point.k) || Number(pointPlayer.w); // 601
     const locationId = point.id; // 115378
     const locationType = point.pointType; // 1
 
@@ -47,20 +47,16 @@ export default function(
 
     const now = Math.floor(Date.now() / 1000);
 
-    if (!x || !y) {
-        console.log('🔸 playerInfoResponse:', playerInfoResponse);
-        console.log('🔸 playerPosInfoResponse:', playerPosInfoResponse);
-    }
-
     const powerFormatted = formatPower(power);
     const genderFormatted = formatGender(gender);
-    const positionFormatted = `${x},${y}`;
+    const positionFormatted = x && y ? `${x},${y}` : 'removed from map';
     const fullNameFormatted = allianceTag ? `[${allianceTag}] ${name}` : name;
     const allianceFormatted = allianceId ? `${allianceName} [${allianceTag}] id=${allianceId}` : 'none';
     const avatarFormatted = avatar && avatar.indexOf('http') === 0 ? `<${avatar}>` : avatar;
-    const banFormatted = banEndTime < now ? 'no' : `BANNED UNTIL ${new Date(banEndTime * 1000)}`;
-    const shieldFormatted = shieldTime < now ? 'no' : `SHIELD UNTIL ${new Date(shieldTime * 1000)}`;
-    const fireFormatted = fireTime < now ? 'no' : `BURNING UNTIL ${new Date(fireTime * 1000)}`;
+    const banFormatted = !banEndTime || banEndTime < now ? 'no' : `BANNED UNTIL ${new Date(banEndTime * 1000)}`;
+    const shieldFormatted = !shieldTime || shieldTime < now ? 'no' : `SHIELD UNTIL ${new Date(shieldTime * 1000)}`;
+    const fireFormatted = !fireTime || fireTime < now ? 'no' : `BURNING UNTIL ${new Date(fireTime * 1000)}`;
+    const serverFormatted = serverId || 'removed';
 
     const formatted: string[] = [
         fullNameFormatted,
@@ -68,7 +64,7 @@ export default function(
         `power: ${powerFormatted}`,
         `position: ${positionFormatted}`,
         `alliance: ${allianceFormatted}`,
-        `server: ${serverId}`,
+        `server: ${serverFormatted}`,
         `gender: ${genderFormatted}`,
         `language: ${language}`,
         `profile pic: ${avatarFormatted}`,
