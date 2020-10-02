@@ -8,6 +8,7 @@ import getPlayerInfo from 'gameCommands/getPlayerInfo';
 import getPlayerPosInfo from 'gameCommands/getPlayerPosInfo';
 import formatPlayerInfo from 'gameCommands/formatPlayerInfo';
 import getTopPlayers from 'gameCommands/getTopPlayers';
+import randomPhrase from 'modules/randomPhrase';
 
 const USAGE = [
     'How to use:',
@@ -131,5 +132,18 @@ async function onInfoReceived(
 
     await savePlayerInfoToMongo(bot, msg, playerInfo);
 
-    msg.reply(`here is your order:\n    ${playerInfo.formatted.join('\n    ')}`);
+    const phrase = randomPhrase([
+        `here is your order:`,
+        `please take a look:`,
+        `glad to serve you:`,
+        `check this out:`,
+        `is that him?`,
+        `look what I've found:`,
+        `here you are:`,
+        `here we go:`,
+        `success:`,
+        `am I good?`,
+    ]);
+
+    msg.reply(`${phrase}\n    ${playerInfo.formatted.join('\n    ')}`);
 }
