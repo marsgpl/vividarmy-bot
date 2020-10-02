@@ -132,18 +132,18 @@ async function onInfoReceived(
 
     await savePlayerInfoToMongo(bot, msg, playerInfo);
 
-    const phrase = randomPhrase([
-        `here is your order:`,
-        `please take a look:`,
-        `glad to serve you:`,
-        `check this out:`,
-        `is that him?`,
-        `look what I've found:`,
-        `here you are:`,
-        `here we go:`,
-        `success:`,
-        `am I good?`,
-    ]);
+    // const phrase = randomPhrase([
+    //     `here is your order:`,
+    //     `please take a look:`,
+    //     `glad to serve you:`,
+    //     `check this out:`,
+    //     `is that him?`,
+    //     `look what I've found:`,
+    //     `here you are:`,
+    //     `here we go:`,
+    //     `success:`,
+    //     `am I good?`,
+    // ]);
 
-    msg.reply(`${phrase}\n    ${playerInfo.formatted.join('\n    ')}`);
+    msg.reply(`\`${msg.content}\`:\n    ${playerInfo.formatted.join('\n    ')}`);
 }
