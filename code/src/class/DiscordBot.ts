@@ -151,7 +151,7 @@ export class DiscordBot extends BaseBot {
             if (!topPlayersInfo.list.length) break;
         }
 
-        reporter(`indexing ${indexLimit} done`);
+        reporter(`indexing ${indexLimit} done`, true);
     }
 
     protected async cmd_showPlayerInfo(msg: Discord.Message): Promise<void> {
