@@ -138,7 +138,7 @@ export class DiscordBot extends BaseBot {
             const topPlayersInfo = await game.getTopPlayers({
                 offsetFrom,
                 offsetTo,
-                noReport: offsetFrom % 300 !== 0,
+                report: offsetFrom % 300 === 0,
             });
 
             offsetFrom += PAGE_SIZE;

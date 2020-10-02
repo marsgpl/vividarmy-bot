@@ -145,7 +145,7 @@ export class GameBot extends BaseBot {
 
             await this.connectToGameWs();
 
-            if (!options?.noReport) {
+            if (options?.report) {
                 reporter(`${command} => ${JSON.stringify(payload)}`);
             }
 
@@ -189,12 +189,12 @@ export class GameBot extends BaseBot {
         });
     }
 
-    public async getTopPlayers(options: { offsetFrom: number, offsetTo: number, noReport?: boolean }): Promise<any> {
+    public async getTopPlayers(options: { offsetFrom: number, offsetTo: number, report?: boolean }): Promise<any> {
         return this.state.gameWsRPC(GAME_WS_COMMANDS.GET_TOP_PLAYERS, {
             start: options.offsetFrom,
             end: options.offsetTo,
         }, {
-            noReport: options.noReport,
+            report: options.report,
         });
     }
 
