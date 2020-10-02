@@ -14,12 +14,12 @@ services:
         ports:
             - 127.0.0.1:54017:27017
         command: --quiet
-    bot:
-        build: .
+    farm:
+        build: ./farm
         networks:
             - vividarmybot
         volumes:
-            - ./src/:/vividarmy/bot/src/:ro
+            - ./farm/src/:/vividarmy/bot/src/:ro
         restart: always
 
 networks:
