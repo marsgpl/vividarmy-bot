@@ -47,8 +47,9 @@ export default async function(bot: DiscordBot, msg: Discord.Message): Promise<vo
         await connectToGameWS(bot);
 
         const RATING_REQUEST_WINDOW_SIZE = 30;
+        const rankTranslated = Number(rank) - 1;
 
-        const offsetFrom = Number(rank) - Number(rank) % 30;
+        const offsetFrom = rankTranslated - rankTranslated % 30;
         const offsetTo = offsetFrom + RATING_REQUEST_WINDOW_SIZE - 1;
 
         msg.channel.send(`requesting top scrore ${offsetFrom} -> ${offsetTo}`);
@@ -59,13 +60,13 @@ export default async function(bot: DiscordBot, msg: Discord.Message): Promise<vo
         let uid: string = '';
 
         topPlayersResponse.list.forEach((entry: any) => {
-            pos++;
-
-            if (pos === Number(rank)) {
+            if (pos === rankTranslated) {
                 const playerInfo = formatPlayerInfo(entry);
                 uid = playerInfo.uid;
                 reporter(`player rank #${rank} uid found: ${uid}`);
             }
+
+            pos++;
         });
 
         if (!uid) {
