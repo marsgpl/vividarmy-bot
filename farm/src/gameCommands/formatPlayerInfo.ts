@@ -66,7 +66,7 @@ export default function(
         `alliance: ${allianceFormatted}`,
         `server: ${serverFormatted}`,
         `gender: ${genderFormatted}`,
-        `language: ${language}`,
+        `language: ${language || 'missing'}`,
         `profile pic: ${avatarFormatted}`,
         `ban: ${banFormatted}`,
         `shield: ${shieldFormatted}`,
