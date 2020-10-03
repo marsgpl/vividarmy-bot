@@ -152,7 +152,7 @@ export class DiscordBot extends BaseBot {
                 for (let i = 0; i < topPlayersInfo.list.length; ++i) {
                     const info = topPlayersInfo.list[i];
                     const playerId = Number(info.uid);
-                    const playerInfo = JSON.parse(info.playerInfo);
+                    const playerInfo = info.playerInfo ? JSON.parse(info.playerInfo) : {};
                     const playerName = playerInfo.username || playerInfo.nickname;
                     await this.indexPlayer(playerId, playerName);
                 }
@@ -187,7 +187,7 @@ export class DiscordBot extends BaseBot {
             for (let i = 0; i < topPlayersInfo.list.length; ++i) {
                 const info = topPlayersInfo.list[i];
                 const playerId = Number(info.uid);
-                const playerInfo = JSON.parse(info.playerInfo);
+                const playerInfo = info.playerInfo ? JSON.parse(info.playerInfo) : {};
                 const playerName = playerInfo.username || playerInfo.nickname;
                 await this.indexPlayer(playerId, playerName);
             }
@@ -259,7 +259,7 @@ export class DiscordBot extends BaseBot {
     protected formatPlayerInfo(playerInfoResponse: any, playerPosInfoResponse: any): {[key: string]: any} {
         const point = playerPosInfoResponse?.point || {};
         const pointPlayer = point.p || {};
-        const playerInfo = JSON.parse(playerInfoResponse.playerInfo || pointPlayer.playerInfo) || {};
+        const playerInfo = JSON.parse(playerInfoResponse.playerInfo || pointPlayer.playerInfo || '{}') || {};
 
         const playerId = String(playerInfoResponse.uid || '') || String(Number(pointPlayer.pid) || ''); // 307176813145
         const allianceId = Number(playerInfoResponse.allianceId); // 100067575
@@ -391,7 +391,7 @@ export class DiscordBot extends BaseBot {
         for (let index = 0; index < topPlayersInfo.list.length; ++index) {
             const info = topPlayersInfo.list[index];
             const playerId = Number(info.uid);
-            const playerInfo = JSON.parse(info.playerInfo);
+            const playerInfo = info.playerInfo ? JSON.parse(info.playerInfo) : {};
             const playerName = playerInfo.username || playerInfo.nickname;
 
             if (index === rankIndex) {
@@ -429,7 +429,7 @@ export class DiscordBot extends BaseBot {
         for (let i = 0, index = offsetFrom; i < topPlayersInfo.list.length; ++i, ++index) {
             const info = topPlayersInfo.list[i];
             const playerId = Number(info.uid);
-            const playerInfo = JSON.parse(info.playerInfo);
+            const playerInfo = info.playerInfo ? JSON.parse(info.playerInfo) : {};
             const playerName = playerInfo.username || playerInfo.nickname;
 
             if (index === rankIndex) {
