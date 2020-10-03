@@ -8,6 +8,7 @@ import { MongoState } from 'state/MongoState';
 import { CookieJar, CookieJarStorageType } from 'modules/CookieJar';
 import formatPower from 'helpers/formatPower';
 import formatGender from 'helpers/formatGender';
+import * as GAME_WS_FIELDS from 'constants/gameWsFields';
 
 const cmdNameMatchTab: {[key: string]: string} = {
     find: 'showPlayerInfo',
@@ -94,8 +95,12 @@ export class DiscordBot extends BaseBot {
 
             this.state.game.reporter = reporter;
 
-            if (cmdName === 'indexTopXPlayers' && !isUserAdmin) {
-                return reporter(`only bot admin can index players`, true);
+            if (!isUserAdmin) {
+                if (
+                    cmdName === 'indexTopXPlayers'
+                ) {
+                    return reporter(`only bot admin can index players`, true);
+                }
             }
 
             if (cmdFu) {
@@ -118,14 +123,49 @@ export class DiscordBot extends BaseBot {
         const { reporter } = game;
 
         const USAGE = [
-            'usage example: index 1000',
-                'min: 30, max: 10000',
+            'usage example:',
+                'index 100 // min=30 max=10000',
+                'index svs',
         ].join('\n    ');
 
-        const [, limit] = msg.content.match(/^[a-z]+\s+(.*)$/i) || [];
-        const indexLimit = Number(limit);
+        const [, arg] = msg.content.match(/^[a-z]+\s+(.*)$/i) || [];
+        const isSvS = arg && (arg.toLowerCase() === 'svs');
+        const index = Number(arg) || 0;
 
-        if (indexLimit < 30 || indexLimit > 10000) {
+        if (isSvS) {
+            const svsData = game.state.authData?.crossServer;
+
+            if (!svsData) {
+                return reporter(`no SvS data found, are you sure SvS is on?`, true);
+            }
+
+            const serversIds: number[] =
+                svsData.map((data: any) =>
+                    Number(data[GAME_WS_FIELDS.SERVER_ID]));
+
+            reporter(`current SvS opponents: ${serversIds.length}`);
+
+            for (let si = 0; si < serversIds.length; ++si) {
+                const serverId = serversIds[si];
+                const topPlayersInfo = await game.getTopPlayersFromServer({ serverId });
+
+                for (let i = 0; i < topPlayersInfo.list.length; ++i) {
+                    const info = topPlayersInfo.list[i];
+                    const playerId = Number(info.uid);
+                    const playerInfo = JSON.parse(info.playerInfo);
+                    const playerName = playerInfo.username || playerInfo.nickname;
+                    await this.indexPlayer(playerId, playerName);
+                }
+
+                reporter(`server ${serverId} indexed: ${topPlayersInfo.list.length}`);
+            }
+
+            reporter(`done indexing servers: ${serversIds.join(', ')}`, true);
+
+            return;
+        }
+
+        if (index < 30 || index > 10000) {
             return reporter(USAGE, true);
         }
 
@@ -134,7 +174,7 @@ export class DiscordBot extends BaseBot {
         let offsetFrom = 0;
         let offsetTo = offsetFrom + PAGE_SIZE - 1;
 
-        while (offsetTo < indexLimit) {
+        while (offsetTo < index) {
             const topPlayersInfo = await game.getTopPlayers({
                 offsetFrom,
                 offsetTo,
@@ -155,7 +195,9 @@ export class DiscordBot extends BaseBot {
             if (!topPlayersInfo.list.length) break;
         }
 
-        reporter(`indexing ${indexLimit} done`, true);
+        const currentServerId = game?.state?.serverInfo?.serverId;
+
+        reporter(`server ${currentServerId} indexed: ${index}`, true);
     }
 
     protected async cmd_showPlayerInfo(msg: Discord.Message): Promise<void> {
@@ -168,6 +210,7 @@ export class DiscordBot extends BaseBot {
             'usage examples:',
                 'find DoomStar',
                 'find top 1',
+                'find top 1 s631',
                 `find ${config.discord.gameAccount.id}`,
         ].join('\n    ');
 
@@ -179,12 +222,15 @@ export class DiscordBot extends BaseBot {
 
         const [, playerId] = playerNameOrIdOrRank.match(/^([0-9]{9,})$/i) || [];
         const [,, playerRank] = playerNameOrIdOrRank.match(/^(rank|top)\s+([0-9]+)$/i) || [];
+        const [,, playerSvSRank, serverId] = playerNameOrIdOrRank.match(/^(rank|top)\s+([0-9]+)\s+s?([0-9]+)$/i) || [];
         const playerName = !playerId && !playerRank && playerNameOrIdOrRank;
 
         if (playerId) {
             await this.showPlayerInfoById(msg, Number(playerId));
         } else if (playerRank) {
             await this.showPlayerInfoByRank(msg, Number(playerRank));
+        } else if (serverId && playerSvSRank) {
+            await this.showPlayerInfoBySvSRank(msg, Number(serverId), Number(playerSvSRank));
         } else if (playerName) {
             await this.showPlayerInfoByName(msg, playerName);
         } else {
@@ -232,7 +278,7 @@ export class DiscordBot extends BaseBot {
 
         const x = Number(point.x); // 354
         const y = Number(point.y); // 450
-        const serverId = Number(point.k) || Number(pointPlayer.w); // 601
+        const serverId = Number(point[GAME_WS_FIELDS.SERVER_ID]) || Number(pointPlayer.w); // 601
         const locationId = point.id; // 115378
         const locationType = point.pointType; // 1
 
@@ -325,6 +371,44 @@ export class DiscordBot extends BaseBot {
         };
     }
 
+    protected async showPlayerInfoBySvSRank(msg: Discord.Message, serverId: number, playerRank: number): Promise<void> {
+        if (!this.state) throw Error('no state');
+
+        const { game } = this.state;
+        const { reporter } = game;
+
+        if (playerRank < 1 || playerRank > 100) {
+            return reporter(`maximum SvS player rank available for search is 100 (and must be greater than 0)`, true);
+        }
+
+        reporter(`s${serverId}: searching for player with rank #${playerRank}`);
+
+        const topPlayersInfo = await game.getTopPlayersFromServer({ serverId });
+
+        const rankIndex = playerRank - 1;
+        let foundPlayerId: number = 0;
+
+        for (let index = 0; index < topPlayersInfo.list.length; ++index) {
+            const info = topPlayersInfo.list[index];
+            const playerId = Number(info.uid);
+            const playerInfo = JSON.parse(info.playerInfo);
+            const playerName = playerInfo.username || playerInfo.nickname;
+
+            if (index === rankIndex) {
+                foundPlayerId = playerId;
+            }
+
+            this.indexPlayer(playerId, playerName, serverId); // async but we will not wait
+        }
+
+        if (foundPlayerId) {
+            reporter(`s${serverId}: player rank #${playerRank} id found: ${foundPlayerId}`);
+            await this.showPlayerInfoById(msg, foundPlayerId);
+        } else {
+            reporter(`s${serverId}: rank #${playerRank} not found`, true);
+        }
+    }
+
     protected async showPlayerInfoByRank(msg: Discord.Message, playerRank: number): Promise<void> {
         if (!this.state) throw Error('no state');
 
@@ -363,7 +447,7 @@ export class DiscordBot extends BaseBot {
         }
     }
 
-    protected async indexPlayer(playerId: number, playerName: string): Promise<void> {
+    protected async indexPlayer(playerId: number, playerName: string, serverId?: number): Promise<void> {
         if (!this.state) throw Error('no state');
 
         const { game, mongo } = this.state;
@@ -381,6 +465,7 @@ export class DiscordBot extends BaseBot {
                 name: playerName,
                 nameLowercase: playerName.toLowerCase(),
                 lastUpdate: new Date,
+                ...(serverId ? {serverId} : {}),
             },
         }, {
             upsert: true,

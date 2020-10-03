@@ -83,7 +83,7 @@ interface GameBotOptions {
 
 export class GameBot extends BaseBot {
     protected options: GameBotOptions;
-    protected state: GameBotState;
+    public state: GameBotState;
     protected cookieJar: CookieJar;
     protected browser: Browser;
     public reporter: (msg: string, asReply?: boolean) => void = (msg: string) => console.log(msg);
@@ -186,6 +186,13 @@ export class GameBot extends BaseBot {
     public async getPlayerPosInfo(options: { playerId: number }): Promise<any> {
         return this.state.gameWsRPC(GAME_WS_COMMANDS.GET_PLAYER_POS_INFO, {
             targetId: String(options.playerId),
+        });
+    }
+
+    public async getTopPlayersFromServer(options: { serverId: number }): Promise<any> {
+        return this.state.gameWsRPC(GAME_WS_COMMANDS.GET_TOP_PLAYERS_FROM_SERVER, {
+            type: 4, // 4 - players?
+            serverId: options.serverId,
         });
     }
 
