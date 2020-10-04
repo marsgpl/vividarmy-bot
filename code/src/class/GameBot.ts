@@ -11,15 +11,18 @@ import * as GAME_WS_FIELDS from 'constants/gameWsFields';
 import * as GAME_WS_COMMANDS from 'constants/gameWsCommands';
 import randomString from 'modules/randomString';
 
+const DEFAULT_WS_INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 10m
+const DEFAULT_WS_RPC_TIMEOUT_MS = 30 * 1000; // 30s
+const WS_PING_INTERVAL_MS = 11000; // 11s
+
 const DEFAULT_ALISAFDATA_DETAIL = '#7NLIMJXwXGf/ctRcTggSoJ0D3QROwKOlAOzBtZ26EXkEHKhYtSUkA7UgvaRgn6KcNcaKw+sGr3qlaQ2dbnqPPl1tgNze2lR3CRwFBuJU+JdqKXL3ZtWwTq1qijRmNyd3OOH8qkuJ+Jd8qcHAZXnw+cy8qqK7OO96dE3gXJCXv2/5Utf35LLsJHpzZiOdIQOQf60DS4hySCx9fzd8GGXEgKvqzwKmPYvDJc8fMOPFJcGlEKJ8T/BVLSW9WjlgqkUAWOC/4CBbzY2Y8UHggSm3rv20jgfXytYMl/EO6GRQXn/nrD9wSAJOb4InBPg7ROtUVoyWyJS/pToU6Sdf8op6d87oygjhsHCDAOxVtQP67QH647Fs5AsThvzsKvTdXgLGwCXXA1aAhvJVTXDVIjariuT47UsZ94G4VveZLdWOTsNxu5BNOTbwDQdf4GB8gzqg+rUH/7c5rS31nUiXwFxGotqW9nCvmQpcVT6OGvvYSwJla4DnbZm8YPCKxCGQcW+jkyJA5yojt74U1fG4clrTzN9sVltLRAdG+rTbuY/PZKRZ+VkMfG5q7mOqHjsparfWqLTmid/4Rx7WSQ8qxca6J34fud6o6MaZrwr/ZfF/86bCUbtflHK1axATHhdi33aEuf5LPcR/LD6p2E6LO/yC7I3k4TPIeQdGAL+wgAOVEoJ8EeDlwlPCU6KjApAQwMTcG8x5p43QtH25JUxOR1Xxkj7sF6TJI3HkXppBB9Y6/nuEdZ2aUXGs5U4qPfmcKNvqGeK7YEWtTuxr5jNSzfw25WIyGxC/j5kmtEKGX+w9mqjlatros9HUMougxz5Z/a6zIX==';
 const DEFAULT_ALISAFDATA_DETAIL_PREFIX = '134';
 
-type GameWsCallbackKeepMe = boolean | void;
-
-export type GameWsCallback = (data: any) => Promise<GameWsCallbackKeepMe>;
+export type GameWsCallbackRemoveMe = boolean | void;
+export type GameWsCallback = (data: any) => Promise<GameWsCallbackRemoveMe>;
 
 export interface GameWsOutgoingPacket {
-    [GAME_WS_FIELDS.COMMAND]: number;
+    [GAME_WS_FIELDS.COMMAND_ID]: number;
     [GAME_WS_FIELDS.PACKET_INDEX]: string;
     [GAME_WS_FIELDS.OUTGOING_PAYLOAD]: {
         [key: string]: any;
@@ -27,7 +30,7 @@ export interface GameWsOutgoingPacket {
 }
 
 export interface GameWsIncomingPacket {
-    [GAME_WS_FIELDS.COMMAND]: number;
+    [GAME_WS_FIELDS.COMMAND_ID]: number;
     [GAME_WS_FIELDS.PACKET_INDEX]: string;
     [GAME_WS_FIELDS.INCOMING_DATA]: any; // often - json string
 }
@@ -52,27 +55,16 @@ interface GameBotState {
     authData?: {
         [key: string]: any;
     }
-    gameWs?: WebSocket;
-    gameWsNextPacketIndex: number;
-    gameWsCallbacks: {
-        [key: string]: GameWsCallback[],
+    ws?: WebSocket;
+    wsNextPacketIndex: number;
+    wsCallbacksByCommandId: {
+        [commandId: number]: GameWsCallback[],
     };
-    gameWsPingInterval?: NodeJS.Timeout;
-    gameWsInactivityTimeout?: NodeJS.Timeout;
-    gameWsPushCallback: (
-        packet: GameWsOutgoingPacket,
-        callback: GameWsCallback,
-    ) => void;
-    gameWsSend: (
-        packet: GameWsOutgoingPacket,
-        onResponse?: GameWsCallback,
-        onTimeout?: () => Promise<void>,
-    ) => void;
-    gameWsRPC: (
-        command: number,
-        payload: {[key: string]: any},
-        options?: {[key: string]: any},
-    ) => Promise<any>;
+    wsCallbacksByPacketIndex: {
+        [packetIndex: string]: GameWsCallback,
+    };
+    wsPingInterval?: NodeJS.Timeout;
+    wsInactivityTimeout?: NodeJS.Timeout;
 }
 
 interface GameBotOptions {
@@ -93,79 +85,12 @@ export class GameBot extends BaseBot {
 
         this.options = options;
 
-        const self = this;
-
-        const gameWsPushCallback = (
-            packet: GameWsOutgoingPacket,
-            callback: GameWsCallback,
-        ): void => {
-            const { state } = self;
-            const command = packet[GAME_WS_FIELDS.COMMAND];
-
-            state.gameWsCallbacks[command] = state.gameWsCallbacks[command] || [];
-            state.gameWsCallbacks[command].push(callback);
-        };
-
-        const gameWsSend = (
-            packet: GameWsOutgoingPacket,
-            onResponse?: GameWsCallback,
-            onTimeout?: () => Promise<void>,
-        ): void => {
-            const { state, reporter } = self;
-
-            if (!state.gameWs) throw Error('no gameWs');
-
-            if (onResponse) {
-                const tmt = setTimeout(() => {
-                    reporter('ws packet timeout 30s');
-                    onTimeout ? onTimeout() : self.disconnectFromGameWs();
-                }, 30 * 1000);
-
-                state.gameWsPushCallback(packet, async data => {
-                    tmt && clearTimeout(tmt);
-                    return onResponse(data);
-                });
-            }
-
-            const packetFormatted = JSON.stringify(packet);
-
-            if (config.game.printWsPackets) {
-                console.log('🔸 out:', packetFormatted);
-            }
-
-            state.gameWs.send(packetFormatted);
-        };
-
-        const gameWsRPC = (
-            command: number,
-            payload: {[key: string]: any},
-            options?: {[key: string]: any},
-        ): Promise<any> => new Promise(async (resolve, reject) => {
-            const { state, reporter } = this;
-
-            await this.connectToGameWs();
-
-            if (options?.report) {
-                reporter(`${command} => ${JSON.stringify(payload)}`);
-            }
-
-            state.gameWsSend({
-                [GAME_WS_FIELDS.COMMAND]: command,
-                [GAME_WS_FIELDS.PACKET_INDEX]: String(state.gameWsNextPacketIndex++),
-                [GAME_WS_FIELDS.OUTGOING_PAYLOAD]: payload,
-            }, async data => {
-                resolve(data);
-            });
-        });
-
         this.state = {
             connected: false,
             connecting: false,
-            gameWsNextPacketIndex: 0,
-            gameWsCallbacks: {},
-            gameWsPushCallback,
-            gameWsSend,
-            gameWsRPC,
+            wsNextPacketIndex: 0,
+            wsCallbacksByCommandId: {},
+            wsCallbacksByPacketIndex: {},
         };
 
         this.cookieJar = options.cookieJar;
@@ -178,26 +103,26 @@ export class GameBot extends BaseBot {
     }
 
     public async getPlayerInfo(options: { playerId: number }): Promise<any> {
-        return this.state.gameWsRPC(GAME_WS_COMMANDS.GET_PLAYER_INFO, {
+        return this.wsRPC(GAME_WS_COMMANDS.GET_PLAYER_INFO, {
             uid: String(options.playerId),
         });
     }
 
     public async getPlayerPosInfo(options: { playerId: number }): Promise<any> {
-        return this.state.gameWsRPC(GAME_WS_COMMANDS.GET_PLAYER_POS_INFO, {
+        return this.wsRPC(GAME_WS_COMMANDS.GET_PLAYER_POS_INFO, {
             targetId: String(options.playerId),
         });
     }
 
     public async getTopPlayersFromServer(options: { serverId: number }): Promise<any> {
-        return this.state.gameWsRPC(GAME_WS_COMMANDS.GET_TOP_PLAYERS_FROM_SERVER, {
+        return this.wsRPC(GAME_WS_COMMANDS.GET_TOP_PLAYERS_FROM_SERVER, {
             type: 4, // 4 - players?
             serverId: options.serverId,
         });
     }
 
     public async getTopPlayers(options: { offsetFrom: number, offsetTo: number, report?: boolean }): Promise<any> {
-        return this.state.gameWsRPC(GAME_WS_COMMANDS.GET_TOP_PLAYERS, {
+        return this.wsRPC(GAME_WS_COMMANDS.GET_TOP_PLAYERS, {
             start: options.offsetFrom,
             end: options.offsetTo,
         }, {
@@ -209,27 +134,28 @@ export class GameBot extends BaseBot {
         const { state, reporter } = this;
 
         if (!state.connected) return;
-        if (!state.gameWs) return;
+        if (!state.ws) return;
 
-        state.gameWs.close();
+        state.ws.close();
 
-        state.gameWsPingInterval && clearInterval(state.gameWsPingInterval);
-        state.gameWsInactivityTimeout && clearTimeout(state.gameWsInactivityTimeout);
+        state.wsPingInterval && clearInterval(state.wsPingInterval);
+        state.wsInactivityTimeout && clearTimeout(state.wsInactivityTimeout);
 
-        delete state.gameWsPingInterval;
-        delete state.gameWsInactivityTimeout;
+        delete state.ws;
+        delete state.wsPingInterval;
+        delete state.wsInactivityTimeout;
+
         delete state.session;
         delete state.clientVersion;
         delete state.serverInfo;
         delete state.authData;
-        delete state.gameWs;
 
         state.connected = false;
 
         reporter('disconnected from game');
     }
 
-    protected async connectToGameWs(): Promise<void> {
+    protected async connectToWs(): Promise<void> {
         const { state, reporter, config } = this;
 
         if (state.connected) return;
@@ -273,14 +199,11 @@ export class GameBot extends BaseBot {
         }
 
         try {
-            await this.openGameWs();
+            await this.openWs();
         } catch (error) {
             state.connecting = false;
             throw error;
         }
-
-        state.connecting = false;
-        state.connected = true;
 
         this.startPings();
         this.startInactivityTimeout();
@@ -289,32 +212,103 @@ export class GameBot extends BaseBot {
     protected startInactivityTimeout(): void {
         const { state, reporter } = this;
 
-        state.gameWsInactivityTimeout && clearTimeout(state.gameWsInactivityTimeout);
+        state.wsInactivityTimeout && clearTimeout(state.wsInactivityTimeout);
 
-        state.gameWsInactivityTimeout = setTimeout(() => {
-            reporter('inactivity 10 minutes');
+        state.wsInactivityTimeout = setTimeout(() => {
+            const minutes = Math.round(DEFAULT_WS_INACTIVITY_TIMEOUT_MS / 1000 / 60);
+            reporter(`inactivity ${minutes}m`);
             this.disconnectFromGameWs();
-        }, 10 * 60 * 1000);
+        }, DEFAULT_WS_INACTIVITY_TIMEOUT_MS);
     }
 
     protected startPings(): void {
         const { state } = this;
 
-        state.gameWsPingInterval && clearInterval(state.gameWsPingInterval);
+        state.wsPingInterval && clearInterval(state.wsPingInterval);
 
-        state.gameWsPingInterval = setInterval(() => {
+        state.wsPingInterval = setInterval(() => {
             if (!state.connected) return;
-            if (!state.gameWs) return;
+            if (!state.ws) return;
 
-            state.gameWsSend({
-                [GAME_WS_FIELDS.COMMAND]: GAME_WS_COMMANDS.PING,
-                [GAME_WS_FIELDS.PACKET_INDEX]: String(state.gameWsNextPacketIndex++),
-                [GAME_WS_FIELDS.OUTGOING_PAYLOAD]: {},
-            });
-        }, 11 * 1000);
+            this.wsSend(GAME_WS_COMMANDS.PING, {});
+        }, WS_PING_INTERVAL_MS);
     }
 
-    protected async openGameWs(options?: { switchServer?: boolean }): Promise<void> { return new Promise((resolve, reject) => {
+    protected async wsRPC(
+        commandId: number,
+        payload: {[key: string]: any},
+        options?: {report?: boolean},
+    ): Promise<any> { return new Promise(async (resolve, reject) => {
+        const { state } = this;
+
+        const packetIndex = await this.wsSend(commandId, payload, options);
+
+        const tmt = this.spawnSendTmt();
+
+        state.wsCallbacksByPacketIndex[packetIndex] = async data => {
+            clearTimeout(tmt);
+            resolve(data);
+        };
+    }); }
+
+    protected wsSetCallbackByCommandId(commandId: number, cb: GameWsCallback): void {
+        const { state } = this;
+
+        if (!state.wsCallbacksByCommandId[commandId]) {
+            state.wsCallbacksByCommandId[commandId] = [];
+        }
+
+        state.wsCallbacksByCommandId[commandId].push(cb);
+    }
+
+    protected async wsSend(
+        commandId: number,
+        payload: {[key: string]: any},
+        options?: {report?: boolean},
+    ): Promise<string> {
+        const { config, state, reporter } = this;
+
+        await this.connectToWs();
+
+        if (!state.ws) throw Error('no ws');
+
+        const packetIndex = String(state.wsNextPacketIndex++);
+
+        const packet: GameWsOutgoingPacket = {
+            [GAME_WS_FIELDS.COMMAND_ID]: commandId,
+            [GAME_WS_FIELDS.PACKET_INDEX]: packetIndex,
+            [GAME_WS_FIELDS.OUTGOING_PAYLOAD]: payload,
+        };
+
+        const packetFormatted = JSON.stringify(packet);
+
+        if (options?.report) {
+            reporter(`=> ${packetFormatted}`);
+        }
+
+        if (config.game.printWsPackets) {
+            console.log('🔸 out:', packetFormatted);
+        }
+
+        state.ws.send(packetFormatted);
+
+        this.startInactivityTimeout();
+
+        return packetIndex;
+    }
+
+    protected spawnSendTmt(): NodeJS.Timeout {
+        const { reporter, state } = this;
+
+        return setTimeout(() => {
+            if (!state.connected) return;
+            const seconds = Math.round(DEFAULT_WS_RPC_TIMEOUT_MS / 1000);
+            reporter(`ws rpc failed by timeout ${seconds}s`);
+            this.disconnectFromGameWs();
+        }, DEFAULT_WS_RPC_TIMEOUT_MS);
+    }
+
+    protected async openWs(options?: { switchServer?: boolean }): Promise<void> { return new Promise((resolve, reject) => {
         const { reporter, config, state } = this;
 
         if (state.connected) throw Error('disconnect from previous game ws before opening new');
@@ -345,52 +339,61 @@ export class GameBot extends BaseBot {
                 undefined,
         });
 
-        state.gameWs = ws;
-        state.gameWsNextPacketIndex = (options?.switchServer ? state.gameWsNextPacketIndex : 0) || 0;
-        state.gameWsCallbacks = {};
+        state.ws = ws;
+        state.wsNextPacketIndex = (options?.switchServer ? state.wsNextPacketIndex : 0) || 0;
+        state.wsCallbacksByCommandId = {};
+        state.wsCallbacksByPacketIndex = {};
 
         ws.on('erorr', () => {
             throw Error('WS communication error');
         });
 
-        ws.on('open', () => {
+        ws.on('open', async () => {
             reporter(`connected to ${wsUrl}`);
+
+            state.connecting = false;
+            state.connected = true;
 
             if (!state.session) throw Error('no session');
             if (!state.serverInfo) throw Error('no serverInfo');
             if (!state.clientVersion) throw Error('no clientVersion');
 
-            const packet: GameWsOutgoingPacket = {
-                [GAME_WS_FIELDS.COMMAND]: GAME_WS_COMMANDS.AUTH,
-                [GAME_WS_FIELDS.PACKET_INDEX]: String(state.gameWsNextPacketIndex++),
-                [GAME_WS_FIELDS.OUTGOING_PAYLOAD]: {
-                    aliSAFData,
-                    token: state.session.code,
-                    serverId: Number(state.serverInfo.serverId),
-                    serverInfoToken: state.serverInfo.serverInfoToken,
-                    appVersion: state.clientVersion,
-                    platformVer: state.clientVersion,
-                    country: 'JP',
-                    lang: 'ja',
-                    nationalFlag: 114,
-                    ip: '0',
-                    pf: options?.switchServer ? '' : 'g123',
-                    platform: 'G123',
-                    channel: 'g123_undefined',
-                    gaid: '',
-                    itemId: '',
-                    g123test: 0,
-                },
-            };
+            const tmt = this.spawnSendTmt();
 
-            if (options?.switchServer) {
-                packet[GAME_WS_FIELDS.OUTGOING_PAYLOAD].changeServer = 1;
-            }
+            this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.AUTH, async data => {
+                clearTimeout(tmt);
 
-            state.gameWsSend(packet, async data => {
                 state.authData = data;
+
+                if (!data.username) {
+                    throw Error(`invalid authData: ${JSON.stringify(state.authData).substr(0, 32)}...`);
+                }
+
                 reporter(`auth complete: ${data.username}`);
+
                 resolve();
+
+                return true; // remove me
+            });
+
+            await this.wsSend(GAME_WS_COMMANDS.AUTH, {
+                aliSAFData,
+                token: state.session.code,
+                serverId: Number(state.serverInfo.serverId),
+                serverInfoToken: state.serverInfo.serverInfoToken,
+                appVersion: state.clientVersion,
+                platformVer: state.clientVersion,
+                country: 'JP',
+                lang: 'ja',
+                nationalFlag: 114,
+                ip: '0',
+                pf: options?.switchServer ? '' : 'g123',
+                platform: 'G123',
+                channel: 'g123_undefined',
+                gaid: '',
+                itemId: '',
+                g123test: 0,
+                changeServer: options?.switchServer ? 1 : undefined,
             });
         });
 
@@ -406,15 +409,30 @@ export class GameBot extends BaseBot {
                     JSON.parse(packet[GAME_WS_FIELDS.INCOMING_DATA]);
             } catch {}
 
-            await self.applyCallbacks(packet);
+            await self.applyCallbacksByCommandId(packet);
+            await self.applyCallbacksByIndex(packet);
         });
     }); }
 
-    protected async applyCallbacks(packet: GameWsIncomingPacket): Promise<void> {
+    protected async applyCallbacksByIndex(packet: GameWsIncomingPacket): Promise<void> {
         const { state } = this;
 
-        const command = packet[GAME_WS_FIELDS.COMMAND];
-        const cbs = state.gameWsCallbacks[command];
+        const packetIndex = packet[GAME_WS_FIELDS.PACKET_INDEX];
+        const cb = state.wsCallbacksByPacketIndex[packetIndex];
+
+        if (!cb) return;
+
+        await cb(packet[GAME_WS_FIELDS.INCOMING_DATA]);
+
+        // always remove
+        delete state.wsCallbacksByPacketIndex[packetIndex];
+    }
+
+    protected async applyCallbacksByCommandId(packet: GameWsIncomingPacket): Promise<void> {
+        const { state } = this;
+
+        const commandId = packet[GAME_WS_FIELDS.COMMAND_ID];
+        const cbs = state.wsCallbacksByCommandId[commandId];
 
         if (!cbs) return;
 
@@ -422,17 +440,17 @@ export class GameBot extends BaseBot {
 
         for (let i = 0; i < cbs.length; ++i) {
             const cb = cbs[i];
-            const keepMe = await cb(packet[GAME_WS_FIELDS.INCOMING_DATA]);
+            const removeMe = await cb(packet[GAME_WS_FIELDS.INCOMING_DATA]);
 
-            if (keepMe) {
+            if (!removeMe) {
                 newCbs.push(cb);
             }
         }
 
         if (newCbs.length) {
-            state.gameWsCallbacks[command] = newCbs;
+            state.wsCallbacksByCommandId[commandId] = newCbs;
         } else {
-            delete state.gameWsCallbacks[command];
+            delete state.wsCallbacksByCommandId[commandId];
         }
     }
 
