@@ -85,7 +85,7 @@ export class DiscordBot extends BaseBot {
             }
 
             let [, cmdName] = msg.content.match(/^([^\s]+)/) || [];
-            cmdName = cmdNameMatchTab[cmdName] || cmdName;
+            cmdName = cmdNameMatchTab[cmdName.toLowerCase()] || cmdName;
             const cmdFu: undefined | Function = (this as any)[`cmd_${cmdName}`];
 
             const reporter = (text: string, asReply?: boolean): void => {
