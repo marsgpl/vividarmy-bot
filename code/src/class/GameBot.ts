@@ -69,14 +69,17 @@ interface GameBotState {
 
 interface GameBotOptions {
     userAgent: string;
+    aliSAFDataHash?: string;
+    aliSAFDataDetail?: string;
     cookieJar: CookieJar;
     gp_token: string;
+    logSensitiveData?: boolean;
 }
 
 export class GameBot extends BaseBot {
     protected options: GameBotOptions;
     public state: GameBotState;
-    protected cookieJar: CookieJar;
+    public cookieJar: CookieJar;
     protected browser: Browser;
     public reporter: (msg: string, asReply?: boolean) => void = (msg: string) => console.log(msg);
 
@@ -100,6 +103,18 @@ export class GameBot extends BaseBot {
             cookieJar: this.cookieJar,
             socks5: config.proxy.required ? config.proxy.socks5?.[0] : undefined,
         });
+    }
+
+    public getGpToken(): string {
+        return this.cookieJar.getCookieValueByKey('g123.jp:gp_token');
+    }
+
+    public s(...args: any[]) {
+        const { options, reporter } = this;
+
+        if (options.logSensitiveData) {
+            reporter(`s: ${JSON.stringify(args)}`);
+        }
     }
 
     public async getPlayerInfo(options: { playerId: number }): Promise<any> {
@@ -155,7 +170,31 @@ export class GameBot extends BaseBot {
         reporter('disconnected from game');
     }
 
-    protected async connectToWs(): Promise<void> {
+    public async getAvailServersList(): Promise<any> {
+        return this.wsRPC(GAME_WS_COMMANDS.GET_AVAILABLE_SERVERS_LIST, {
+            devPlatform: 'g123',
+            channel: 'g123',
+            lineAddress: '',
+        });
+    }
+
+    public async switchServerTo(targetServerId: number): Promise<void> {
+        const { state, reporter } = this;
+
+        if (!state.serverInfo) throw Error('no serverInfo');
+
+        const currentServerId = state.serverInfo.serverId;
+
+        if (currentServerId === targetServerId) return;
+
+        reporter(`switching server: ${currentServerId} -> ${targetServerId}`);
+
+        const servers = await this.getAvailServersList();
+
+        console.log('🔸 servers:', servers);
+    }
+
+    public async connectToWs(): Promise<void> {
         const { state, reporter, config } = this;
 
         if (state.connected) return;
@@ -207,6 +246,20 @@ export class GameBot extends BaseBot {
 
         this.startPings();
         this.startInactivityTimeout();
+        this.sendOnEveryLogin();
+    }
+
+    protected async sendOnEveryLogin(): Promise<void> {
+        // {"c":1652,"o":"18","p":{"type":1}}
+        // {"c":1652,"s":0,"d":"{\"stat\":1}","o":"18"}
+
+        const data = await this.wsRPC(GAME_WS_COMMANDS.INIT_STAT, {
+            type: 1,
+        });
+
+        if (data.stat !== 1) {
+            throw Error('init stat error');
+        }
     }
 
     protected startInactivityTimeout(): void {
@@ -322,8 +375,8 @@ export class GameBot extends BaseBot {
             // hash: '', awsc.um.init({appName:"saf-aliyun-com"}).tn
             // https://g.alicdn.com/AWSC/uab/1.137.1/collina.js
             // detail: '', awsc.uab.getUA()
-            hash: randomString(88, randomString.alpha.azAZ09_),
-            detail: ((state.serverInfo.t || DEFAULT_ALISAFDATA_DETAIL_PREFIX) + DEFAULT_ALISAFDATA_DETAIL),
+            hash: this.options.aliSAFDataHash || randomString(88, randomString.alpha.azAZ09_),
+            detail: this.options.aliSAFDataDetail || ((state.serverInfo.t || DEFAULT_ALISAFDATA_DETAIL_PREFIX) + DEFAULT_ALISAFDATA_DETAIL),
             fphash: md5(state.session.code + ':' + this.options.userAgent),
         };
 
@@ -465,6 +518,8 @@ export class GameBot extends BaseBot {
             .replace(':token:', state.session.code)
             .replace(':appVersion:', state.clientVersion);
 
+        this.s(url);
+
         const r = await this.browser.get(url, {}, {
             referer: config.game.urls.getServerInfo_referer,
             origin: config.game.urls.getServerInfo_origin,
@@ -478,15 +533,19 @@ export class GameBot extends BaseBot {
             throw Error(`getServerInfo: invalid: ${r.body}`);
         }
 
-        const { server_status, stop_start_time, stop_end_time, msg, stop_reason } = serverInfo;
+        const { stop_start_time, stop_end_time, msg, stop_reason } = serverInfo;
 
-        if (server_status !== 1 || stop_reason || stop_start_time) {
-            throw Error(`maintenance: ${stop_reason}; ${msg}; end time: ${stop_end_time}`);
+        if (stop_reason || stop_start_time) {
+            throw Error(`maintenance: ${stop_reason}; ${msg}; end time: ${stop_end_time}; ${JSON.stringify(serverInfo)}`);
         }
 
         state.serverInfo = serverInfo;
 
         reporter(`server: ${serverId} ${region || 'no region'}`);
+
+        this.s({
+            serverInfoToken: serverInfo.serverInfoToken,
+        });
     }
 
     protected async getClientVersion(): Promise<void> {
@@ -521,6 +580,8 @@ export class GameBot extends BaseBot {
         const url = config.game.urls.getSession
             .replace(':from:', encodeURIComponent(config.game.urls.shell));
 
+        this.s(authCookie);
+
         const r = await this.browser.get(url, {}, {
             referer: config.game.urls.shell,
         });
@@ -534,6 +595,8 @@ export class GameBot extends BaseBot {
         state.session = session;
 
         reporter(`is new user: ${session.isPlatformNewUser}`);
+
+        this.s(session);
     }
 
     protected async checkIp(): Promise<void> {
@@ -549,5 +612,7 @@ export class GameBot extends BaseBot {
         }
 
         reporter(`ip: ${received.match(/\(([^\)]+)\)/)?.[1] || '?'}`);
+
+        this.s(received);
     }
 }

@@ -181,4 +181,8 @@ export class CookieJar {
 
         return result.join('; ');
     }
+
+    public getCookieValueByKey(key: string): string {
+        return this.cookies[key]?.value || '';
+    }
 }

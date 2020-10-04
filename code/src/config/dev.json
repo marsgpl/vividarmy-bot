@@ -1,6 +1,7 @@
 {
     "browser": {
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36",
+        "userAgentTemplate": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/:v1: (KHTML, like Gecko) Chrome/:v2: Safari/:v1:"
     },
     "proxy": {
         "required": true,
@@ -56,5 +57,8 @@
             "getServerInfo_referer": "https://knight-us.topwargame.com/",
             "gameWs_origin": "https://knight-g123.akamaized.net"
         }
+    },
+    "farm": {
+        "targetServerId": 601
     }
 }

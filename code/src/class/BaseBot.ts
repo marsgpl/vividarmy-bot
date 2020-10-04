@@ -25,7 +25,7 @@ export abstract class BaseBot {
         const collections = {
             cookies: await db.collection('cookies'),
             players: await db.collection('players'),
-            bots: await db.collection('bots'),
+            puppetconfigs: await db.collection('puppetconfigs'),
         };
 
         log('connected to storage:', config.mongo.db);

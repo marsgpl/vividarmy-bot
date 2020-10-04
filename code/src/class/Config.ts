@@ -1,6 +1,7 @@
 export interface Config {
     browser: {
         userAgent: string;
+        userAgentTemplate: string;
     };
     proxy: {
         required: boolean;
@@ -39,5 +40,8 @@ export interface Config {
         };
         gpTokenCookieTemplate: string;
         urls: {[key: string]: string};
-    }
+    };
+    farm: {
+        targetServerId: number;
+    };
 }
