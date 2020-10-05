@@ -375,37 +375,6 @@ export class GameBot extends BaseBot {
         this.subscribeToAllNotifications();
     }
 
-    protected async subscribeToAllNotifications(): Promise<void> {
-        const { reporter } = this;
-        const { authData } = this.state;
-
-        if (!authData) throw Error('no authData');
-
-        // {"c":10202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":21,\"y\":27,\"id\":\"1693121665506567177\",\"state\":0,\"march\":0}","o":null}
-
-        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.UNIT_REMOVED, async data => {
-            authData.armys = authData.armys.filter((unit: Unit) => unit.id !== data.id);
-
-            reporter(`unit removed: ${data.id}`);
-        });
-
-        // {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":22,\"y\":28,\"li\":[]},{\"im\":true,\"x\":13,\"y\":23,\"li\":[{\"t\":2,\"i\":10004}]}]}","o":null}
-
-        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.CASTLE_TILES_DELTA, async data => {
-            data.data.forEach((changedTile: CastleTile) => {
-                authData.points.forEach((tile: CastleTile) => {
-                    if (tile.x !== changedTile.x) return;
-                    if (tile.y !== changedTile.y) return;
-
-                    tile.im = changedTile.im;
-                    tile.li = changedTile.li;
-
-                    reporter(`castle tile ${changedTile.x},${changedTile.y} new state: ${JSON.stringify(changedTile)}`);
-                });
-            });
-        });
-    }
-
     protected async sendOnEveryLogin(): Promise<void> {
         // {"c":1652,"o":"18","p":{"type":1}}
         // {"c":1652,"s":0,"d":"{\"stat\":1}","o":"18"}
@@ -436,11 +405,16 @@ export class GameBot extends BaseBot {
 
         state.wsPingInterval && clearInterval(state.wsPingInterval);
 
-        state.wsPingInterval = setInterval(() => {
+        state.wsPingInterval = setInterval(async () => {
             if (!state.connected) return;
             if (!state.ws) return;
+            if (!state.authData) return;
 
-            this.wsSend(GAME_WS_COMMANDS.PING, {});
+            const pong = await this.wsRPC(GAME_WS_COMMANDS.PING, {});
+
+            if (pong.t) {
+                state.authData.serverTime = pong.t;
+            }
         }, WS_PING_INTERVAL_MS);
     }
 
@@ -773,5 +747,44 @@ export class GameBot extends BaseBot {
         reporter(`ip: ${received.match(/\(([^\)]+)\)/)?.[1] || '?'}`);
 
         this.s(received);
+    }
+
+    protected async subscribeToAllNotifications(): Promise<void> {
+        const { reporter } = this;
+        const { authData } = this.state;
+
+        if (!authData) throw Error('no authData');
+
+        // {"c":10202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":21,\"y\":27,\"id\":\"1693121665506567177\",\"state\":0,\"march\":0}","o":null}
+
+        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.UNIT_REMOVED, async data => {
+            authData.armys = authData.armys.filter((unit: Unit) => unit.id !== data.id);
+
+            reporter(`unit removed: ${data.id}`);
+        });
+
+        // {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":22,\"y\":28,\"li\":[]},{\"im\":true,\"x\":13,\"y\":23,\"li\":[{\"t\":2,\"i\":10004}]}]}","o":null}
+
+        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.CASTLE_TILES_DELTA, async data => {
+            data.data.forEach((changedTile: CastleTile) => {
+                authData.points.forEach((tile: CastleTile) => {
+                    if (tile.x !== changedTile.x) return;
+                    if (tile.y !== changedTile.y) return;
+
+                    tile.im = changedTile.im;
+                    tile.li = changedTile.li;
+
+                    reporter(`castle tile ${changedTile.x},${changedTile.y} new state: ${JSON.stringify(changedTile)}`);
+                });
+            });
+        });
+
+        // {"c":10012,"s":0,"d":"{\"power\":\"516.0\"}","o":null}
+
+        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.POWER_DELTA, async data => {
+            authData.star = Number(data.power);
+
+            reporter(`power: ${authData.star}`);
+        });
     }
 }

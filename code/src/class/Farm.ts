@@ -190,7 +190,7 @@ export class Farm extends BaseBot {
 
         await bot.switchServerTo(puppet.config.targetServerId);
 
-        if (bot.state.serverInfo?.serverId != puppet.config.targetServerId) {
+        if (bot.state.authData?.currk != puppet.config.targetServerId) {
             throw Error(`puppet server id mismatch: ${bot.state.serverInfo?.serverId} != ${puppet.config.targetServerId}`);
         }
 

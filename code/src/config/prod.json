@@ -51,5 +51,8 @@
             "getServerInfo_referer": "https://knight-us.topwargame.com/",
             "gameWs_origin": "https://knight-g123.akamaized.net"
         }
+    },
+    "farm": {
+        "targetServerId": 601
     }
 }
