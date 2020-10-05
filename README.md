@@ -15,6 +15,7 @@
         db.disableFreeMonitoring()
         db.players.ensureIndex({ nameLowercase:1 }, { unique:false })
         db.players.ensureIndex({ playerId:1 }, { unique:true })
+        db.puppetconfigs.ensureIndex({ docId:1 }, { unique:true })
     npm start discord-dev
     npm start farm-dev
 
@@ -29,5 +30,6 @@
             db.disableFreeMonitoring()
             db.players.ensureIndex({ nameLowercase:1 }, { unique:false })
             db.players.ensureIndex({ playerId:1 }, { unique:true })
+            db.puppetconfigs.ensureIndex({ docId:1 }, { unique:true })
         docker-compose restart discord
         docker-compose restart farm

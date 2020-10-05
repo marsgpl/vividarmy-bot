@@ -10,6 +10,10 @@ import { BaseBot } from 'class/BaseBot';
 import * as GAME_WS_FIELDS from 'constants/gameWsFields';
 import * as GAME_WS_COMMANDS from 'constants/gameWsCommands';
 import randomString from 'modules/randomString';
+import { Unit } from 'types/Unit';
+import sleep from 'modules/sleep';
+import randomNumber from 'modules/randomNumber';
+import { CastleTile } from 'types/CastleTile';
 
 const DEFAULT_WS_INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 10m
 const DEFAULT_WS_RPC_TIMEOUT_MS = 30 * 1000; // 30s
@@ -145,7 +149,74 @@ export class GameBot extends BaseBot {
         });
     }
 
-    protected async disconnectFromGameWs(): Promise<void> {
+    public async moveTutorial(options: { step: number }): Promise<any> {
+        return this.wsRPC(GAME_WS_COMMANDS.MOVE_TUTORIAL, {
+            text: String(options.step),
+        });
+    }
+
+    /**
+     * true - some units were merged
+     * false - no units were merged
+     */
+    public async mergeAllUnits(sourceArmyId: number): Promise<boolean> {
+        const { authData } = this.state;
+        if (!authData) throw Error('no authData');
+
+        const avail: Unit[] = authData.armys.filter((unit: Unit) =>
+                unit.armyId === sourceArmyId &&
+                unit.march === 0 &&
+                unit.state === 0 &&
+                unit.warehouseId === "0");
+
+        if (avail.length < 2) {
+            return false;
+        }
+
+        this.reporter(`merging x${avail.length} of armyId:${sourceArmyId}`);
+
+        for (let i = 0; i < avail.length - 1; i += 2) {
+            const srcUnit = avail[i];
+            const targetUnit = avail[i + 1];
+
+            // now kiss
+            const success = await this.merge2Units(srcUnit, targetUnit);
+
+            if (!success) {
+                throw Error('merge failed');
+            }
+        }
+
+        return true;
+    }
+
+    // {"c":203,"o":"79","p":{"delId":"1693121665506567177","targetId":"1693121665506567173"}}
+    // {"c":203,"s":0,"d":"{\"res\":\"suc\",\"targetId\":\"1693121665506567173\",\"armyId\":10002}","o":"79"}
+    protected async merge2Units(srcUnit: Unit, targetUnit: Unit): Promise<boolean> {
+        const { authData } = this.state;
+        if (!authData) throw Error('no authData');
+
+        const data = await this.wsRPC(GAME_WS_COMMANDS.MERGE_2_UNITS, {
+            delId: srcUnit.id,
+            targetId: targetUnit.id,
+        });
+
+        const success = data.res === 'suc';
+
+        if (success) { // update targetUnit
+            authData.armys.forEach((unit: Unit) => {
+                if (unit.id === data.targetId) {
+                    unit.armyId = data.armyId;
+                }
+            });
+
+            await sleep(randomNumber(100, 200));
+        }
+
+        return success;
+    }
+
+    protected async disconnectFromGameWs(options?: { reconnecting: boolean }): Promise<void> {
         const { state, reporter } = this;
 
         if (!state.connected) return;
@@ -160,14 +231,17 @@ export class GameBot extends BaseBot {
         delete state.wsPingInterval;
         delete state.wsInactivityTimeout;
 
-        delete state.session;
-        delete state.clientVersion;
-        delete state.serverInfo;
+        options?.reconnecting || delete state.session;
+        options?.reconnecting || delete state.clientVersion;
+        options?.reconnecting || delete state.serverInfo;
+
         delete state.authData;
 
         state.connected = false;
 
-        reporter('disconnected from game');
+        reporter(options?.reconnecting ?
+            'disconnected from game for reconnection' :
+            'disconnected from game');
     }
 
     public async getAvailServersList(): Promise<any> {
@@ -191,23 +265,66 @@ export class GameBot extends BaseBot {
 
         const servers = await this.getAvailServersList();
 
-        console.log('🔸 servers:', servers);
+        const allAvailableServers = servers.showServerList.serverList;
+
+        const targetServer = allAvailableServers.find(
+            (server: {[key: string]: any}) => server.id === targetServerId);
+
+        if (!targetServer) {
+            throw Error(`server id ${targetServerId} is not allowed for switching to`);
+        }
+
+        const isG123Supported = targetServer.platforms.includes('g123');
+
+        if (!isG123Supported) {
+            throw Error(`server id ${targetServerId} does not support g123: ${JSON.stringify(targetServer)}`);
+        }
+
+        const switchResponse = await this.wsRPC(GAME_WS_COMMANDS.SWITCH_SERVER, {
+            serverId: targetServerId,
+            uid: '0',
+            deviceType: 'wxMiniProgram',
+        });
+
+        // {"c":848,"s":0,"d":"{\"uid\":0,\"region\":\"us-west-1\"}","o":"3"}
+
+        const region = switchResponse.region;
+
+        if (!region) {
+            throw Error(`switch failed: ${switchResponse}`);
+        }
+
+        state.serverInfo.serverId = targetServer.id;
+        state.serverInfo.g123Url = targetServer.url;
+        state.serverInfo.region = region;
+
+        await this.reconnectToWs();
     }
 
-    public async connectToWs(): Promise<void> {
+    protected async reconnectToWs(): Promise<void> {
+        await this.disconnectFromGameWs({ reconnecting: true });
+        await this.connectToWs({ reconnecting: true });
+    }
+
+    public async connectToWs(options?: { reconnecting: boolean }): Promise<void> {
         const { state, reporter, config } = this;
 
         if (state.connected) return;
 
         if (state.connecting) {
-            throw Error('can\'t connect to game: already connecting in other thread; try again later');
+            throw Error(`can't connect to game: already connecting in other thread; try again later`);
         }
 
         state.connecting = true;
 
         reporter('connecting to game');
 
-        if (config.game.checkIp.required) {
+        const needToCheckIp = config.game.checkIp.required && !options?.reconnecting;
+        const needToGetSession = !options?.reconnecting;
+        const needToGetClientVersion = !options?.reconnecting;
+        const needToGetServerInfo = !options?.reconnecting;
+
+        if (needToCheckIp) {
             try {
                 await this.checkIp();
             } catch (error) {
@@ -216,29 +333,37 @@ export class GameBot extends BaseBot {
             }
         }
 
-        try {
-            await this.getSession();
-        } catch (error) {
-            state.connecting = false;
-            throw error;
+        if (needToGetSession) {
+            try {
+                await this.getSession();
+            } catch (error) {
+                state.connecting = false;
+                throw error;
+            }
+        }
+
+        if (needToGetClientVersion) {
+            try {
+                await this.getClientVersion();
+            } catch (error) {
+                state.connecting = false;
+                throw error;
+            }
+        }
+
+        if (needToGetServerInfo) {
+            try {
+                await this.getServerInfo();
+            } catch (error) {
+                state.connecting = false;
+                throw error;
+            }
         }
 
         try {
-            await this.getClientVersion();
-        } catch (error) {
-            state.connecting = false;
-            throw error;
-        }
-
-        try {
-            await this.getServerInfo();
-        } catch (error) {
-            state.connecting = false;
-            throw error;
-        }
-
-        try {
-            await this.openWs();
+            await this.openWs({
+                switchServer: options?.reconnecting,
+            });
         } catch (error) {
             state.connecting = false;
             throw error;
@@ -247,6 +372,38 @@ export class GameBot extends BaseBot {
         this.startPings();
         this.startInactivityTimeout();
         this.sendOnEveryLogin();
+        this.subscribeToAllNotifications();
+    }
+
+    protected async subscribeToAllNotifications(): Promise<void> {
+        const { reporter } = this;
+        const { authData } = this.state;
+
+        if (!authData) throw Error('no authData');
+
+        // {"c":10202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":21,\"y\":27,\"id\":\"1693121665506567177\",\"state\":0,\"march\":0}","o":null}
+
+        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.UNIT_REMOVED, async data => {
+            authData.armys = authData.armys.filter((unit: Unit) => unit.id !== data.id);
+
+            reporter(`unit removed: ${data.id}`);
+        });
+
+        // {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":22,\"y\":28,\"li\":[]},{\"im\":true,\"x\":13,\"y\":23,\"li\":[{\"t\":2,\"i\":10004}]}]}","o":null}
+
+        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.CASTLE_TILES_DELTA, async data => {
+            data.data.forEach((changedTile: CastleTile) => {
+                authData.points.forEach((tile: CastleTile) => {
+                    if (tile.x !== changedTile.x) return;
+                    if (tile.y !== changedTile.y) return;
+
+                    tile.im = changedTile.im;
+                    tile.li = changedTile.li;
+
+                    reporter(`castle tile ${changedTile.x},${changedTile.y} new state: ${JSON.stringify(changedTile)}`);
+                });
+            });
+        });
     }
 
     protected async sendOnEveryLogin(): Promise<void> {
@@ -345,7 +502,9 @@ export class GameBot extends BaseBot {
 
         state.ws.send(packetFormatted);
 
-        this.startInactivityTimeout();
+        if (commandId !== GAME_WS_COMMANDS.PING) {
+            this.startInactivityTimeout();
+        }
 
         return packetIndex;
     }

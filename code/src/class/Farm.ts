@@ -20,6 +20,10 @@ interface PuppetConfig {
     aliSAFDataHash: string;
     targetServerId: number;
     gp_token: string;
+    state: {
+        tutorialStep?: number;
+        areInitialUnitsMerged?: true;
+    };
 }
 
 interface Puppet {
@@ -64,13 +68,13 @@ export class Farm extends BaseBot {
         }
     }
 
-    protected async loadPuppetConfig(docId: string): Promise<PuppetConfig | null> {
+    protected async loadPuppetConfig(puppetDocId: string): Promise<PuppetConfig | null> {
         if (!this.state) throw Error('no state');
 
-        this.log(`loading puppet config for docId: ${docId}`);
+        this.log(`loading puppet config for docId: ${puppetDocId}`);
 
         const doc = await this.state.mongo.collections.puppetconfigs.findOne({
-            _id: docId,
+            docId: puppetDocId,
         });
 
         if (doc) {
@@ -80,11 +84,15 @@ export class Farm extends BaseBot {
         return doc;
     }
 
+    protected async savePuppet(puppet: Puppet): Promise<void> {
+        await this.savePuppetConfig(puppet.config);
+    }
+
     protected async savePuppetConfig(puppetConfig: PuppetConfig): Promise<void> {
         if (!this.state) throw Error('no state');
 
         await this.state.mongo.collections.puppetconfigs.updateOne({
-            _id: puppetConfig.docId,
+            docId: puppetConfig.docId,
         }, {
             $set: puppetConfig,
         }, {
@@ -92,10 +100,10 @@ export class Farm extends BaseBot {
         });
     }
 
-    protected createPuppetConfig(docId?: string): PuppetConfig {
+    protected createPuppetConfig(puppetDocId?: string): PuppetConfig {
         const { config } = this;
 
-        docId = docId || uuidv4();
+        puppetDocId = puppetDocId || uuidv4();
 
         const cookieDocId = uuidv4();
 
@@ -110,12 +118,13 @@ export class Farm extends BaseBot {
         this.log('puppet config created');
 
         return {
-            docId,
+            docId: puppetDocId,
             cookieDocId,
             userAgent,
             aliSAFDataHash,
             targetServerId: config.farm.targetServerId,
             gp_token,
+            state: {},
         };
     }
 
@@ -136,26 +145,31 @@ export class Farm extends BaseBot {
 
         const { userAgent, aliSAFDataHash, gp_token } = puppetConfig;
 
-        return new GameBot(config, {
+        const gameBot = new GameBot(config, {
             userAgent,
             aliSAFDataHash,
             cookieJar,
             gp_token,
             logSensitiveData: true,
         });
+
+        const gameBotLog = _log.setName(`Farm:puppet:${puppetConfig.docId}:GameBot`);
+        gameBot.reporter = (msg: string) => gameBotLog(msg);
+
+        return gameBot;
     }
 
-    protected async createPuppet(docId?: string): Promise<Puppet> {
-        const puppetConfig = docId &&
-            await this.loadPuppetConfig(docId) ||
-            this.createPuppetConfig(docId);
+    protected async createPuppet(puppetDocId?: string): Promise<Puppet> {
+        const puppetConfig = puppetDocId &&
+            await this.loadPuppetConfig(puppetDocId) ||
+            this.createPuppetConfig(puppetDocId);
 
         const puppetGameBot = await this.createPuppetGameBot(puppetConfig);
 
         const puppet: Puppet = {
             config: puppetConfig,
             gameBot: puppetGameBot,
-            reporter: _log.setName(`puppet:${puppetConfig.docId}`),
+            reporter: _log.setName(`Farm:puppet:${puppetConfig.docId}`),
         };
 
         puppet.reporter('created');
@@ -164,28 +178,57 @@ export class Farm extends BaseBot {
     }
 
     protected async cmd_createAndPrepareNewAcc(): Promise<void> {
-        const docId = process.argv[3];
+        const puppetDocId = process.argv[3];
 
-        const puppet = await this.createPuppet(docId);
+        const puppet = await this.createPuppet(puppetDocId);
 
-        await this.connectToGame(puppet);
+        const bot = puppet.gameBot;
 
+        await bot.connectToWs();
+
+        await this.saveGpToken(puppet);
+
+        await bot.switchServerTo(puppet.config.targetServerId);
+
+        if (bot.state.serverInfo?.serverId != puppet.config.targetServerId) {
+            throw Error(`puppet server id mismatch: ${bot.state.serverInfo?.serverId} != ${puppet.config.targetServerId}`);
+        }
+
+        await this.moveTutorial(puppet, 1);
+        await this.moveTutorial(puppet, 2);
+
+        await this.mergeAndRelocateInitialUnits(puppet);
+    }
+
+    protected async mergeAndRelocateInitialUnits(puppet: Puppet): Promise<void> {
+        if (puppet.config.state.areInitialUnitsMerged) return;
+
+        if (!await puppet.gameBot.mergeAllUnits(10001)) throw Error(`no 10001 units were merged`);
+        if (!await puppet.gameBot.mergeAllUnits(10002)) throw Error(`no 10002 units were merged`);
+        if (!await puppet.gameBot.mergeAllUnits(10003)) throw Error(`no 10003 units were merged`);
+
+        puppet.config.state.areInitialUnitsMerged = true;
+
+        await this.savePuppet(puppet);
+    }
+
+    protected async moveTutorial(puppet: Puppet, step: number): Promise<void> {
+        const currentStep = Number(puppet.config.state.tutorialStep) || 0;
+
+        if (currentStep < step) {
+            await puppet.gameBot.moveTutorial({ step });
+
+            puppet.config.state.tutorialStep = step;
+
+            await this.savePuppet(puppet);
+        }
+    }
+
+    protected async saveGpToken(puppet: Puppet): Promise<void> {
         puppet.config.gp_token = puppet.gameBot.getGpToken();
-        await this.savePuppetConfig(puppet.config);
-        puppet.reporter(`gp_token: ${puppet.config.gp_token}`);
 
-        await this.switchServer(puppet);
-    }
+        puppet.reporter(`gp token: ${puppet.config.gp_token}`);
 
-    protected async connectToGame(puppet: Puppet): Promise<void> {
-        puppet.reporter('connectToGame');
-
-        await puppet.gameBot.connectToWs();
-    }
-
-    protected async switchServer(puppet: Puppet): Promise<void> {
-        puppet.reporter('switchServer', puppet.config.targetServerId);
-
-        await puppet.gameBot.switchServerTo(puppet.config.targetServerId);
+        await this.savePuppet(puppet);
     }
 }
