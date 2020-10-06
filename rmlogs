@@ -1,0 +1,5 @@
+#!/bin/bash
+
+truncate -s 0 $(docker inspect --format='{{.LogPath}}' $(docker ps -a -q -f name=vividarmybot_mongo))
+truncate -s 0 $(docker inspect --format='{{.LogPath}}' $(docker ps -a -q -f name=vividarmybot_discord))
+truncate -s 0 $(docker inspect --format='{{.LogPath}}' $(docker ps -a -q -f name=vividarmybot_farm))
