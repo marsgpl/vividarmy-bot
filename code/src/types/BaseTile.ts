@@ -1,4 +1,4 @@
-export interface CastleTile {
+export interface BaseTile {
     im: boolean; // true
     li: {
         t: number;

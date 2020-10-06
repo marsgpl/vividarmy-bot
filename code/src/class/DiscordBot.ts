@@ -139,9 +139,7 @@ export class DiscordBot extends BaseBot {
                 return reporter(`no SvS data found, are you sure SvS is on?`, true);
             }
 
-            const serversIds: number[] =
-                svsData.map((data: any) =>
-                    Number(data[GAME_WS_FIELDS.SERVER_ID]));
+            const serversIds: number[] = svsData.map((data: any) => Number(data.k));
 
             reporter(`current SvS opponents: ${serversIds.length}`);
 
@@ -278,7 +276,7 @@ export class DiscordBot extends BaseBot {
 
         const x = Number(point.x); // 354
         const y = Number(point.y); // 450
-        const serverId = Number(point[GAME_WS_FIELDS.SERVER_ID]) || Number(pointPlayer.w); // 601
+        const serverId = Number(point.k) || Number(pointPlayer.w); // 601
         const locationId = point.id; // 115378
         const locationType = point.pointType; // 1
 

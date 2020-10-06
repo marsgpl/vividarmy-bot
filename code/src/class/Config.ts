@@ -43,5 +43,6 @@ export interface Config {
     };
     farm: {
         targetServerId: number;
+        resetServerId: number;
     };
 }

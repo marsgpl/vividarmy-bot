@@ -53,6 +53,7 @@
         }
     },
     "farm": {
-        "targetServerId": 601
+        "targetServerId": 601,
+        "resetServerId": 707
     }
 }
