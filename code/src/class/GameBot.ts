@@ -16,6 +16,8 @@ import sleep from 'modules/sleep';
 import randomNumber from 'modules/randomNumber';
 import { BaseTile } from 'types/BaseTile';
 import { Building } from 'types/Building';
+import { MyServer } from 'types/MyServer';
+import crop from 'modules/crop';
 
 const js = JSON.stringify;
 
@@ -62,7 +64,7 @@ interface GameBotState {
     };
     authData?: {
         [key: string]: any;
-    }
+    };
     ws?: WebSocket;
     wsNextPacketIndex: number;
     wsCallbacksByCommandId: {
@@ -76,6 +78,23 @@ interface GameBotState {
     mutex: {
         armyTipClaim: {[key: string]: true},
         treasureTaskClaim: {[key: string]: true},
+    };
+    resources?: {
+        voucher?: number;
+        honor?: number;
+        metal?: number;
+        soil?: number;
+        gold?: number; // red diamonds
+        paid_gold?: number;
+        free_gold?: number;
+        coal?: number;
+        wood?: number;
+        military?: number;
+        expedition_coin?: number;
+        oila?: number;
+        jungong?: number;
+        coin?: number; // gold
+        oil?: number; // ???
     };
 }
 
@@ -161,26 +180,36 @@ export class GameBot extends BaseBot {
             'disconnected from game');
     }
 
-    public async switchServerTo(targetServerId: number): Promise<void> {
+    public async switchServerTo(targetServerId: number, platform?: string): Promise<void> {
         const { state, reporter } = this;
 
         if (!state.serverInfo) throw Error('no serverInfo');
 
         const currentServerId = state.serverInfo.serverId;
+        const currentServerId2 = state.authData?.k;
+        const currentServerId3 = state.authData?.currk;
+
+        if (currentServerId != currentServerId2 || currentServerId != currentServerId3) {
+            throw Error(`current server id is inconsistent: serverInfo.serverId=${currentServerId} authData.k=${currentServerId2} authData.currk=${currentServerId3}`);
+        }
 
         if (currentServerId === targetServerId) return;
 
         reporter(`switching server: ${currentServerId} -> ${targetServerId}`);
 
-        const servers = await this.getAvailServersList();
+        const servers = await this.getAvailServersList(platform);
 
         const allAvailableServers = servers.showServerList.serverList;
+        const myServers: MyServer[] = servers.serverList;
 
-        const targetServer = allAvailableServers.find(
-            (server: {[key: string]: any}) => server.id === targetServerId);
+        const existingTargetServer: MyServer | undefined = myServers
+            .find(s => s.serverId == targetServerId);
+
+        const targetServer = allAvailableServers.find((server: {[key: string]: any}) =>
+        server.id === targetServerId);
 
         if (!targetServer) {
-            throw Error(`server id ${targetServerId} is not allowed for switching to`);
+            throw Error(`server id ${targetServerId} not found in all servers list: ${allAvailableServers.map((s:any)=>s.id).join(', ')}`);
         }
 
         const isG123Supported = targetServer.platforms.includes('g123');
@@ -189,13 +218,19 @@ export class GameBot extends BaseBot {
             throw Error(`server id ${targetServerId} does not support g123: ${js(targetServer)}`);
         }
 
+        const uidToSwitchTo = existingTargetServer ? String(existingTargetServer.uid) : '0';
+
+        if (existingTargetServer) {
+            reporter(`already have acc on ${targetServerId}: switching to it: uid=${uidToSwitchTo}`);
+        } else {
+            reporter(`no acc on ${targetServerId}: creating it`);
+        }
+
         const switchResponse = await this.wsRPC(GAME_WS_COMMANDS.SWITCH_SERVER, {
             serverId: targetServerId,
-            uid: '0',
+            uid: uidToSwitchTo,
             deviceType: 'wxMiniProgram',
         });
-
-        // {"c":848,"s":0,"d":"{\"uid\":0,\"region\":\"us-west-1\"}","o":"3"}
 
         const region = switchResponse.region;
 
@@ -208,7 +243,6 @@ export class GameBot extends BaseBot {
         state.serverInfo.region = region;
 
         await this.reconnectToWs();
-        await this.initStatAfterRegister();
     }
 
     protected async reconnectToWs(): Promise<void> {
@@ -227,7 +261,7 @@ export class GameBot extends BaseBot {
 
         state.connecting = true;
 
-        reporter('connecting to game');
+        reporter(`${options?.reconnecting ? 're' : ''}connecting to game`);
 
         const needToCheckIp = config.game.checkIp.required && !options?.reconnecting;
         const needToGetSession = !options?.reconnecting;
@@ -282,18 +316,6 @@ export class GameBot extends BaseBot {
         this.startPings();
         this.startInactivityTimeout();
         this.subscribeToAllNotifications();
-    }
-
-    // {"c":1652,"o":"18","p":{"type":1}}
-    // {"c":1652,"s":0,"d":"{\"stat\":1}","o":"18"}
-    public async initStatAfterRegister(): Promise<void> {
-        const data = await this.wsRPC(GAME_WS_COMMANDS.INIT_STAT, {
-            type: 1,
-        });
-
-        if (data.stat !== 1) {
-            throw Error(`init stat error: ${js(data)}`);
-        }
     }
 
     protected startInactivityTimeout(): void {
@@ -379,7 +401,7 @@ export class GameBot extends BaseBot {
         }
 
         if (config.game.printWsPackets) {
-            console.log(colors.gray('🔸 out:'), colors.gray(packetFormatted));
+            console.log(colors.gray('🔸 out:'), colors.gray(crop(packetFormatted, 256)));
         }
 
         state.ws.send(packetFormatted);
@@ -441,6 +463,7 @@ export class GameBot extends BaseBot {
             armyTipClaim: {},
             treasureTaskClaim: {},
         };
+        state.resources = {};
 
         ws.on('erorr', () => {
             throw Error('WS communication error');
@@ -461,7 +484,9 @@ export class GameBot extends BaseBot {
             this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.AUTH, async data => {
                 clearTimeout(tmt);
 
-                state.authData = data;
+                state.authData = data as {[key: string]: any};
+                state.authData.localTime = Math.floor(Date.now() / 1000);
+                state.authData.timeDelta = state.authData.localTime - state.authData.serverTime;
 
                 if (!data.username) {
                     throw Error(`invalid authData: ${js(state.authData).substr(0, 32)}...`);
@@ -497,7 +522,7 @@ export class GameBot extends BaseBot {
 
         ws.on('message', async (rawData: string) => {
             if (config.game.printWsPackets) {
-                console.log(colors.gray('🔸 in:'), colors.gray(rawData));
+                console.log(colors.gray('🔸 in:'), colors.gray(crop(rawData, 256)));
             }
 
             const packet: GameWsIncomingPacket = JSON.parse(rawData);
@@ -511,6 +536,15 @@ export class GameBot extends BaseBot {
             await self.applyCallbacksByIndex(packet);
         });
     }); }
+
+    public getServerTime(): number {
+        if (!this.state.authData) throw Error('no auth data');
+
+        const timeDelta = this.state.authData?.timeDelta;
+        const localTime = Math.floor(Date.now() / 1000);
+
+        return localTime - timeDelta;
+    }
 
     protected async applyCallbacksByIndex(packet: GameWsIncomingPacket): Promise<void> {
         const { state } = this;
@@ -673,10 +707,10 @@ export class GameBot extends BaseBot {
             .filter((unit: Unit) => unit.armyId === typeId);
     }
 
-    public async getAvailServersList(): Promise<any> {
+    public async getAvailServersList(platform: string = 'g123'): Promise<any> {
         return this.wsRPC(GAME_WS_COMMANDS.GET_AVAILABLE_SERVERS_LIST, {
-            devPlatform: 'g123',
-            channel: 'g123',
+            devPlatform: platform,
+            channel: platform,
             lineAddress: '',
         });
     }
@@ -684,6 +718,8 @@ export class GameBot extends BaseBot {
     // {"c":857,"o":"2239","p":{"targetUID":"482538062531"}}
     // {"c":857,"s":0,"d":"{\"result\":0,\"targetUID\":482538062531}","o":"2239"}
     public async deleteAccount(accountId: number): Promise<void> {
+        this.reporter(`deleting account id=${accountId}`);
+
         const r = await this.wsRPC(GAME_WS_COMMANDS.DELETE_ACCOUNT, {
             targetUID: String(accountId),
         });
@@ -727,14 +763,66 @@ export class GameBot extends BaseBot {
         });
 
         if (r.text !== String(options.step)) {
-            throw Error(`failed to move tutorial: ${JSON.stringify(r)}; step=${options.step}`);
+            throw Error(`failed to move tutorial: ${js(r)}; step=${options.step}`);
         }
     }
 
-    /**
-     * true - some units were merged
-     * false - no units were merged
-     */
+    // {"c":1652,"o":"18","p":{"type":1}}
+    // {"c":1652,"s":0,"d":"{\"stat\":1}","o":"18"}
+    // {"c":1652,"o":"557","p":{"type":2}}
+    // {"c":1652,"s":0,"d":"{\"stat\":2,\"endTime\":1601748262}","o":"557"}
+    public async startRepairingOldTank(): Promise<number> {
+        const r1 = await this.wsRPC(GAME_WS_COMMANDS.OLD_TANK_API, { type: 1 });
+        if (r1.stat != 1) throw Error(`old tank r1 fail: ${js(r1)}`);
+
+        const r2 = await this.wsRPC(GAME_WS_COMMANDS.OLD_TANK_API, { type: 2 });
+        if (r2.stat != 2) throw Error(`old tank r2 fail: ${js(r2)}`);
+
+        return r2.endTime;
+    }
+
+    // {"c":101,"o":"508","p":{"id":"1693121665254908937","x":23,"y":23}}
+    // {"c":101,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":1601747700,\"buildingId\":1043,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":1,\"productIds\":[\"1693191885520725001\"],\"proId\":0,\"x\":24,\"y\":24,\"proCount\":0.0,\"state\":1,\"id\":\"1693121665254908937\",\"proTime\":1.601747703E9,\"proLastTime\":3.0}}","o":"508"}
+    public async orderUnit(building: Building, pos: { x:number, y:number }): Promise<number> {
+        const { authData } = this.state;
+        if (!authData) throw Error('no authData');
+
+        const r = await this.wsRPC(GAME_WS_COMMANDS.ORDER_UNIT, {
+            id: building.id,
+            ...pos,
+        });
+
+        if (!r.building) {
+            throw Error(`failed to order unit: ${js(r)} for building ${js(building)} at pos ${js(pos)}`);
+        }
+
+        return r.building.proLastTime;
+    }
+
+    public async mergeAllBuildings(sourceBuildingId: number): Promise<void> {
+        const { authData } = this.state;
+        if (!authData) throw Error('no authData');
+
+        const avail: Building[] = authData.buildings.filter((building: Building) =>
+            building.buildingId == sourceBuildingId &&
+            building.broken == 0);
+
+        if (avail.length < 2) {
+            this.reporter(`wanted to merge buildings with buildingId=${sourceBuildingId} but found: ${js(avail)}`);
+            return;
+        }
+
+        this.reporter(`merging x${avail.length} of buildingId:${sourceBuildingId}`);
+
+        for (let i = 0; i < avail.length - 1; i += 2) {
+            const src = avail[i];
+            const target = avail[i + 1];
+
+            await this.merge2Buildings(src, target);
+            await sleep(randomNumber(100, 200));
+        }
+    }
+
     public async mergeAllUnits(sourceArmyId: number): Promise<void> {
         const { authData } = this.state;
         if (!authData) throw Error('no authData');
@@ -742,7 +830,6 @@ export class GameBot extends BaseBot {
         const avail: Unit[] = authData.armys.filter((unit: Unit) =>
                 unit.armyId === sourceArmyId &&
                 unit.march === 0 &&
-                unit.state === 0 &&
                 unit.warehouseId === "0");
 
         if (avail.length < 2) return;
@@ -750,10 +837,10 @@ export class GameBot extends BaseBot {
         this.reporter(`merging x${avail.length} of armyId:${sourceArmyId}`);
 
         for (let i = 0; i < avail.length - 1; i += 2) {
-            const srcUnit = avail[i];
-            const targetUnit = avail[i + 1];
+            const src = avail[i];
+            const target = avail[i + 1];
 
-            await this.merge2Units(srcUnit, targetUnit);
+            await this.merge2Units(src, target);
             await sleep(randomNumber(100, 200));
         }
     }
@@ -776,13 +863,45 @@ export class GameBot extends BaseBot {
         const { authData } = this.state;
         if (!authData) throw Error('no authData');
 
+        let added: boolean = false;
+
         for (let i = 0; i < authData.buildings.length; ++i) {
             const building = authData.buildings[i];
 
             if (building.id === changedBuilding.id) {
                 authData.buildings[i] = changedBuilding;
+                added = true;
             }
         }
+
+        if (!added) {
+            authData.buildings.push(changedBuilding);
+        }
+    }
+
+    // {"c":104,"o":"468","p":{"x":26,"y":22,"id":"1693121665103913992"}}
+    // {"c":104,"s":0,"d":"{\"x\":16,\"y\":20,\"building\":{\"broken\":0,\"proStartTime\":1601747334,\"buildingId\":1704,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":26,\"y\":22,\"proCount\":0.0,\"state\":1,\"id\":\"1693121665103913992\",\"proTime\":1.601747359E9,\"proLastTime\":25.0}}","o":"468"}
+    public async relocateBuilding(building: Building, newPos: { x:number, y:number }): Promise<void> {
+        const { authData } = this.state;
+        if (!authData) throw Error('no authData');
+
+        const r = await this.wsRPC(GAME_WS_COMMANDS.RELOCATE_BUILDING, {
+            id: building.id,
+            ...newPos,
+        });
+
+        const changedBuilding: Building | undefined = r.building;
+
+        if (!changedBuilding) {
+            throw Error(`building relocation failed: ${js(r)}; building id=${building.id}; pos=${js(newPos)}`);
+        }
+
+        authData.buildings.forEach((building: Building) => {
+            if (building.id == changedBuilding.id) {
+                building.x = changedBuilding.x;
+                building.y = changedBuilding.y;
+            }
+        });
     }
 
     // {"c":110,"o":"262","p":{"x":13,"y":23,"id":"1693121665506567173"}}
@@ -791,15 +910,15 @@ export class GameBot extends BaseBot {
         const { authData } = this.state;
         if (!authData) throw Error('no authData');
 
-        const data = await this.wsRPC(GAME_WS_COMMANDS.RELOCATE_UNIT, {
+        const r = await this.wsRPC(GAME_WS_COMMANDS.RELOCATE_UNIT, {
             id: unit.id,
             ...newPos,
         });
 
-        const changedUnit = data.army;
+        const changedUnit: Unit | undefined = r.army;
 
         if (!changedUnit) {
-            throw Error(`unit relocation failed: ${js(data)}; unit id=${unit.id}; pos=${js(newPos)}`);
+            throw Error(`unit relocation failed: ${js(r)}; unit id=${unit.id}; pos=${js(newPos)}`);
         }
 
         authData.armys.forEach((unit: Unit) => {
@@ -810,24 +929,90 @@ export class GameBot extends BaseBot {
         });
     }
 
+    // {"c":102,"o":"429","p":{"id":"1693121665070359559"}}
+    // {"c":102,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":20.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"crit\":false,\"building\":{\"broken\":0,\"proStartTime\":1601747040,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":18,\"y\":22,\"proCount\":0.0,\"state\":1,\"id\":\"1693121665070359559\",\"proTime\":1.60174705E9,\"proLastTime\":10.0}}","o":"429"}
+    public async collectGoldFromBuilding(building: Building): Promise<void> {
+        const { state, reporter } = this;
+
+        if (!this.isGoldMine(building)) {
+            throw Error(`not a gold mine: ${building.buildingId}; can't collect gold; ${js(building)}`);
+        }
+
+        if (!building.proTime) {
+            throw Error(`no proTime: ${js(building)}`);
+        }
+
+        const serverTime = this.getServerTime();
+        const waitSeconds = building.proTime - serverTime + 1;
+
+        if (waitSeconds > 0) {
+            reporter(`waiting ${waitSeconds}s before collecting gold ...`);
+            await sleep(waitSeconds * 1000);
+        }
+
+        reporter(`collecting gold from building: ${building.id}`);
+
+        const r = await this.wsRPC(GAME_WS_COMMANDS.COLLECT_GOLD_FROM_GOLD_MINE, {
+            id: building.id,
+        });
+
+        if (!r.reward) {
+            reporter(`gold was not claimed from building: ${js(r)}; server time: ${this.getServerTime()}; building: ${js(building)}`);
+        } else {
+            state.resources = { ...(state.resources || {}), ...r.reward.resource };
+        }
+    }
+
+    public isGoldMine(building: Building): boolean {
+        return building.buildingId >= 1701 && building.buildingId <= 1799;
+    }
+
+    // {"c":116,"o":"430","p":{"delId":"1693121665070359559","targetId":"1693121665103913992","isNew":0}}
+    // {"c":116,"s":0,"d":"{\"res\":\"suc\",\"targetId\":\"1693121665103913992\",\"buidingId\":1702}","o":"430"}
+    public async merge2Buildings(srcBuilding: Building, targetBuilding: Building): Promise<void> {
+        const { authData } = this.state;
+        if (!authData) throw Error('no authData');
+
+        this.isGoldMine(srcBuilding) &&
+            await this.collectGoldFromBuilding(srcBuilding);
+        this.isGoldMine(targetBuilding) &&
+            await this.collectGoldFromBuilding(targetBuilding);
+
+        const r = await this.wsRPC(GAME_WS_COMMANDS.MERGE_2_BUILDINGS, {
+            delId: srcBuilding.id,
+            targetId: targetBuilding.id,
+            isNew: 0,
+        });
+
+        if (r.res !== 'suc') {
+            throw Error(`buildings not merged: ${js(r)}; src=${js(srcBuilding)}; dst=${js(targetBuilding)}`);
+        }
+
+        authData.buildings.forEach((building: Building) => {
+            if (building.id === r.targetId) {
+                building.buildingId = r.buidingId;
+            }
+        });
+    }
+
     // {"c":203,"o":"79","p":{"delId":"1693121665506567177","targetId":"1693121665506567173"}}
     // {"c":203,"s":0,"d":"{\"res\":\"suc\",\"targetId\":\"1693121665506567173\",\"armyId\":10002}","o":"79"}
     public async merge2Units(srcUnit: Unit, targetUnit: Unit): Promise<void> {
         const { authData } = this.state;
         if (!authData) throw Error('no authData');
 
-        const data = await this.wsRPC(GAME_WS_COMMANDS.MERGE_2_UNITS, {
+        const r = await this.wsRPC(GAME_WS_COMMANDS.MERGE_2_UNITS, {
             delId: srcUnit.id,
             targetId: targetUnit.id,
         });
 
-        if (data.res !== 'suc') {
-            throw Error(`units not merged: ${js(data)}; src=${js(srcUnit)}; dst=${js(targetUnit)}`);
+        if (r.res !== 'suc') {
+            throw Error(`units not merged: ${js(r)}; src=${js(srcUnit)}; dst=${js(targetUnit)}`);
         }
 
         authData.armys.forEach((unit: Unit) => {
-            if (unit.id === data.targetId) {
-                unit.armyId = data.armyId;
+            if (unit.id === r.targetId) {
+                unit.armyId = r.armyId;
             }
         });
     }
@@ -835,7 +1020,7 @@ export class GameBot extends BaseBot {
     // {"c":420,"o":"159","p":{"pveId":101,"armyList":["1693121665506567173"],"areaId":805,"heroList":[],"trapList":[]}}
     // {"c":420,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":1000.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"battle\":{\"result\":1,\"ver\":1,\"process\":[{\"val\":1.0,\"selfVal\":0.0,\"t\":4,\"tl\":0,\"source\":\"0\"},{\"val\":2.0,\"selfVal\":0.0,\"t\":1,\"tl\":0,\"source\":\"1693121665506567173\"},{\"val\":2.0,\"selfVal\":0.0,\"t\":1,\"tl\":0,\"source\":\"1\"},{\"val\":7.0,\"selfVal\":0.0,\"t\":2,\"tl\":1800,\"actType\":2,\"source\":\"1693121665506567173\",\"target\":\"1\"}],\"attacker\":{\"uid\":316949168729,\"career\":0,\"effectBuffs\":[],\"activeSkill\":[],\"traceEffectBuffs\":[],\"allStandings\":{\"wounded\":0,\"total\":1,\"survival\":1,\"dead\":0},\"players\":[{\"heroList\":[],\"uid\":316949168729,\"traps\":[],\"career\":0,\"effectBuffs\":[],\"activeSkill\":[],\"traceEffectBuffs\":[],\"allStandings\":{\"wounded\":0,\"total\":1,\"survival\":1,\"dead\":0},\"buffs\":[],\"attackPointNum\":1,\"armyEquips\":[{\"itemId\":400002,\"pos\":1,\"armyType\":101},{\"itemId\":400001,\"pos\":0,\"armyType\":101},{\"itemId\":400004,\"pos\":1,\"armyType\":201},{\"itemId\":400005,\"pos\":0,\"armyType\":301},{\"itemId\":400003,\"pos\":0,\"armyType\":201},{\"itemId\":400006,\"pos\":1,\"armyType\":301}]}],\"buffs\":[],\"units\":[{\"uid\":316949168729,\"maxShield\":0.0,\"armyId\":10004,\"maxPower\":28.0,\"uuid\":\"1693121665506567173\",\"isDead\":0,\"uuids\":[{\"uuid\":\"1693121665506567173\",\"isDead\":0}]}],\"attackPointNum\":1},\"reportComparison\":1,\"fightType\":1,\"defender\":{\"uid\":0,\"career\":0,\"effectBuffs\":[],\"activeSkill\":[],\"traceEffectBuffs\":[],\"allStandings\":{\"wounded\":0,\"total\":1,\"survival\":0,\"dead\":1},\"players\":[{\"heroList\":[],\"uid\":0,\"traps\":[],\"career\":0,\"effectBuffs\":[],\"activeSkill\":[],\"traceEffectBuffs\":[],\"allStandings\":{\"wounded\":0,\"total\":1,\"survival\":0,\"dead\":1},\"buffs\":[],\"attackPointNum\":1,\"armyEquips\":[]}],\"buffs\":[],\"units\":[{\"uid\":0,\"maxShield\":0.0,\"armyId\":10001,\"maxPower\":5.0,\"uuid\":\"1\",\"isDead\":1,\"uuids\":[{\"uuid\":\"1\",\"isDead\":1}]}],\"attackPointNum\":1}},\"energy\":30}","o":"159"}
     public async fightForBaseMapArea(baseMapAreaId: number, baseMapAreaPveId: number, units: Unit[]): Promise<boolean> {
-        const { reporter } = this;
+        const { state, reporter } = this;
 
         reporter(`fighting for base map area: ${baseMapAreaId} stage: ${baseMapAreaPveId}`);
 
@@ -854,6 +1039,8 @@ export class GameBot extends BaseBot {
         if (!r.battle) {
             throw Error(`failed to fight for base map area id=${baseMapAreaId} stage=${baseMapAreaPveId}: ${js(r)}`);
         }
+
+        state.resources = { ...(state.resources || {}), ...r.reward.resource };
 
         return Boolean(r.battle.result === 1);
     }
@@ -907,7 +1094,7 @@ export class GameBot extends BaseBot {
     // {"c":309,"o":"238","p":{"taskId":3}}
     // {"c":309,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":2000.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"addStage\":0}","o":"238"}
     public async claimTreasureTask(taskId: number): Promise<void> {
-        const { reporter } = this;
+        const { reporter, state } = this;
 
         if (this.state.mutex.treasureTaskClaim[taskId]) return;
         this.state.mutex.treasureTaskClaim[taskId] = true;
@@ -920,30 +1107,56 @@ export class GameBot extends BaseBot {
 
         if (r.reward) {
             reporter(`treasure task id=${taskId} claimed`);
-            reporter(`\n\n\nTODO: add CLAIM_TREASURE_TASK reward to resources delta\n\n\n`);
+            state.resources = { ...(state.resources || {}), ...r.reward.resource };
         } else {
             throw Error(`treasure task id=${taskId} not claimed: ${js(r)}`);
         }
     }
 
+    // {"c":100,"o":"390","p":{"x":18,"y":26,"buildingId":1701}}
+    // {"c":100,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":1601746700,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":18,\"y\":26,\"proCount\":0.0,\"state\":1,\"id\":\"1693175094597739528\",\"proTime\":1.60174671E9,\"proLastTime\":0.0}}","o":"390"}
+    public async build(buildingId: number, pos: { x:number, y:number }): Promise<void> {
+        const r = await this.wsRPC(GAME_WS_COMMANDS.BUILD, {
+            buildingId,
+            ...pos,
+        });
+
+        if (!r.building) {
+            throw Error(`build failed: ${js(r)}`);
+        }
+
+        this.reporter(`successfully built: id=${buildingId} x=${pos.x} y=${pos.y}`);
+    }
+
     protected async subscribeToAllNotifications(): Promise<void> {
-        const { reporter } = this;
-        const { authData } = this.state;
+        const { reporter, state } = this;
+        const { authData } = state;
 
         if (!authData) throw Error('no authData');
+
+        // {"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"bx\":24,\"armyId\":10003,\"by\":24,\"x\":23,\"y\":23,\"id\":\"1693191885520725001\",\"state\":2,\"march\":0}","o":null}
+
+        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.UNIT_DELTA, async data => {
+            for (let i = 0; i < authData.armys.length; ++i) {
+                const unit: Unit = authData.armys[i];
+                if (unit.id === data.id) {
+                    authData.armys[i] = data;
+                }
+            }
+        });
 
         // {"c":10202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":21,\"y\":27,\"id\":\"1693121665506567177\",\"state\":0,\"march\":0}","o":null}
 
         this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.UNIT_REMOVED, async data => {
             authData.armys = authData.armys.filter((unit: Unit) => unit.id !== data.id);
-
-            reporter(`unit removed: ${data.id}`);
         });
 
         // {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":22,\"y\":28,\"li\":[]},{\"im\":true,\"x\":13,\"y\":23,\"li\":[{\"t\":2,\"i\":10004}]}]}","o":null}
 
         this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.BASE_TILES_DELTA, async data => {
             data.data.forEach((changedTile: BaseTile) => {
+                let added: boolean = false;
+
                 authData.points.forEach((tile: BaseTile) => {
                     if (tile.x !== changedTile.x) return;
                     if (tile.y !== changedTile.y) return;
@@ -951,8 +1164,12 @@ export class GameBot extends BaseBot {
                     tile.im = changedTile.im;
                     tile.li = changedTile.li;
 
-                    reporter(`base tile ${changedTile.x},${changedTile.y} new state: ${js(changedTile)}`);
+                    added = true;
                 });
+
+                if (!added) {
+                    authData.points.push(changedTile);
+                }
             });
         });
 
@@ -960,8 +1177,6 @@ export class GameBot extends BaseBot {
 
         this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.POWER_DELTA, async data => {
             authData.star = Number(data.power);
-
-            reporter(`power: ${authData.star}`);
         });
 
         // {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[\"99999\"],\"buildingTips\":[\"1704\",\"1043\"]}}","o":null}
@@ -992,15 +1207,40 @@ export class GameBot extends BaseBot {
         // {"c":10001,"s":0,"d":"{\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"soil\":0.0,\"gold\":0.0,\"paid_gold\":0.0,\"free_gold\":0.0,\"coal\":0.0,\"wood\":20000.0,\"military\":0.0,\"expedition_coin\":0.0,\"oila\":0.0,\"jungong\":0.0,\"coin\":800.0}","o":null}
 
         this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.RESOURCES_UPDATE, async data => {
-            reporter(`resources delta: ${js(data)}`);
-            reporter(`\n\n\nTODO: add RESOURCES_UPDATE to resources delta\n\n\n`);
+            state.resources = { ...(state.resources || {}), ...data };
         });
 
         // {"c":10101,"s":0,"d":"{\"broken\":0,\"proStartTime\":1601743515,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":16,\"y\":20,\"proCount\":0.0,\"state\":1,\"id\":\"1693121665103913992\",\"proTime\":1.601743525E9,\"proLastTime\":10.0}","o":null}
 
         this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.BUILDING_UPDATE, async data => {
-            reporter(`building delta: ${js(data)}`);
             this.applyBuildingDelta(data);
         });
+
+        // {"c":10041,"s":0,"d":"{\"level\":2,\"exp\":110.0}","o":null}
+
+        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.LEVEL_EXP_UPDATE, async data => {
+            const oldLevel = authData.level;
+
+            if (oldLevel != data.level) {
+                reporter(`level up: ${oldLevel} -> ${data.level}`);
+            }
+
+            authData.level = data.level;
+            authData.exp = data.exp;
+        });
+
+        // {"c":10104,"s":0,"d":"{\"areaId\":705}","o":null}
+
+        this.wsSetCallbackByCommandId(GAME_WS_COMMANDS.NEW_AREA_CLAIMED, async data => {
+            authData.areas.push(data.areaId);
+        });
+
+        // {"c":10203,"s":0,"d":"{\"armyNum\":5,\"armyId\":10003,\"overdueTime\":0}","o":null}
+
+        // received units in backpack
+
+        // {"c":10401,"s":0,"d":"{\"itemId\":300001,\"amount\":10}","o":null}
+
+        // received items
     }
 }

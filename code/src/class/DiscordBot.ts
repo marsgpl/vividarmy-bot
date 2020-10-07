@@ -8,7 +8,6 @@ import { MongoState } from 'state/MongoState';
 import { CookieJar, CookieJarStorageType } from 'modules/CookieJar';
 import formatPower from 'helpers/formatPower';
 import formatGender from 'helpers/formatGender';
-import * as GAME_WS_FIELDS from 'constants/gameWsFields';
 
 const cmdNameMatchTab: {[key: string]: string} = {
     find: 'showPlayerInfo',
