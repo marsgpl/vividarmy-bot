@@ -10,6 +10,6 @@ export interface MongoState {
     collections: {
         cookies: MongoCollection;
         players: MongoCollection;
-        puppetconfigs: MongoCollection;
+        puppets: MongoCollection;
     };
 }

@@ -17,10 +17,10 @@
             "clientSecret": "vyjXj4m9nVHmkBldc9bODbxSeUOjYIMw",
             "bot": {
                 "name": "G123",
+                "nametag": "3783",
                 "token": "NzYwMTY3NjE4NzkwNTU1NjY4.X3IHQw.j0hxWHPHgyoKUtmj90hXOrr0mgI"
             },
             "allowedChannelsIds": {
-                "760478969203130429": "g123-dev",
                 "760479029131214868": "g123"
             },
             "adminUsersIds": {
@@ -28,18 +28,24 @@
             }
         },
         "gameAccount": {
-            "id": "316401955417",
-            "gp_token": "TMAvncSAwiO6bCmVh6Yf9NidN0mgti6S78V7Zjggjl5rtPjh3Xzm0Bz8VYcDHP7utnmqS130tagNMisx8rW4r0Hxh9Asp51kPc0QXzTlzts6rgsWGm10LSD7slPeS5FW"
-        }
+            "gpToken": "TMAvncSAwiO6bCmVh6Yf9NidN0mgti6S78V7Zjggjl5rtPjh3Xzm0Bz8VYcDHP7utnmqS130tagNMisx8rW4r0Hxh9Asp51kPc0QXzTlzts6rgsWGm10LSD7slPeS5FW"
+        },
+        "cookieDocId": "discord"
     },
     "game": {
-        "printWsPackets": false,
+        "printWsPackets": true,
         "checkIp": {
             "required": true,
             "url": "https://eki.one/ipcc",
             "expectedAnswer": "45.32.27.226 (JP)\n"
         },
-        "gpTokenCookieTemplate": "gp_token=:gp_token:; domain=g123.jp",
+        "gpTokenCookie": {
+            "name": "gp_token",
+            "params": {
+                "host": "g123.jp",
+                "path": "/"
+            }
+        },
         "urls": {
             "shell": "https://h5.g123.jp/game/vividarmy",
             "game": "https://knight-g123.akamaized.net/worldbattlerelease/index.html?platform=ctw&code=:code:",

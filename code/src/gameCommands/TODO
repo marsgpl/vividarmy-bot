@@ -1,0 +1,23 @@
+{"c":1318,"o":"1","p":{}}
+    {"c":1318,"s":0,"d":"{\"endowments\":[[],[],[]],\"endowmentStudy\":[]}","o":"1"}
+{"c":671,"o":"2","p":{}}
+    {"c":671,"s":0,"d":"{\"rooms\":[\"102_1_707g123\"],\"success\":1,\"gateway\":{\"path\":\"/socket.io/sjzb/707\",\"socketio\":\"wss://group-push-us.rivergame.net\",\"lines\":[\"wss://group-push.rivergame.net\",\"wss://group-push-us.rivergame.net\",\"wss://group-push-jp.rivergame.net\",\"wss://chat-group.topwargame.com\"]}}","o":"2"}
+{"c":128,"o":"3","p":{}}
+    {"c":128,"s":0,"d":"{\"buildboxs\":[]}","o":"3"}
+{"c":861,"o":"4","p":{}}
+    {"c":861,"s":0,"d":"{\"heroSuperRecruit\":0,\"heroSkillFreeEndTime\":300,\"hero1FreeEndTime\":300,\"hero2Num\":0,\"effectiveHeroIds\":[201,202,203,204,205,206,207,208,210,211,212,101,102,103,104,105,106,107,108,301,109,302,110,303,111,304,112,305,113,306,307,115,308,309,310,312,1209],\"heroSkillFreeTodayNum\":0,\"hero1FreeTodayNum\":5,\"heroSkins\":[],\"heroEliteNum\":0,\"list\":[{\"starExp\":0,\"subSkills\":[],\"star\":1,\"def\":0,\"level\":1,\"skillsIndex\":1,\"levelExp\":\"0.0\",\"firstBuffSkills\":[],\"skinId\":0,\"subBuffSkills\":[],\"skills\":[],\"id\":101,\"state\":0,\"firstSkills\":[],\"buffSkills\":[],\"talents\":[]}],\"hero2FreeEndTime\":86400,\"heroSkillLotteryTodayNum\":0}","o":"4"}
+{"c":1055,"o":"6","p":{}}
+    {"c":1055,"s":0,"d":"{\"cur\":1602018444,\"start\":1602594000,\"end\":1602601200,\"list\":[{\"owner\":0,\"totem\":0,\"name\":\"\",\"id\":4001,\"tag\":\"\",\"time\":0},{\"owner\":0,\"totem\":0,\"name\":\"\",\"id\":4003,\"tag\":\"\",\"time\":0},{\"owner\":0,\"totem\":0,\"name\":\"\",\"id\":4002,\"tag\":\"\",\"time\":0},{\"owner\":0,\"totem\":0,\"name\":\"\",\"id\":4004,\"tag\":\"\",\"time\":0}]}","o":"6"}
+{"c":1394,"o":"7","p":{"activity":""}}
+    {"c":1394,"s":0,"d":"{\"activity\":\"\"}","o":"7"}
+{"c":700,"o":"8","p":{"exchangeConfigVer":null}}
+{"c":934,"o":"9","p":{}}
+    {"c":934,"s":0,"d":"{\"all\":1,\"all_unread\":1,\"5_unread\":0,\"6_unread\":0,\"7_unreward\":0,\"4_unreward\":0,\"1_unread\":0,\"2_unread\":0,\"1_unreward\":0,\"7_unread\":0,\"3_unread\":1,\"4_unread\":0,\"5_unreward\":0,\"1\":0,\"2\":0,\"3\":1,\"4\":0,\"5\":0,\"2_unreward\":0,\"6\":0,\"7\":0,\"6_unreward\":0,\"3_unreward\":1}","o":"9"}
+{"c":841,"o":"10","p":{}}
+    {"c":841,"s":0,"d":"{\"alist\":[]}","o":"10"}
+{"c":82,"o":"11","p":{}}
+    {"c":82,"s":0,"d":"{}","o":"11"}
+{"c":1484,"o":"12","p":{}}
+    {"c":1484,"s":0,"d":"{\"ret\":1}","o":"12"}
+
+{"c":10124,"s":0,"d":"{\"treasureTasks\":[{\"num\":0.0,\"state\":0,\"taskId\":1},{\"num\":0.0,\"state\":0,\"taskId\":2},{\"num\":0.0,\"state\":0,\"taskId\":3},{\"num\":0.0,\"state\":0,\"taskId\":4},{\"num\":5.0,\"state\":0,\"taskId\":5}]}","o":null}

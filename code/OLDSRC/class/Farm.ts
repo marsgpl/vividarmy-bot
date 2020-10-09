@@ -192,8 +192,8 @@ export class Farm extends BaseBot {
         return puppet;
     }
 
-    protected async cmd_exp(): Promise<void> {
-        const puppet = await this.createPuppet('exp');
+    protected async cmd_test(): Promise<void> {
+        const puppet = await this.createPuppet('test');
 
         const bot = puppet.gameBot;
 
@@ -202,7 +202,7 @@ export class Farm extends BaseBot {
         await bot.switchServerTo(642);
     }
 
-    protected async cmd_resetAcc(): Promise<void> {
+    protected async cmd_resetPuppet(): Promise<void> {
         const puppetDocId = process.argv[3];
         if (!puppetDocId) throw Error('no puppetDocId');
 
@@ -265,7 +265,7 @@ export class Farm extends BaseBot {
         puppet.reporter('resetted');
     }
 
-    protected async cmd_createAndPrepareNewAcc(): Promise<void> {
+    protected async cmd_createAndPreparePuppet(): Promise<void> {
         const puppetDocId = process.argv[3];
         if (!puppetDocId) throw Error('no puppetDocId');
 

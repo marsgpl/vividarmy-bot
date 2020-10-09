@@ -51,6 +51,10 @@ export class Browser {
         }
     }
 
+    setCookieJar(cookieJar: CookieJar): void {
+        this.config.cookieJar = cookieJar;
+    }
+
     get(
         url: string | URL,
         options: RequestOptions = {},

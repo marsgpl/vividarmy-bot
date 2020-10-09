@@ -1,10 +1,5 @@
 # Vividarmy bot
 
-## Discord
-
-    check acc:
-    https://knight-g123.akamaized.net/worldbattlerelease/index.html?platform=ctw&code=njN0vuCkAE6Mdd7F1lZdmZ2MJ9g0wrwvfZFkbtl4szkBweFcvW9iwPlGO70Xk8sA
-
 ## Local
 
     docker network create vividarmybot
@@ -13,9 +8,8 @@
     docker-compose up -d mongo
     ./db
         db.disableFreeMonitoring()
-        db.players.ensureIndex({ nameLowercase:1 }, { unique:false })
+        db.players.ensureIndex({ nameLowercase:1, serverId:1 }, { unique:false })
         db.players.ensureIndex({ playerId:1 }, { unique:true })
-        db.puppetconfigs.ensureIndex({ docId:1 }, { unique:true })
     npm start discord-dev
     npm start farm-dev
 
@@ -26,10 +20,12 @@
         cd ~/vividarmy-bot
         git pull
         docker-compose up -d mongo
-        ./db
-            db.disableFreeMonitoring()
-            db.players.ensureIndex({ nameLowercase:1 }, { unique:false })
-            db.players.ensureIndex({ playerId:1 }, { unique:true })
-            db.puppetconfigs.ensureIndex({ docId:1 }, { unique:true })
         docker-compose restart discord
         docker-compose restart farm
+
+## Discord bots
+
+    prod:
+    https://discord.com/oauth2/authorize?client_id=760167618790555668&scope=bot
+    dev:
+    https://discord.com/oauth2/authorize?client_id=763330023422689311&scope=bot

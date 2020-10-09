@@ -23,12 +23,12 @@ export abstract class BaseBot {
         const db = client.db(config.mongo.db);
 
         const collections = {
-            cookies: await db.collection('cookies'),
-            players: await db.collection('players'),
-            puppetconfigs: await db.collection('puppetconfigs'),
+            cookies: db.collection('cookies'),
+            players: db.collection('players'),
+            puppets: db.collection('puppets'),
         };
 
-        log('connected to storage:', config.mongo.db);
+        log(`connected to storage: ${config.mongo.db}`);
 
         return {
             client,

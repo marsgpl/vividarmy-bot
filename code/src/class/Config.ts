@@ -21,15 +21,16 @@ export interface Config {
             clientSecret: string;
             bot: {
                 name: string;
+                nametag: string;
                 token: string;
             };
             allowedChannelsIds: {[key: string]: string};
             adminUsersIds: {[key: string]: string};
         };
         gameAccount: {
-            id: string;
-            gp_token: string;
+            gpToken: string;
         };
+        cookieDocId: string;
     };
     game: {
         printWsPackets: boolean;
@@ -38,8 +39,24 @@ export interface Config {
             url: string;
             expectedAnswer: string;
         };
-        gpTokenCookieTemplate: string;
-        urls: {[key: string]: string};
+        gpTokenCookie: {
+            name: string;
+            params: {
+                host: string;
+                path: string;
+            };
+        };
+        urls: {
+            shell: string;
+            game: string;
+            getSession: string;
+            getClientVersion: string;
+            getClientVersion_referer: string;
+            getServerInfo: string;
+            getServerInfo_origin: string;
+            getServerInfo_referer: string;
+            gameWs_origin: string;
+        };
     };
     farm: {
         targetServerId: number;

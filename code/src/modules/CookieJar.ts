@@ -14,14 +14,16 @@ export interface CookieJarStorageConfig {
     docId: string;
 }
 
+interface CookieParams {
+    [key: string]: string;
+}
+
 export interface CookieJarCookie {
     key: string;
     name: string;
     value: string;
     host: string;
-    params: {
-        [key: string]: string;
-    };
+    params: CookieParams;
     rawValue: string;
 }
 
@@ -149,12 +151,28 @@ export class CookieJar {
 
         const domain = this.getCookieDomain(cookie);
 
-        cookie.key = `${domain}:${cookie.name}`;
+        cookie.key = this.getCookieKey(domain, cookie.name);
 
         return cookie;
     }
 
-    public getCookieDomain(cookie: CookieJarCookie): string {
+    public buildRawCookie(name: string, value: string, cookieParams?: CookieParams): string {
+        const result: string[] = [];
+
+        result.push(`${name}=${value}`);
+
+        cookieParams && Object.keys(cookieParams).forEach(paramName => {
+            result.push(`${paramName}=${cookieParams[paramName]}`);
+        });
+
+        return result.join('; ');
+    }
+
+    public getCookieKey(domain: string, name: string): string {
+        return `${domain}:${name}`;
+    }
+
+    protected getCookieDomain(cookie: CookieJarCookie): string {
         return (cookie.params.domain || cookie.host || '').replace(/^\./, '');
     }
 
