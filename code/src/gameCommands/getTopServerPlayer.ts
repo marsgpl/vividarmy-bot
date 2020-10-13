@@ -15,7 +15,7 @@ export default async function(game: GameBot, options: {
 
     const r = await game.wsRPC(1659, {
         type: 4,
-        serverId: options.serverId,
+        serverId: Number(options.serverId),
     });
 
     const player = r?.list?.[indexInResponse];
