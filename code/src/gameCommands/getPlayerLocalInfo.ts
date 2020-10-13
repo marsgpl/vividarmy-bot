@@ -11,7 +11,7 @@ export default async function(game: GameBot, options: {
     // game.reporter(`getPlayerLocalInfo: ${options.playerId}`);
 
     const r = await game.wsRPC(630, {
-        uid: options.playerId,
+        uid: String(options.playerId),
     });
 
     const playerInfo = r?.playerInfo;
