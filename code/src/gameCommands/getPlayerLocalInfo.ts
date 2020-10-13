@@ -8,7 +8,7 @@ import { PlayerLocalInfo } from 'gameTypes/PlayerLocalInfo';
 export default async function(game: GameBot, options: {
     playerId: string;
 }): Promise<PlayerLocalInfo | null> {
-    game.reporter(`getPlayerLocalInfo: ${options.playerId}`);
+    // game.reporter(`getPlayerLocalInfo: ${options.playerId}`);
 
     const r = await game.wsRPC(630, {
         uid: options.playerId,
@@ -17,7 +17,7 @@ export default async function(game: GameBot, options: {
     const playerInfo = r?.playerInfo;
 
     if (!r?.uid || !playerInfo) {
-        game.reporter(`fail: ${JSON.stringify(r)}`);
+        game.reporter(`getPlayerLocalInfo fail`);
         return null;
     }
 

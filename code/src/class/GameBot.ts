@@ -1,12 +1,46 @@
+import colors from 'colors';
+import md5 from 'md5';
 import { Collection as MongoCollection } from 'mongodb';
+import WebSocket from 'ws';
+import { SocksProxyAgent } from 'socks-proxy-agent';
+import { Agent } from 'https';
 
 import { Config } from 'class/Config';
 import { CookieJar, CookieJarStorageType } from 'modules/CookieJar';
 import { Browser } from 'modules/Browser';
+import crop from 'modules/crop';
+import { AuthData } from 'gameTypes/AuthData';
+import randomString from 'modules/randomString';
 
 const js = JSON.stringify;
 
-const DEFAULT_WS_RPC_TIMEOUT_MS = 30000;
+const DEFAULT_WS_RPC_TIMEOUT_MS = 30 * 1000; // 30s
+const DEFAULT_WS_INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 10m
+const WS_PING_INTERVAL_MS = 10300; // 10s 300ms
+const DEFAULT_WS_CONNECT_TIMEOUT_MS = 10000; // 10s
+
+const WS_FIELD_COMMAND_ID = 'c';
+const WS_FIELD_PACKET_INDEX = 'o';
+const WS_FIELD_OUTGOING_PAYLOAD = 'p';
+const WS_FIELD_INCOMING_DATA = 'd';
+
+const DEFAULT_ALISAFDATA_DETAIL = '#7NLIMJXwXGf/ctRcTggSoJ0D3QROwKOlAOzBtZ26EXkEHKhYtSUkA7UgvaRgn6KcNcaKw+sGr3qlaQ2dbnqPPl1tgNze2lR3CRwFBuJU+JdqKXL3ZtWwTq1qijRmNyd3OOH8qkuJ+Jd8qcHAZXnw+cy8qqK7OO96dE3gXJCXv2/5Utf35LLsJHpzZiOdIQOQf60DS4hySCx9fzd8GGXEgKvqzwKmPYvDJc8fMOPFJcGlEKJ8T/BVLSW9WjlgqkUAWOC/4CBbzY2Y8UHggSm3rv20jgfXytYMl/EO6GRQXn/nrD9wSAJOb4InBPg7ROtUVoyWyJS/pToU6Sdf8op6d87oygjhsHCDAOxVtQP67QH647Fs5AsThvzsKvTdXgLGwCXXA1aAhvJVTXDVIjariuT47UsZ94G4VveZLdWOTsNxu5BNOTbwDQdf4GB8gzqg+rUH/7c5rS31nUiXwFxGotqW9nCvmQpcVT6OGvvYSwJla4DnbZm8YPCKxCGQcW+jkyJA5yojt74U1fG4clrTzN9sVltLRAdG+rTbuY/PZKRZ+VkMfG5q7mOqHjsparfWqLTmid/4Rx7WSQ8qxca6J34fud6o6MaZrwr/ZfF/86bCUbtflHK1axATHhdi33aEuf5LPcR/LD6p2E6LO/yC7I3k4TPIeQdGAL+wgAOVEoJ8EeDlwlPCU6KjApAQwMTcG8x5p43QtH25JUxOR1Xxkj7sF6TJI3HkXppBB9Y6/nuEdZ2aUXGs5U4qPfmcKNvqGeK7YEWtTuxr5jNSzfw25WIyGxC/j5kmtEKGX+w9mqjlatros9HUMougxz5Z/a6zIX==';
+const DEFAULT_ALISAFDATA_DETAIL_PREFIX = '134';
+
+type GameWsOutgoingPayload = { [key: string]: any };
+type GameWsIncomingData = any;
+
+export interface GameWsOutgoingPacket {
+    [WS_FIELD_COMMAND_ID]: number;
+    [WS_FIELD_PACKET_INDEX]: string;
+    [WS_FIELD_OUTGOING_PAYLOAD]: GameWsOutgoingPayload;
+}
+
+export interface GameWsIncomingPacket {
+    [WS_FIELD_COMMAND_ID]: number;
+    [WS_FIELD_PACKET_INDEX]: string;
+    [WS_FIELD_INCOMING_DATA]: GameWsIncomingData;
+}
 
 interface GameBotOptions {
     gpToken: string;
@@ -61,15 +95,34 @@ interface GameBotSession {
 }
 
 interface GameBotState {
-    serverInfo?: GameBotServerInfo;
     clientVersion?: GameBotClientVersion;
     session?: GameBotSession;
+    serverInfo?: GameBotServerInfo;
+    authData?: AuthData;
+    wsConnected: boolean;
+    wsConnecting: boolean;
+    wsAuthed: boolean;
+    ws?: WebSocket;
+    wsPingInterval?: NodeJS.Timer;
+    wsInactivityTimeout?: NodeJS.Timer;
+    wsNextPacketIndex: number;
+    wsCallbacksByCommandId: {
+        [commandId: number]: GameBotWsCallback[];
+    }
     wsCallbacksByPacketIndex: {
-        [packetIndex: number]: GameBotWsCallback;
+        [packetIndex: string]: GameBotWsCallback;
     };
+    wsConnectSemaphoreCallbacks: Function[];
+    wsLocalTimeMs?: number;
+    wsServerTimeMs?: number;
 }
 
-type GameBotWsCallback = (data: any) => void;
+type GameBotWsCallbackRemoveMe = boolean | void;
+type GameBotWsCallback = (data: GameWsIncomingData) => Promise<GameBotWsCallbackRemoveMe>;
+
+interface GameBotWsConnectOptions {
+    switchServer?: true;
+}
 
 export class GameBot {
     protected config: Config;
@@ -83,8 +136,16 @@ export class GameBot {
         this.config = config;
         this.options = options;
 
+        this.options.userAgent = this.options.userAgent || config.browser.userAgent;
+
         this.state = {
+            wsConnected: false,
+            wsConnecting: false,
+            wsAuthed: false,
+            wsNextPacketIndex: 0,
+            wsCallbacksByCommandId: {},
             wsCallbacksByPacketIndex: {},
+            wsConnectSemaphoreCallbacks: [],
         };
     }
 
@@ -94,14 +155,10 @@ export class GameBot {
         await this.initCookieJar();
 
         this.browser = new Browser({
-            userAgent: options.userAgent || config.browser.userAgent,
+            userAgent: options.userAgent,
             cookieJar: this.cookieJar,
             socks5: config.proxy.required ? config.proxy.socks5?.[0] : undefined,
         });
-
-        if (config.game.checkIp.required) {
-            await this.checkIp();
-        }
     }
 
     protected async initCookieJar(): Promise<void> {
@@ -131,35 +188,8 @@ export class GameBot {
         }
     }
 
-    public getGpToken(): string {
-        if (this.cookieJar) {
-            const cookieKey = this.cookieJar.getCookieKey(
-                this.config.game.gpTokenCookie.params.host,
-                this.config.game.gpTokenCookie.name);
-
-            const cookieValue = this.cookieJar.getCookieValueByKey(cookieKey);
-
-            if (cookieValue) {
-                return cookieValue;
-            }
-        }
-
-        return this.options.gpToken;
-    }
-
-    public async getCurrentServerId(): Promise<number> {
-        const { state } = this;
-
-        if (!state.serverInfo) await this.getServerInfo();
-        if (!state.serverInfo) throw Error('no state.serverInfo');
-
-        return state.serverInfo.serverId;
-    }
-
     protected async getServerInfo(): Promise<void> {
         const { reporter, config, state, browser } = this;
-
-        reporter(`requesting server info ...`);
 
         if (!state.clientVersion) await this.getClientVersion();
         if (!state.clientVersion) throw Error('no state.clientVersion');
@@ -205,8 +235,6 @@ export class GameBot {
     protected async getSession(): Promise<void> {
         const { reporter, config, state, browser } = this;
 
-        reporter(`requesting game session ...`);
-
         if (!browser) throw Error('no browser');
 
         const url = config.game.urls.getSession
@@ -227,15 +255,18 @@ export class GameBot {
         const gameUrl = config.game.urls.game
             .replace(':code:', session.code);
 
-        reporter(`game session:${session.isPlatformNewUser ? ' (new user)' : ''} <${gameUrl}>`);
+        reporter(`session: ${session.isPlatformNewUser ? 'new user' : 'existing user'}`);
+        console.log(`----------\n${gameUrl}\n----------`);
     }
 
     protected async getClientVersion(): Promise<void> {
         const { reporter, config, state, browser } = this;
 
-        reporter(`requesting client version ...`);
-
         if (!browser) throw Error('no browser');
+
+        if (config.game.checkIp.required) {
+            await this.checkIp();
+        }
 
         const url = config.game.urls.getClientVersion
             .replace(':ts:', String(Date.now()));
@@ -258,8 +289,6 @@ export class GameBot {
     protected async checkIp(): Promise<void> {
         const { reporter, config, browser } = this;
 
-        reporter(`checking ip ...`);
-
         if (!browser) throw Error('no browser');
 
         const r = await browser.get(config.game.checkIp.url);
@@ -274,20 +303,19 @@ export class GameBot {
         reporter(`ip: ${received.match(/\(([^\)]+)\)/)?.[1] || '?'}`);
     }
 
-    public wsRPC(commandId: number, payload: {[key: string]: any}): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            const { reporter, state } = this;
-
-            reporter(`calling ws rpc: ${commandId} ...`);
+    public wsRPC(
+        commandId: number,
+        payload: GameWsOutgoingPayload,
+    ): Promise<GameWsIncomingData> {
+        return new Promise((resolve, reject) => {
+            const { state } = this;
 
             const responseTimeout = setTimeout(() => {
-                this.disconnectFromWs();
                 reject(`ws rpc failed by timeout: ${DEFAULT_WS_RPC_TIMEOUT_MS}ms`);
+                this.disconnectFromWs();
             }, DEFAULT_WS_RPC_TIMEOUT_MS);
 
-            const packetIndex = await this.wsSend(commandId, payload);
-
-            state.wsCallbacksByPacketIndex[packetIndex] = async data => {
+            const cb: GameBotWsCallback = async data => {
                 clearTimeout(responseTimeout);
 
                 if (data) {
@@ -296,14 +324,422 @@ export class GameBot {
                     reject(data);
                 }
             };
+
+            this.wsSend(commandId, payload).then(packetIndex => {
+                state.wsCallbacksByPacketIndex[packetIndex] = cb;
+            }).catch(reject);
         });
     }
 
-    public async wsSend(commandId: number, payload: {[key: string]: any}): Promise<number> {
-        throw Error('TODO: wsSend');
+    protected async wsSend(
+        commandId: number,
+        payload: GameWsOutgoingPayload,
+    ): Promise<string> {
+        const { config, state } = this;
+
+        await this.connectToWs();
+        if (!state.ws) throw Error('no ws');
+
+        const packetIndex = String(state.wsNextPacketIndex++);
+
+        const packet: GameWsOutgoingPacket = {
+            [WS_FIELD_COMMAND_ID]: commandId,
+            [WS_FIELD_PACKET_INDEX]: packetIndex,
+            [WS_FIELD_OUTGOING_PAYLOAD]: payload,
+        };
+
+        const bytes = js(packet);
+
+        if (config.game.printWsPackets) {
+            console.log(
+                colors.gray('🔸 out:'),
+                colors.gray(crop(bytes, config.game.printWsPacketsMaxLength)));
+        }
+
+        state.ws.send(bytes);
+
+        if (commandId !== 0) { // 0 = ping
+            this.restartWsInactivityTimeout();
+        }
+
+        return packetIndex;
     }
 
-    public disconnectFromWs(): void {
-        throw Error('TODO: disconnectFromWs');
+    protected restartWsInactivityTimeout(): void {
+        const { state, reporter } = this;
+
+        this.stopWsInactivityTimeout();
+
+        state.wsInactivityTimeout = setTimeout(() => {
+            reporter(`ws inactivity: ${DEFAULT_WS_INACTIVITY_TIMEOUT_MS}ms`);
+            this.disconnectFromWs();
+        }, DEFAULT_WS_INACTIVITY_TIMEOUT_MS);
+    }
+
+    protected stopWsInactivityTimeout(): void {
+        const { state } = this;
+
+        state.wsInactivityTimeout &&
+            clearTimeout(state.wsInactivityTimeout);
+
+        delete state.wsInactivityTimeout;
+    }
+
+    protected async connectToWs(options: GameBotWsConnectOptions = {}): Promise<void> {
+        const { state } = this;
+
+        if (state.wsConnected) return;
+
+        if (state.wsConnecting) {
+            return await this.waitForOtherThreadToConnectToWs();
+        }
+
+        state.wsConnecting = true;
+
+        try {
+            await this.openWs(options);
+        } catch (error) {
+            state.wsConnecting = false;
+            throw error;
+        }
+
+        this.startWsPings();
+        this.restartWsInactivityTimeout();
+        this.subscribeToAllNotifications();
+    }
+
+    protected openWs(options: GameBotWsConnectOptions): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            const { reporter, state, config } = this;
+
+            if (state.wsConnected) throw Error('state.wsConnected must be false');
+            if (!state.wsConnecting) throw Error('state.wsConnecting must be true');
+            if (state.ws) throw Error('state.ws should not exist');
+
+            if (!state.clientVersion) await this.getClientVersion();
+            if (!state.clientVersion) throw Error('no state.clientVersion');
+
+            if (!state.session) await this.getSession();
+            if (!state.session) throw Error('no state.session');
+
+            if (!state.serverInfo) await this.getServerInfo();
+            if (!state.serverInfo) throw Error('no state.serverInfo');
+
+            const needSocks5 = config.proxy.required;
+            const socks5 = config.proxy.socks5?.[0];
+
+            if (needSocks5 && !socks5) {
+                throw Error('socks5 required but missing in config');
+            }
+
+            const wsUrl = state.serverInfo.g123Url;
+
+            const ws = new WebSocket(wsUrl, {
+                headers: {
+                    'User-Agent': this.options.userAgent,
+                },
+                origin: config.game.urls.gameWs_origin,
+                agent: (needSocks5 && socks5) ?
+                    new SocksProxyAgent(socks5) as unknown as Agent :
+                    undefined,
+            });
+
+            state.ws = ws;
+            state.wsNextPacketIndex = (options.switchServer ? state.wsNextPacketIndex : 0) || 0;
+            state.wsCallbacksByCommandId = {};
+            state.wsCallbacksByPacketIndex = {};
+
+            const wsConnectTimeout = setTimeout(() => {
+                reject(`ws connect timeout: ${DEFAULT_WS_CONNECT_TIMEOUT_MS}ms`);
+                this.disconnectFromWs();
+            }, DEFAULT_WS_CONNECT_TIMEOUT_MS);
+
+            ws.on('erorr', error => {
+                clearTimeout(wsConnectTimeout);
+                reject(`ws communication error: ${error}`);
+            });
+
+            ws.on('open', async () => {
+                clearTimeout(wsConnectTimeout);
+                reporter(`ws connected to ${wsUrl}`);
+
+                state.wsConnected = true;
+                state.wsConnecting = false;
+
+                await this.wsAuth(options);
+
+                resolve();
+
+                await this.triggerWsConnectSemaphore();
+            });
+
+            ws.on('message', this.onWsMessage.bind(this));
+        });
+    }
+
+    protected wsAuth(options: GameBotWsConnectOptions): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            const { state, reporter } = this;
+
+            if (state.wsAuthed) throw Error('ws already authed');
+            if (!state.session) throw Error('no state.session');
+            if (!state.serverInfo) throw Error('no state.serverInfo');
+            if (!state.clientVersion) throw Error('no state.clientVersion');
+
+            const aliSAFData = {
+                // https://g.alicdn.com/AWSC/WebUMID/1.85.0/um.js
+                // hash: '', awsc.um.init({appName:"saf-aliyun-com"}).tn
+                // https://g.alicdn.com/AWSC/uab/1.137.1/collina.js
+                // detail: '', awsc.uab.getUA()
+                hash: this.options.aliSAFDataHash || randomString(88, randomString.alpha.azAZ09_),
+                detail: this.options.aliSAFDataDetail || ((state.serverInfo.t || DEFAULT_ALISAFDATA_DETAIL_PREFIX) + DEFAULT_ALISAFDATA_DETAIL),
+                fphash: md5(state.session.code + ':' + this.options.userAgent),
+            };
+
+            const responseTimeout = setTimeout(() => {
+                reject(`ws auth failed by timeout: ${DEFAULT_WS_RPC_TIMEOUT_MS}ms`);
+                this.disconnectFromWs();
+            }, DEFAULT_WS_RPC_TIMEOUT_MS);
+
+            this.wsSetCallbackByCommandId(1, async data => {
+                clearTimeout(responseTimeout);
+
+                state.authData = data as AuthData;
+
+                if (
+                    !state.authData.username ||
+                    !state.authData.serverTime
+                ) {
+                    return reject(`auth failed: ${data}`);
+                }
+
+                state.wsAuthed = true;
+                state.wsLocalTimeMs = Date.now();
+                state.wsServerTimeMs = state.authData.serverTime * 1000;
+
+                reporter(`auth complete: ${data.username}`);
+
+                resolve();
+
+                return true; // remove me
+            });
+
+            await this.wsSend(1, {
+                aliSAFData,
+                token: state.session.code,
+                serverId: state.serverInfo.serverId,
+                serverInfoToken: state.serverInfo.serverInfoToken,
+                appVersion: state.clientVersion.value,
+                platformVer: state.clientVersion.value,
+                country: 'JP',
+                lang: 'ja',
+                nationalFlag: 114,
+                ip: '0',
+                pf: options.switchServer ? '' : 'g123',
+                platform: 'G123',
+                channel: 'g123_undefined',
+                gaid: '',
+                itemId: '',
+                g123test: 0,
+                changeServer: options.switchServer ? 1 : undefined,
+            });
+        });
+    }
+
+    protected wsSetCallbackByCommandId(commandId: number, cb: GameBotWsCallback): void {
+        const { state } = this;
+
+        if (!state.wsCallbacksByCommandId[commandId]) {
+            state.wsCallbacksByCommandId[commandId] = [];
+        }
+
+        state.wsCallbacksByCommandId[commandId].push(cb);
+    }
+
+    protected async onWsMessage(rawData: string): Promise<void> {
+        const { config } = this;
+
+        if (config.game.printWsPackets) {
+            console.log(
+                colors.gray('💎 in:'),
+                colors.gray(crop(rawData, config.game.printWsPacketsMaxLength)));
+        }
+
+        const packet: GameWsIncomingPacket = JSON.parse(rawData);
+
+        try {
+            packet[WS_FIELD_INCOMING_DATA] =
+                JSON.parse(packet[WS_FIELD_INCOMING_DATA]);
+        } catch {
+            // perfectly safe to ignore this error
+            // because server may return string with just id instead of json
+        }
+
+        await this.applyCallbacksByCommandId(packet);
+        await this.applyCallbacksByIndex(packet);
+    }
+
+    protected async applyCallbacksByCommandId(packet: GameWsIncomingPacket): Promise<void> {
+        const { state } = this;
+
+        const commandId = packet[WS_FIELD_COMMAND_ID];
+        const cbs = state.wsCallbacksByCommandId[commandId];
+
+        if (!cbs) return;
+
+        const newCbs: GameBotWsCallback[] = [];
+
+        for (let i = 0; i < cbs.length; ++i) {
+            const cb = cbs[i];
+            const removeMe = await cb(packet[WS_FIELD_INCOMING_DATA]);
+
+            if (!removeMe) {
+                newCbs.push(cb);
+            }
+        }
+
+        if (newCbs.length) {
+            state.wsCallbacksByCommandId[commandId] = newCbs;
+        } else {
+            delete state.wsCallbacksByCommandId[commandId];
+        }
+    }
+
+    protected async applyCallbacksByIndex(packet: GameWsIncomingPacket): Promise<void> {
+        const { state } = this;
+
+        const packetIndex = packet[WS_FIELD_PACKET_INDEX];
+        const cb = state.wsCallbacksByPacketIndex[packetIndex];
+
+        if (!cb) return;
+
+        await cb(packet[WS_FIELD_INCOMING_DATA]);
+
+        // always remove
+        delete state.wsCallbacksByPacketIndex[packetIndex];
+    }
+
+    protected subscribeToAllNotifications(): void {
+        // todo
+        // this.wsSetCallbackByCommandId(12399999, async data => {
+        //     console.log('🔸 data:', data);
+        // });
+    }
+
+    protected startWsPings(): void {
+        const { state } = this;
+
+        state.wsPingInterval &&
+            clearInterval(state.wsPingInterval);
+
+        state.wsPingInterval = setInterval(async () => {
+            if (!state.wsConnected) return;
+            if (state.wsConnecting) return;
+            if (!state.wsAuthed) return;
+            if (!state.ws) return;
+
+            // {"c":0,"o":"38","p":{}}
+            // {"c":0,"s":0,"d":"{\"t\":1602242818291}","o":"38"}
+            await this.wsRPC(0, {});
+        }, WS_PING_INTERVAL_MS);
+    }
+
+    protected async triggerWsConnectSemaphore(): Promise<void> {
+        const cbs = this.state.wsConnectSemaphoreCallbacks;
+
+        for (let i = 0; i < cbs.length; ++i) {
+            await cbs[i].call(this);
+        }
+
+        this.state.wsConnectSemaphoreCallbacks = [];
+    }
+
+    protected waitForOtherThreadToConnectToWs(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const { reporter, state } = this;
+
+            if (state.wsConnected) return;
+            if (!state.wsConnecting) return;
+
+            reporter(`already connecting in other thread, waiting ...`);
+
+            state.wsConnectSemaphoreCallbacks.push(resolve);
+        });
+    }
+
+    protected disconnectFromWs(): void {
+        const { state, reporter } = this;
+
+        if (state.ws) {
+            state.ws.close();
+        }
+
+        delete state.clientVersion;
+        delete state.session;
+        delete state.serverInfo;
+        delete state.authData;
+
+        state.wsConnected = false;
+        state.wsConnecting = false;
+        state.wsAuthed = false;
+
+        delete state.ws;
+
+        state.wsPingInterval && clearInterval(state.wsPingInterval);
+        state.wsInactivityTimeout && clearTimeout(state.wsInactivityTimeout);
+
+        delete state.wsPingInterval;
+        delete state.wsInactivityTimeout;
+
+        state.wsNextPacketIndex = 0;
+        state.wsCallbacksByCommandId = {};
+        state.wsCallbacksByPacketIndex = {};
+        state.wsConnectSemaphoreCallbacks = [];
+
+        delete state.wsLocalTimeMs;
+        delete state.wsServerTimeMs;
+
+        reporter('disconnected from ws');
+    }
+
+    public async getCurrentServerTime(): Promise<number> {
+        const { state } = this;
+
+        await this.connectToWs();
+
+        if (!state.wsLocalTimeMs || !state.wsServerTimeMs) {
+            throw Error('wsLocalTimeMs or wsServerTimeMs is missing');
+        }
+
+        const deltaMs = state.wsLocalTimeMs - state.wsServerTimeMs;
+        const localMs = Date.now();
+        const serverMs = localMs - deltaMs;
+
+        return Math.floor(serverMs / 1000);
+    }
+
+    public getGpToken(): string {
+        if (this.cookieJar) {
+            const cookieKey = this.cookieJar.getCookieKey(
+                this.config.game.gpTokenCookie.params.host,
+                this.config.game.gpTokenCookie.name);
+
+            const cookieValue = this.cookieJar.getCookieValueByKey(cookieKey);
+
+            if (cookieValue) {
+                return cookieValue;
+            }
+        }
+
+        return this.options.gpToken;
+    }
+
+    public async getCurrentServerId(): Promise<number> {
+        const { state } = this;
+
+        if (!state.serverInfo) await this.getServerInfo();
+        if (!state.serverInfo) throw Error('no state.serverInfo');
+
+        return state.serverInfo.serverId;
     }
 }

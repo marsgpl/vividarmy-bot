@@ -69,13 +69,13 @@ export class Browser {
         options: RequestOptions = {},
         customOptions: BrowserRequestCustomOptions = {},
     ): Promise<BrowserResponse> {
-        const { config } = this;
-
-        if (options.method !== 'GET') {
-            throw Error('Browser currently supports only GET method');
-        }
-
         return new Promise((resolve, reject) => {
+            const { config } = this;
+
+            if (options.method !== 'GET') {
+                throw Error('Browser currently supports only GET method');
+            }
+
             const url = typeof rawUrl === 'string' ? new URL(rawUrl) : rawUrl;
 
             if (url.search.match(/=:[^:&\?]+:/i)) {

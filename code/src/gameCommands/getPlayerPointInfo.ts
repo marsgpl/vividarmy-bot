@@ -8,7 +8,7 @@ import { PlayerPointInfo } from 'gameTypes/PlayerPointInfo';
 export default async function(game: GameBot, options: {
     playerId: string;
 }): Promise<PlayerPointInfo | null> {
-    game.reporter(`getPlayerPointInfo: ${options.playerId}`);
+    // game.reporter(`getPlayerPointInfo: ${options.playerId}`);
 
     const r = await game.wsRPC(909, {
         targetId: options.playerId,
@@ -17,7 +17,7 @@ export default async function(game: GameBot, options: {
     const playerInfo = r?.point?.p?.playerInfo;
 
     if (!r?.point || !playerInfo) {
-        game.reporter(`fail: ${JSON.stringify(r)}`);
+        game.reporter(`getPlayerPointInfo fail`);
         return null;
     }
 

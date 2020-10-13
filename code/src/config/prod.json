@@ -28,12 +28,17 @@
             }
         },
         "gameAccount": {
-            "gpToken": "TMAvncSAwiO6bCmVh6Yf9NidN0mgti6S78V7Zjggjl5rtPjh3Xzm0Bz8VYcDHP7utnmqS130tagNMisx8rW4r0Hxh9Asp51kPc0QXzTlzts6rgsWGm10LSD7slPeS5FW"
+            "gpToken": "TMAvncSAwiO6bCmVh6Yf9NidN0mgti6S78V7Zjggjl5rtPjh3Xzm0Bz8VYcDHP7utnmqS130tagNMisx8rW4r0Hxh9Asp51kPc0QXzTlzts6rgsWGm10LSD7slPeS5FW",
+            "cookieDocId": "discord"
         },
-        "cookieDocId": "discord"
+        "gameAccountSvS": {
+            "gpToken": "0SwQZpWYb5iK8hVtwvgUYPnbwhi7MnUzjb2Pfqw0ZW7farHaS4nI3aot5EHULegHVuzJoRnydy6kd0LHsvwmYxGvq4kHIcial6JDFBvDkXd940JNYlDjINuXd9cGM2y2",
+            "cookieDocId": "discordSvS"
+        }
     },
     "game": {
         "printWsPackets": true,
+        "printWsPacketsMaxLength": 128,
         "checkIp": {
             "required": true,
             "url": "https://eki.one/ipcc",

@@ -16,8 +16,6 @@ export abstract class BaseBot {
     protected async connectToMongo(): Promise<MongoState> {
         const { log, config } = this;
 
-        log('connecting to storage ...');
-
         const client = await MongoClient.connect(config.mongo.connectUrl);
 
         const db = client.db(config.mongo.db);

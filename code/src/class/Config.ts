@@ -24,16 +24,21 @@ export interface Config {
                 nametag: string;
                 token: string;
             };
-            allowedChannelsIds: {[key: string]: string};
-            adminUsersIds: {[key: string]: string};
+            allowedChannelsIds: {[channelId: string]: string};
+            adminUsersIds: {[userId: string]: string};
         };
         gameAccount: {
             gpToken: string;
+            cookieDocId: string;
         };
-        cookieDocId: string;
+        gameAccountSvS: {
+            gpToken: string;
+            cookieDocId: string;
+        };
     };
     game: {
         printWsPackets: boolean;
+        printWsPacketsMaxLength: number;
         checkIp: {
             required: boolean;
             url: string;

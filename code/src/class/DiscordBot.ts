@@ -11,6 +11,7 @@ interface DiscordBotState {
     mongo: MongoState;
     discord: DiscordState;
     game: GameBot;
+    gameSvS: GameBot;
 }
 
 type DiscordBotCommand = (
@@ -35,11 +36,13 @@ export class DiscordBot extends BaseBot {
         const mongoState = await this.connectToMongo();
         const discordState = await this.connectToDiscord();
         const gameBot = await this.createGameBot(mongoState);
+        const gameBotSvS = await this.createGameBotSvS(mongoState);
 
         this.state = {
             mongo: mongoState,
             discord: discordState,
             game: gameBot,
+            gameSvS: gameBotSvS,
         };
 
         await this.bindToDiscord();
@@ -47,8 +50,6 @@ export class DiscordBot extends BaseBot {
 
     protected async connectToDiscord(): Promise<DiscordState> {
         const { log, config } = this;
-
-        log('connecting to discord ...');
 
         const client = new Discord.Client;
 
@@ -59,14 +60,32 @@ export class DiscordBot extends BaseBot {
         };
     }
 
+    protected async createGameBotSvS(mongoState: MongoState): Promise<GameBot> {
+        const { config, log } = this;
+
+        const gameBot = new GameBot(config, {
+            gpToken: config.discord.gameAccountSvS.gpToken,
+            cookieDocId: config.discord.gameAccountSvS.cookieDocId,
+            cookieCollection: mongoState.collections.cookies,
+        });
+
+        gameBot.reporter = (text: string): void => {
+            log('GameBot SvS:', text);
+        };
+
+        await gameBot.init();
+
+        log(`game bot SvS created: gp_token=${gameBot.getGpToken()}`);
+
+        return gameBot;
+    }
+
     protected async createGameBot(mongoState: MongoState): Promise<GameBot> {
         const { config, log } = this;
 
-        log('creating game bot ...');
-
         const gameBot = new GameBot(config, {
             gpToken: config.discord.gameAccount.gpToken,
-            cookieDocId: config.discord.cookieDocId,
+            cookieDocId: config.discord.gameAccount.cookieDocId,
             cookieCollection: mongoState.collections.cookies,
         });
 
@@ -139,8 +158,15 @@ export class DiscordBot extends BaseBot {
         }
 
         state.game.reporter = (text: string): void => {
-            log('GameBot:', text);
-            message.channel.send(text);
+            const msg = `GameBot: ${text}`;
+            message.channel.send(msg);
+            log(msg);
+        };
+
+        state.gameSvS.reporter = (text: string): void => {
+            const msg = `GameBot SvS: ${text}`;
+            message.channel.send(msg);
+            log(msg);
         };
 
         try {
@@ -187,7 +213,25 @@ export class DiscordBot extends BaseBot {
         });
     }
 
+    protected findPlayerInMongoById(playerId: string): Promise<Player | null> {
+        if (!this.state) throw Error('no state');
+
+        return this.state?.mongo.collections.players.findOne({
+            playerId,
+        });
+    }
+
     protected async indexPlayer(player: Player): Promise<void> {
-        throw Error('TODO: indexPlayer');
+        if (!this.state) throw Error('no state');
+
+        await this.state?.mongo.collections.players.updateOne({
+            playerId: player.playerId,
+        }, {
+            $set: {
+                ...player,
+            },
+        }, {
+            upsert: true,
+        });
     }
 }
