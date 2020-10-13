@@ -42,7 +42,7 @@ export class DiscordBot extends BaseBot {
             mongo: mongoState,
             discord: discordState,
             game: gameBot,
-            gameSvS: gameBotSvS,
+            gameSvS: gameBotSvS || gameBot,
         };
 
         await this.bindToDiscord();
@@ -60,8 +60,12 @@ export class DiscordBot extends BaseBot {
         };
     }
 
-    protected async createGameBotSvS(mongoState: MongoState): Promise<GameBot> {
+    protected async createGameBotSvS(mongoState: MongoState): Promise<GameBot | null> {
         const { config, log } = this;
+
+        if (!config.discord.gameAccountSvS) {
+            return null;
+        }
 
         const gameBot = new GameBot(config, {
             gpToken: config.discord.gameAccountSvS.gpToken,

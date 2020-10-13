@@ -24,6 +24,15 @@ services:
         restart: always
         command: npm run discord-prod
 
+    discord578:
+        build: ./code
+        networks:
+            - vividarmybot
+        volumes:
+            - ./code/src/:/vividarmy/bot/src/:ro
+        restart: always
+        command: npm run discord-prod-578
+
     farm:
         build: ./code
         networks:

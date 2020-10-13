@@ -29,3 +29,5 @@
     https://discord.com/oauth2/authorize?client_id=760167618790555668&scope=bot
     dev:
     https://discord.com/oauth2/authorize?client_id=763330023422689311&scope=bot
+    prod-578:
+    https://discord.com/oauth2/authorize?client_id=765401203906969650&scope=bot

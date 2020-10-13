@@ -31,7 +31,7 @@ export interface Config {
             gpToken: string;
             cookieDocId: string;
         };
-        gameAccountSvS: {
+        gameAccountSvS?: {
             gpToken: string;
             cookieDocId: string;
         };
