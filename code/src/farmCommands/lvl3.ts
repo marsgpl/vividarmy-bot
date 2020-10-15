@@ -23,7 +23,7 @@ export default async function(this: Farm): Promise<void> {
     ]);
     await puppet.moveTutorial(5);
     await puppet.moveTutorial(6);
-    await puppet.repairBuildingsByTypeId(1701, 'Gold Mine lvl 1');
+    await puppet.repairBuildingsByTypeId(1701, 'Gold Mine lvl1');
     await puppet.moveTutorial(99);
     await puppet.relocateInitialLvl4Unit();
     await puppet.build5goldMinesLvl1();

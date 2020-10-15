@@ -249,13 +249,6 @@ export class Puppet {
         return this.done(key);
     }
 
-    // public async relocateInitialLvl4Unit(): Promise<Done> {
-    //     const key = `relocateInitialLvl4Unit`;
-    //     if (!this.can(key)) return this.cant();
-
-    //     //
-    // }
-
     // {"c":117,"o":"871","p":{"id":805}}
     // {"c":117,"s":0,"d":"{\"unlockArea\":1}","o":"871"}
     public async buyBaseMapArea(baseMapAreaId: number): Promise<Done> {
@@ -299,6 +292,19 @@ export class Puppet {
         await spawnUnitFromBag(this.gameBot, 10005, { x:27, y:25 });
         await spawnUnitFromBag(this.gameBot, 10005, { x:28, y:24 });
         await spawnUnitFromBag(this.gameBot, 10005, { x:29, y:25 });
+
+        return this.done(key);
+    }
+
+    public async spawnLvl6TanksFromBag(): Promise<Done> {
+        const key = `spawnLvl6TanksFromBag`;
+        if (!this.can(key)) return this.cant();
+
+        await spawnUnitFromBag(this.gameBot, 10006, { x:31, y:19 });
+        await spawnUnitFromBag(this.gameBot, 10006, { x:30, y:20 });
+        await spawnUnitFromBag(this.gameBot, 10006, { x:29, y:21 });
+        await spawnUnitFromBag(this.gameBot, 10006, { x:28, y:22 });
+        await spawnUnitFromBag(this.gameBot, 10006, { x:27, y:21 });
 
         return this.done(key);
     }
@@ -418,6 +424,37 @@ export class Puppet {
         return this.done(key);
     }
 
+    public async relocateLvl6AndOldToTop(): Promise<Done> {
+        const key = `relocateLvl6AndOldToTop`;
+        if (!this.can(key)) return this.cant();
+
+        const oldTanks = await this.gameBot.getUnitsByTypeId(99999);
+        if (oldTanks.length !== 1) {
+            throw Error(`expected: old tanks x1, got: x${oldTanks.length}`);
+        }
+
+        if (!await relocateUnit(this.gameBot, oldTanks[0], { x:20, y:16 })) {
+            throw Error(`relocation failed`);
+        }
+
+        const lvl6Tanks = await this.gameBot.getUnitsByTypeId(10006);
+        if (lvl6Tanks.length !== 3) {
+            throw Error(`expected: lvl6 tanks x3, got: x${lvl6Tanks.length}`);
+        }
+
+        if (!await relocateUnit(this.gameBot, lvl6Tanks[0], { x:19, y:17 })) {
+            throw Error(`relocation failed`);
+        }
+        if (!await relocateUnit(this.gameBot, lvl6Tanks[1], { x:20, y:18 })) {
+            throw Error(`relocation failed`);
+        }
+        if (!await relocateUnit(this.gameBot, lvl6Tanks[2], { x:21, y:17 })) {
+            throw Error(`relocation failed`);
+        }
+
+        return this.done(key);
+    }
+
     public async build5goldMinesLvl1(): Promise<Done> {
         const key = `build5goldMinesLvl1`;
         if (!this.can(key)) return this.cant();
@@ -467,6 +504,8 @@ export class Puppet {
             await repairBuilding(this.gameBot, { buildingId: building.id });
         });
 
+        this.log(`${note} x${reparable.length} repaired`);
+
         return this.done(key);
     }
 
@@ -478,6 +517,8 @@ export class Puppet {
         if (!r) {
             throw Error(`researchScienceById: ${scienceId} failed; note: ${note}`);
         }
+
+        this.log(note);
 
         return this.done(key);
     }
