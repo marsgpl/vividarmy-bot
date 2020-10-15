@@ -1,4 +1,4 @@
-import config from 'config/prod.json';
+import config from 'config/prod-farm.json';
 import { Config } from 'class/Config';
 import { Farm } from 'class/Farm';
 
