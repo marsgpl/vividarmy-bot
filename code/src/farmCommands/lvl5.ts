@@ -4,12 +4,12 @@ export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
     const puppet = await this.getPuppetById(puppetId);
 
-    if (puppet.can(`doAncientTank:2`)) {
-        throw Error('doAncientTank 2 not done');
-    }
-
     if (!puppet.can(`researchScienceById:310006`)) {
         return this.log('already done');
+    }
+
+    if (puppet.can(`doAncientTank:2`)) {
+        throw Error('doAncientTank 2 not done');
     }
 
     await puppet.doAncientTank(3);
