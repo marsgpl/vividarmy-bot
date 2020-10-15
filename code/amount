@@ -1,4 +1,4 @@
 #!/bin/bash
 
-echo -n ' bots: '
+echo -n ' farm processes: '
 ps ax|grep '[n]ode /home' | wc -l
