@@ -12,6 +12,7 @@ import { Building } from 'gameTypes/Building';
 import repairBuilding from 'gameCommands/repairBuilding';
 import relocateUnit from 'gameCommands/relocateUnit';
 import build from 'gameCommands/build';
+import researchScience from 'gameCommands/researchScience';
 
 const js = JSON.stringify;
 
@@ -178,6 +179,11 @@ export class Puppet {
 
         r.endTime && await this.done('doAncientTank:endTime', r.endTime);
 
+        if (r.endTime) {
+            this.log(`waiting 3 minutes for tank repair ...`);
+            await sleep(3 * 60 * 1000);
+        }
+
         return this.done(key);
     }
 
@@ -299,24 +305,6 @@ export class Puppet {
         // {"c":10031,"s":0,"d":"{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":1000.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0}","o":null}
     }
 
-    public async repairInitialLvl1GoldMines(): Promise<Done> {
-        const key = `repairInitialLvl1GoldMines`;
-        if (!this.can(key)) return this.cant();
-
-        const goldMinesLvl1 = await this.gameBot.getBuildingsByTypeId(1701);
-        const reparableMines = goldMinesLvl1.filter(b => b.broken === 1);
-
-        if (reparableMines.length !== 3) {
-            throw Error(`repairInitialLvl1GoldMines: must have 3, have: ${reparableMines.length}`);
-        }
-
-        await asyncForeach<Building>(reparableMines, async building => {
-            await repairBuilding(this.gameBot, { buildingId: building.id });
-        });
-
-        return this.done(key);
-    }
-
     public async relocateInitialLvl4Unit(): Promise<Done> {
         const key = `relocateInitialLvl4Unit`;
         if (!this.can(key)) return this.cant();
@@ -334,8 +322,8 @@ export class Puppet {
         return this.done(key);
     }
 
-    public async build3goldMinesLvl1(): Promise<Done> {
-        const key = `build3goldMinesLvl1`;
+    public async build5goldMinesLvl1(): Promise<Done> {
+        const key = `build5goldMinesLvl1`;
         if (!this.can(key)) return this.cant();
 
         const bot = this.gameBot;
@@ -344,12 +332,49 @@ export class Puppet {
         if (!await build(bot, 1701, { x:20, y:24 })) throw Error(`failed to build`);
         if (!await build(bot, 1701, { x:22, y:26 })) throw Error(`failed to build`);
 
+        // wait for treasure task claim apply
+        await sleep(3000);
+
+        if (!await build(bot, 1701, { x:24, y:24 })) throw Error(`failed to build`);
+        if (!await build(bot, 1701, { x:26, y:22 })) throw Error(`failed to build`);
+
+        // wait for building delta apply
         await sleep(3000);
 
         const goldMines = await bot.getBuildingsByTypeId(1701);
 
-        if (goldMines.length != 6) {
-            throw Error(`expected 6 buildings of type 1701, got: ${goldMines.length}`);
+        if (goldMines.length != 8) {
+            throw Error(`expected 8 buildings of type 1701, got: ${goldMines.length}`);
+        }
+
+        return this.done(key);
+    }
+
+    public async repairBuildingsByTypeId(buildingTypeId: number, note: string): Promise<Done> {
+        const key = `repairBuildingByTypeId:${buildingTypeId}`;
+        if (!this.can(key)) return this.cant();
+
+        const building = await this.gameBot.getBuildingsByTypeId(buildingTypeId);
+        const reparable = building.filter(b => b.broken === 1);
+
+        if (reparable.length < 1) {
+            throw Error(`repairBuildingByTypeId: ${buildingTypeId}: expected more than 1; note: ${note}`);
+        }
+
+        await asyncForeach<Building>(reparable, async building => {
+            await repairBuilding(this.gameBot, { buildingId: building.id });
+        });
+
+        return this.done(key);
+    }
+
+    public async researchScienceById(scienceId: number, note: string): Promise<Done> {
+        const key = `researchScienceById:${scienceId}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await researchScience(this.gameBot, { scienceId });
+        if (!r) {
+            throw Error(`researchScienceById: ${scienceId} failed; note: ${note}`);
         }
 
         return this.done(key);

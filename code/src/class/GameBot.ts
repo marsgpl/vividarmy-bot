@@ -19,6 +19,7 @@ import deleteAccount from 'gameCommands/deleteAccount';
 import { Unit } from 'gameTypes/Unit';
 import { Resources } from 'gameTypes/Resources';
 import { Building } from 'gameTypes/Building';
+import claimTreasureTask from 'gameCommands/claimTreasureTask';
 
 const js = JSON.stringify;
 
@@ -944,6 +945,14 @@ export class GameBot {
             reporter('resources received');
         });
 
+        // {"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":99999,\"x\":24,\"y\":20,\"id\":\"1710339831034898436\",\"state\":0,\"march\":0}","o":null}
+        this.wsSetCallbackByCommandId(10201, async data => {
+            if (!data?.id) return warn(10201, js(data));
+            const unit = data as Unit;
+            await this.updateUnit(unit);
+            reporter(`unit added: ${unit.id}`);
+        });
+
         // {"c":10202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":22,\"y\":26,\"id\":\"1710042903487277063\",\"state\":0,\"march\":0}","o":null}
         this.wsSetCallbackByCommandId(10202, async data => {
             if (!data?.id) return warn(10202, js(data));
@@ -959,6 +968,22 @@ export class GameBot {
             reporter(`power Δ: ${authData.star}`);
         });
 
+        // {"c":10124,"s":0,"d":"{\"treasureTasks\":[{\"num\":1.0,\"state\":1,\"taskId\":3}],\"isUpdate\":1}","o":null}
+        this.wsSetCallbackByCommandId(10124, async data => {
+            if (!data?.treasureTasks) return warn(10124, js(data));
+
+            // state 0 - not finished
+            // state 1 - can be claimed
+            // state 2 - claimed
+
+            await asyncForeach<any>(data.treasureTasks, async task => {
+                if (task.state === 1) {
+                    await claimTreasureTask(this, { taskId: task.taskId });
+                }
+            });
+        });
+
+        // @TODO async
         // {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":22,\"y\":26,\"li\":[]}]}","o":null}
     }
 }

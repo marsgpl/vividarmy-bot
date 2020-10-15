@@ -23,6 +23,8 @@ export default async function(game: GameBot, {
 
     game.updateUnitTypeId(r.targetId, r.armyId);
 
+    // @TODO preemptively remove delId building
+
     game.reporter(`units merged: ${delId} -> ${targetId}`);
     return true;
 }
