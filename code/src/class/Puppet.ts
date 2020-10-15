@@ -318,6 +318,29 @@ export class Puppet {
         return this.done(key);
     }
 
+    public async spawnLvl7TanksFromBag(): Promise<Done> {
+        const key = `spawnLvl7TanksFromBag`;
+        if (!this.can(key)) return this.cant();
+
+        await spawnUnitFromBag(this.gameBot, 10007, { x:27, y:15 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:26, y:16 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:25, y:17 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:24, y:18 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:26, y:14 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:23, y:17 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:25, y:13 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:22, y:16 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:24, y:12 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:23, y:13 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:22, y:14 });
+        await spawnUnitFromBag(this.gameBot, 10007, { x:21, y:15 });
+
+        // pause between spawns to await for all async notifications
+        await sleep(2000);
+
+        return this.done(key);
+    }
+
     // {"c":695,"o":"107","p":{"code":"topwar888"}} // 200 diamonds
     // {"c":695,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":200.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":0.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0}}","o":"107"}
     public async usePromoCode(promoCode: string): Promise<Done> {
