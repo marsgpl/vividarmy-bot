@@ -13,6 +13,7 @@ import repairBuilding from 'gameCommands/repairBuilding';
 import relocateUnit from 'gameCommands/relocateUnit';
 import build from 'gameCommands/build';
 import researchScience from 'gameCommands/researchScience';
+import { Pos } from 'localTypes/Pos';
 
 const js = JSON.stringify;
 
@@ -186,6 +187,8 @@ export class Puppet {
         const r = await this.gameBot.wsRPC(1652, { type: Number(tankStage) });
         if (r?.stat !== tankStage) throw Error(`fail: ${js(r)}`);
 
+        this.log(`ancient tank stage -> ${tankStage}`);
+
         r.endTime && await this.done('doAncientTank:endTime', r.endTime);
 
         return this.done(key);
@@ -199,6 +202,8 @@ export class Puppet {
 
         const r = await this.gameBot.wsRPC(814, { text: String(tutorialStage) });
         if (r?.text !== String(tutorialStage)) throw Error(`fail: ${js(r)}`);
+
+        this.log(`tutorial stage -> ${tutorialStage}`);
 
         return this.done(key);
     }
@@ -268,6 +273,8 @@ export class Puppet {
         const r = await this.gameBot.wsRPC(117, { id: Number(baseMapAreaId) });
         if (!r?.unlockArea) throw Error(`fail: ${js(r)}`);
 
+        this.log(`base map area bought/unlocked: ${baseMapAreaId}`);
+
         // @TODO apply unlockArea
 
         return this.done(key);
@@ -292,6 +299,8 @@ export class Puppet {
             this.log(`usePromoCode fail: ${js(r)}`);
             return this.done(key);
         }
+
+        this.log(`promo code applied: ${promoCode}`);
 
         // @TODO apply reward
 
@@ -327,6 +336,8 @@ export class Puppet {
             throw Error(`fightBaseMapArea fail: ${js(r)}`);
         }
 
+        this.log(`base map area stage cleared: ${baseMapAreaId}:${baseMapAreaStageId}`);
+
         // @TODO apply reward
 
         return this.done(key);
@@ -336,6 +347,46 @@ export class Puppet {
         // {"c":10124,"s":0,"d":"{\"treasureTasks\":[{\"num\":1.0,\"state\":0,\"taskId\":5}],\"isUpdate\":1}","o":null}
         // {"c":10708,"s":0,"d":"{\"allAreaWar\":[]}","o":null}
         // {"c":10031,"s":0,"d":"{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":1000.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0}","o":null}
+    }
+
+    // {"c":109,"o":"50","p":{"x":20,"y":20,"id":1023}}
+    // {"c":109,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":500.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"x\":20,\"y\":20}","o":"50"}
+    public async removeObstacle(obstacleId: number, pos: Pos, note: string): Promise<Done> {
+        const key = `removeObstacle:${obstacleId}:${pos.x},${pos.y}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await this.gameBot.wsRPC(109, {
+            x: Number(pos.x),
+            y: Number(pos.y),
+            id: Number(obstacleId),
+        });
+
+        if (!r?.reward) {
+            throw Error(`removeObstacle fail: ${js(r)}`);
+        }
+
+        // @TODO apply reward
+
+        this.log(`obstacle removed: ${obstacleId}`);
+
+        return this.done(key);
+    }
+
+    public async relocateOldTankToLeft(): Promise<Done> {
+        const key = `relocateOldTankToLeft`;
+        if (!this.can(key)) return this.cant();
+
+        const oldTanks = await this.gameBot.getUnitsByTypeId(99999);
+        if (oldTanks.length !== 1) {
+            throw Error(`expected: old tanks x1, got: x${oldTanks.length}`);
+        }
+
+        const r = await relocateUnit(this.gameBot, oldTanks[0], { x:14, y:24 });
+        if (!r) {
+            throw Error(`relocation failed`);
+        }
+
+        return this.done(key);
     }
 
     public async relocateInitialLvl4Unit(): Promise<Done> {
@@ -417,9 +468,5 @@ export class Puppet {
         }
 
         return this.done(key);
-    }
-
-    public async useFreeRedHeroToken(): Promise<void> {
-        //
     }
 }

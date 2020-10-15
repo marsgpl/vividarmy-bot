@@ -9,7 +9,7 @@ export default async function(this: Farm): Promise<void> {
     }
 
     if (puppet.can(`doAncientTank:2`)) {
-        throw Error('doAncientTank 2 not done');
+        throw Error('lvl3 not ready');
     }
 
     await puppet.doAncientTank(3);

@@ -1097,6 +1097,9 @@ export class GameBot {
             reporter(`areaWars Δ: areaId=${data.nowAreaWar.areaId} pveId=${data.nowAreaWar.pveId}`);
         });
 
+        // {"c":10708,"s":0,"d":"{\"allAreaWar\":[]}","o":null}
+        // {"c":10104,"s":0,"d":"{\"areaId\":606}","o":null}
+
         // @TODO async
         // {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":22,\"y\":26,\"li\":[]}]}","o":null}
     }
