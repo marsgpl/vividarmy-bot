@@ -1,3 +1,4 @@
 #!/bin/bash
 
+echo -n ' bots: '
 ps ax|grep '[n]ode /home' | wc -l
