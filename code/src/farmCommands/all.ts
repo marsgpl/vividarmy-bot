@@ -3,7 +3,7 @@ import { Farm } from 'class/Farm';
 export default async function(this: Farm): Promise<void> {
     const commandName = process.argv[3];
     const puppetIdFrom = Number(process.argv[4]) || 0;
-    const puppetIdTo = Number(process.argv[4]) || puppetIdFrom;
+    const puppetIdTo = Number(process.argv[5]) || puppetIdFrom;
 
     if (!commandName) {
         throw Error(`unable to get subcommand name from args for command 'all'`);
