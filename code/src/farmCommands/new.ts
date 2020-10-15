@@ -86,7 +86,7 @@ async function newPuppet(this: Farm, puppetId: string): Promise<void> {
 
 export default async function(this: Farm): Promise<void> {
     const puppetIdFrom = Number(process.argv[3]) || 0;
-    const puppetIdTo = Number(process.argv[4]) || 0;
+    const puppetIdTo = Number(process.argv[4]) || puppetIdFrom;
 
     if (!puppetIdFrom || !puppetIdTo) {
         throw Error(`usage: new 1 10\n1 - puppet id from\n10 - puppet id to`);
