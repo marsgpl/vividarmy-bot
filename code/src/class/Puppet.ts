@@ -281,6 +281,9 @@ export class Puppet {
         await spawnUnitFromBag(this.gameBot, 10004, { x:22, y:30 });
         await spawnUnitFromBag(this.gameBot, 10004, { x:23, y:29 });
 
+        // pause between spawns to await for all async notifications
+        await sleep(2000);
+
         return this.done(key);
     }
 
@@ -292,6 +295,9 @@ export class Puppet {
         await spawnUnitFromBag(this.gameBot, 10005, { x:27, y:25 });
         await spawnUnitFromBag(this.gameBot, 10005, { x:28, y:24 });
         await spawnUnitFromBag(this.gameBot, 10005, { x:29, y:25 });
+
+        // pause between spawns to await for all async notifications
+        await sleep(2000);
 
         return this.done(key);
     }
@@ -305,6 +311,9 @@ export class Puppet {
         await spawnUnitFromBag(this.gameBot, 10006, { x:29, y:21 });
         await spawnUnitFromBag(this.gameBot, 10006, { x:28, y:22 });
         await spawnUnitFromBag(this.gameBot, 10006, { x:27, y:21 });
+
+        // pause between spawns to await for all async notifications
+        await sleep(2000);
 
         return this.done(key);
     }
@@ -466,13 +475,13 @@ export class Puppet {
         if (!await build(bot, 1701, { x:22, y:26 })) throw Error(`failed to build`);
 
         // wait for treasure task claim apply
-        await sleep(3000);
+        await sleep(2000);
 
         if (!await build(bot, 1701, { x:24, y:24 })) throw Error(`failed to build`);
         if (!await build(bot, 1701, { x:26, y:22 })) throw Error(`failed to build`);
 
         // wait for building delta apply
-        await sleep(3000);
+        await sleep(2000);
 
         const goldMines = await bot.getBuildingsByTypeId(1701);
 
