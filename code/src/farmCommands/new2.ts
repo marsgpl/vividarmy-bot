@@ -5,6 +5,10 @@ export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
     const puppet = await this.getPuppetById(puppetId);
 
+    if (puppet.can(`doAncientTank:2`)) {
+        throw Error('doAncientTank 2 not done');
+    }
+
     await puppet.doAncientTank(3);
     await puppet.buyBaseMapArea(705);
     await puppet.fightBaseMapArea(705, 201, [

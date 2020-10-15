@@ -150,7 +150,7 @@ export class Puppet {
         return r as PuppetState;
     }
 
-    protected can(key: string): boolean {
+    public can(key: string): boolean {
         if (this.state.switch[key]) return false;
         return true;
     }
