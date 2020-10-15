@@ -1,5 +1,4 @@
 import { Farm } from 'class/Farm';
-import sleep from 'modules/sleep';
 
 export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
@@ -65,6 +64,4 @@ export default async function(this: Farm): Promise<void> {
     // await puppet.order6unitsLvl3();
     // await puppet.mergeAllUnits('land -> 5');
     // await puppet.relocateLvl5Units();
-
-    await sleep(3000);
 }

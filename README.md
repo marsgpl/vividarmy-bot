@@ -32,3 +32,7 @@
     https://discord.com/oauth2/authorize?client_id=760167618790555668&scope=bot
     dev:
     https://discord.com/oauth2/authorize?client_id=763330023422689311&scope=bot
+
+## locale
+
+    https://knight-cdn.akamaized.net/DynRes/1.3.1357/assets/locale/en_1.3.1357.txt
