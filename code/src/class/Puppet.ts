@@ -180,6 +180,7 @@ export class Puppet {
         r.endTime && await this.done('doAncientTank:endTime', r.endTime);
 
         if (r.endTime) {
+            this.done(key);
             this.log(`waiting 3 minutes for tank repair ...`);
             await sleep(3 * 60 * 1000);
         }
