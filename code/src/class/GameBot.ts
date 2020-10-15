@@ -11,6 +11,14 @@ import { Browser } from 'modules/Browser';
 import crop from 'modules/crop';
 import { AuthData } from 'gameTypes/AuthData';
 import randomString from 'modules/randomString';
+import getAllServers from 'gameCommands/getAllServers';
+import switchServerAccount from 'gameCommands/switchServerAccount';
+import asyncForeach from 'modules/asyncForeach';
+import { MyAccountOnServer } from 'gameTypes/MyAccountOnServer';
+import deleteAccount from 'gameCommands/deleteAccount';
+import { Unit } from 'gameTypes/Unit';
+import { Resources } from 'gameTypes/Resources';
+import { Building } from 'gameTypes/Building';
 
 const js = JSON.stringify;
 
@@ -127,10 +135,20 @@ interface GameBotWsConnectOptions {
 export class GameBot {
     protected config: Config;
     protected options: GameBotOptions;
-    protected cookieJar?: CookieJar;
-    protected browser?: Browser;
+    protected _cookieJar?: CookieJar;
+    protected _browser?: Browser;
     protected state: GameBotState;
     public reporter: (msg: string) => void = (msg: string) => console.log(msg);
+
+    public get cookieJar(): CookieJar {
+        if (!this._cookieJar) throw Error('GameBot: no cookieJar');
+        return this._cookieJar;
+    }
+
+    public get browser(): Browser {
+        if (!this._browser) throw Error('GameBot: no browser');
+        return this._browser;
+    }
 
     constructor(config: Config, options: GameBotOptions) {
         this.config = config;
@@ -154,7 +172,7 @@ export class GameBot {
 
         await this.initCookieJar();
 
-        this.browser = new Browser({
+        this._browser = new Browser({
             userAgent: options.userAgent,
             cookieJar: this.cookieJar,
             socks5: config.proxy.required ? config.proxy.socks5?.[0] : undefined,
@@ -166,7 +184,7 @@ export class GameBot {
 
         if (!options.cookieDocId || !options.cookieCollection) return;
 
-        this.cookieJar = new CookieJar({
+        this._cookieJar = new CookieJar({
             storageType: CookieJarStorageType.MONGO_DB,
             storageConfig: {
                 collection: options.cookieCollection,
@@ -196,8 +214,6 @@ export class GameBot {
 
         if (!state.session) await this.getSession();
         if (!state.session) throw Error('no state.session');
-
-        if (!browser) throw Error('no browser');
 
         const url = config.game.urls.getServerInfo
             .replace(':ts:', String(Date.now()))
@@ -235,8 +251,6 @@ export class GameBot {
     protected async getSession(): Promise<void> {
         const { reporter, config, state, browser } = this;
 
-        if (!browser) throw Error('no browser');
-
         const url = config.game.urls.getSession
             .replace(':from:', encodeURIComponent(config.game.urls.shell));
 
@@ -262,8 +276,6 @@ export class GameBot {
     protected async getClientVersion(): Promise<void> {
         const { reporter, config, state, browser } = this;
 
-        if (!browser) throw Error('no browser');
-
         if (config.game.checkIp.required) {
             await this.checkIp();
         }
@@ -288,8 +300,6 @@ export class GameBot {
 
     protected async checkIp(): Promise<void> {
         const { reporter, config, browser } = this;
-
-        if (!browser) throw Error('no browser');
 
         const r = await browser.get(config.game.checkIp.url);
 
@@ -504,14 +514,16 @@ export class GameBot {
             this.wsSetCallbackByCommandId(1, async data => {
                 clearTimeout(responseTimeout);
 
-                state.authData = data as AuthData;
-
-                if (
-                    !state.authData.username ||
-                    !state.authData.serverTime
+                if (!data.username ||
+                    !data.serverTime ||
+                    !data.userInfo
                 ) {
-                    return reject(`auth failed: ${data}`);
+                    return reject(`auth failed: ${js(data)}`);
                 }
+
+                data.userInfo = JSON.parse(data.userInfo);
+
+                state.authData = data as AuthData;
 
                 state.wsAuthed = true;
                 state.wsLocalTimeMs = Date.now();
@@ -619,13 +631,6 @@ export class GameBot {
         delete state.wsCallbacksByPacketIndex[packetIndex];
     }
 
-    protected subscribeToAllNotifications(): void {
-        // todo
-        // this.wsSetCallbackByCommandId(12399999, async data => {
-        //     console.log('🔸 data:', data);
-        // });
-    }
-
     protected startWsPings(): void {
         const { state } = this;
 
@@ -667,16 +672,16 @@ export class GameBot {
         });
     }
 
-    protected disconnectFromWs(): void {
+    protected disconnectFromWs(options: GameBotWsConnectOptions = {}): void {
         const { state, reporter } = this;
 
         if (state.ws) {
             state.ws.close();
         }
 
-        delete state.clientVersion;
-        delete state.session;
-        delete state.serverInfo;
+        options.switchServer || delete state.clientVersion;
+        options.switchServer || delete state.session;
+        options.switchServer || delete state.serverInfo;
         delete state.authData;
 
         state.wsConnected = false;
@@ -691,7 +696,7 @@ export class GameBot {
         delete state.wsPingInterval;
         delete state.wsInactivityTimeout;
 
-        state.wsNextPacketIndex = 0;
+        state.wsNextPacketIndex = options.switchServer ? state.wsNextPacketIndex : 0;
         state.wsCallbacksByCommandId = {};
         state.wsCallbacksByPacketIndex = {};
         state.wsConnectSemaphoreCallbacks = [];
@@ -699,7 +704,7 @@ export class GameBot {
         delete state.wsLocalTimeMs;
         delete state.wsServerTimeMs;
 
-        reporter('disconnected from ws');
+        reporter(`disconnected from ws${options.switchServer ? ' for reconnection' : ''}`);
     }
 
     public async getCurrentServerTime(): Promise<number> {
@@ -741,5 +746,219 @@ export class GameBot {
         if (!state.serverInfo) throw Error('no state.serverInfo');
 
         return state.serverInfo.serverId;
+    }
+
+    public async switchToServerId({
+        targetServerId,
+    }: {
+        targetServerId: number;
+    }): Promise<void> {
+        if (!targetServerId) throw Error('no targetServerId');
+
+        const currentServerId = await this.getCurrentServerId();
+
+        if (currentServerId === targetServerId) {
+            // already on target server
+            return;
+        }
+
+        const { serverInfo } = this.state;
+        if (!serverInfo) throw Error('no serverInfo');
+
+        this.reporter(`switching server: ${currentServerId} -> ${targetServerId}`);
+
+        const allServers = await getAllServers(this);
+        if (!allServers) throw Error('no allServers');
+
+        const targetServer = allServers.showServerList.serverList.find(s =>
+            s.id === targetServerId &&
+            s.url &&
+            s.platforms.toLowerCase().includes('g123'));
+
+        if (!targetServer) {
+            throw Error(`targetServerId=${targetServerId} is not available for switching`);
+        }
+
+        const accountOnTargetServer = allServers.serverList.find(acc =>
+            acc.serverId === targetServerId);
+
+        let targetAccountId: string = accountOnTargetServer ? String(accountOnTargetServer.uid) : '';
+
+        await switchServerAccount(this, {
+            targetServerId,
+            targetAccountId,
+        });
+
+        this.disconnectFromWs({
+            switchServer: true,
+        });
+
+        serverInfo.serverId = targetServer.id;
+        serverInfo.g123Url = targetServer.url;
+        serverInfo.region = `countrys: ${targetServer.countrys}`;
+
+        await this.connectToWs({
+            switchServer: true,
+        });
+    }
+
+    public async deleteAllAccountsExceptCurrent(): Promise<void> {
+        const currentServerId = await this.getCurrentServerId();
+
+        const allServers = await getAllServers(this);
+        if (!allServers) throw Error('no allServers');
+
+        await asyncForeach<MyAccountOnServer>(allServers.serverList, async acc => {
+            if (acc.serverId === currentServerId) return;
+            if (!acc.canDel) return;
+            if (acc.level >= 60) return; // do not delete precious accounts!
+
+            this.reporter(`deleting account: s${acc.serverId} lvl ${acc.level} ...`);
+
+            await deleteAccount(this, { accountId: String(acc.uid) });
+        });
+    }
+
+    public async getAllUnits(): Promise<Unit[]> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+        return this.state.authData.armys;
+    }
+
+    public async getAllBuildings(): Promise<Building[]> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+        return this.state.authData.buildings;
+    }
+
+    public async getBuildingsByTypeId(buildingTypeId: number): Promise<Building[]> {
+        return (await this.getAllBuildings()).filter(b =>
+            b.buildingId === buildingTypeId);
+    }
+
+    // @TODO what about warehouse?
+    public async getMergeableUnits(): Promise<Unit[]> {
+        return (await this.getAllUnits()).filter(u =>
+            // not marching
+            u.march === 0 &&
+            // not damaged
+            u.state === 0);
+    }
+
+    public async getFightableUnits(): Promise<Unit[]> {
+        return (await this.getAllUnits()).filter(u =>
+            // not marching
+            u.march === 0 &&
+            // not damaged
+            u.state === 0);
+    }
+
+    public async getUnitsByTypeId(unitTypeId: number): Promise<Unit[]> {
+        return (await this.getAllUnits()).filter(u =>
+            u.armyId === unitTypeId);
+    }
+
+    public async getMergeableUnitsGroups(): Promise<{[key: string]: Unit[]}> {
+        const groups: {[key: string]: Unit[]} = {};
+
+        const mergeableUnits = await this.getMergeableUnits();
+
+        mergeableUnits.forEach(u => {
+            groups[u.armyId] = groups[u.armyId] || [];
+            groups[u.armyId].push(u);
+        });
+
+        return groups;
+    }
+
+    public async getStrongestUnitsForFight(perfectUnitsAmount: number = 1): Promise<Unit[]> {
+        if (perfectUnitsAmount < 1 || perfectUnitsAmount > 9) {
+            throw Error(`invalid perfectUnitsAmount: ${perfectUnitsAmount}`);
+        }
+
+        const units = await this.getFightableUnits();
+
+        if (units.length < 1) {
+            throw Error(`not enough fightable units for fight. minimum: 1`);
+        }
+
+        // @TODO army units are always weakest because 10001 is less than 20001
+        units.sort((u1, u2) => u1.armyId > u2.armyId ? -1 : u1.armyId < u2.armyId ? 1 : 0);
+
+        return units.slice(0, perfectUnitsAmount);
+    }
+
+    public updateUnitTypeId(unitId: string, unitTypeId: number): void {
+        this.state.authData?.armys.forEach(u => {
+            if (u.id === unitId) {
+                u.armyId = unitTypeId;
+            }
+        });
+    }
+
+    public updateUnit(unit: Unit): void {
+        let updated = false;
+
+        this.state.authData?.armys.forEach(u => {
+            if (u.id === unit.id) {
+                Object.assign(u, unit);
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            this.state.authData?.armys.push(unit);
+        }
+    }
+
+    public updateBuilding(building: Building): void {
+        let updated = false;
+
+        this.state.authData?.buildings.forEach(b => {
+            if (b.id === building.id) {
+                Object.assign(b, building);
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            this.state.authData?.buildings.push(building);
+        }
+    }
+
+    protected warn(subject: string | number, text: string): void {
+        this.reporter(`----------\n WARNING: bad ${subject}: ${text}\n----------`);
+    }
+
+    protected subscribeToAllNotifications(): void {
+        const { reporter, warn, state } = this;
+        const { authData } = state;
+
+        if (!authData) throw Error('no authData');
+
+        // {"c":10001,"s":0,"d":"{\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"soil\":0.0,\"gold\":0.0,\"paid_gold\":0.0,\"free_gold\":0.0,\"coal\":0.0,\"wood\":20000.0,\"military\":0.0,\"expedition_coin\":0.0,\"oila\":0.0,\"jungong\":0.0,\"coin\":800.0}","o":null}
+        this.wsSetCallbackByCommandId(10001, async data => {
+            if (typeof data?.voucher === undefined) return warn(10001, js(data));
+            const resources = data as Resources;
+            authData.resource = resources;
+            reporter('resources received');
+        });
+
+        // {"c":10202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":22,\"y\":26,\"id\":\"1710042903487277063\",\"state\":0,\"march\":0}","o":null}
+        this.wsSetCallbackByCommandId(10202, async data => {
+            if (!data?.id) return warn(10202, js(data));
+            const unit = data as Unit;
+            authData.armys = authData.armys.filter(u => u.id !== unit.id);
+            reporter(`unit removed: ${unit.id}`);
+        });
+
+        // {"c":10012,"s":0,"d":"{\"power\":\"516.0\"}","o":null}
+        this.wsSetCallbackByCommandId(10012, async data => {
+            if (!data?.power) return warn(10012, js(data));
+            authData.star = Number(data.power);
+            reporter(`power Δ: ${authData.star}`);
+        });
+
+        // {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":22,\"y\":26,\"li\":[]}]}","o":null}
     }
 }

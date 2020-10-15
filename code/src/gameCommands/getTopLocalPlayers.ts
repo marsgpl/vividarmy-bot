@@ -9,8 +9,6 @@ export default async function(game: GameBot, options: {
     offsetFrom: number;
     offsetTo: number;
 }): Promise<TopLocalPlayer[] | null> {
-    // game.reporter(`getTopLocalPlayers: ${options.offsetFrom} -> ${options.offsetTo}`);
-
     const r = await game.wsRPC(650, {
         start: Number(options.offsetFrom),
         end: Number(options.offsetTo),

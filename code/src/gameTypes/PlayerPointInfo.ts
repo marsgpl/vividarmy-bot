@@ -11,7 +11,7 @@ export interface PlayerPointInfo {
         castleEffectId: number; // 0
         pid: number; // 317451149913
         skinId: number; // 0
-        language: string; // ja
+        language: string; // "ja"
         sml: number; // 0
         province: number; // 56
         w: number; // 601
@@ -21,7 +21,7 @@ export interface PlayerPointInfo {
         aid: number; // 100100977
         countryRank: number; // 0
         sBId: number; // 0
-        a_tag: string; // l337
+        a_tag: string; // "l337"
     };
     x: number; // 21
     y: number; // 573

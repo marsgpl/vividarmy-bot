@@ -1,7 +1,7 @@
 import { PlayerInfo } from './PlayerInfo';
 
 export interface TopLocalPlayer {
-    uid: string; // 306931708505
+    uid: string; // "306931708505"
     worldId: number; // 8
     showCareerId: number; // 1205003
     playerInfo: PlayerInfo;

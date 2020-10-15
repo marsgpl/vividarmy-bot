@@ -68,8 +68,9 @@ async function findById(
 ): Promise<void> {
     const { state } = this;
 
-    if (!state) throw Error('no state');
-    if (playerId.length < 9 || playerId.length > 15) throw Error(`invalid playerId: ${playerId}`);
+    if (playerId.length < 9 || playerId.length > 15) {
+        throw Error(`invalid playerId: ${playerId}`);
+    }
 
     message.channel.send(`searching for player: {id: ${playerId}}`);
 
@@ -95,9 +96,13 @@ async function findByTopPos(
 ): Promise<void> {
     const { state } = this;
 
-    if (!state) throw Error('no state');
-    if (playerTopPos < 1 || playerTopPos > 99999) throw Error(`invalid playerTopPos: ${playerTopPos}`);
-    if (serverId !== undefined && (serverId < 0 || serverId > 9999)) throw Error(`invalid serverId: ${serverId}`);
+    if (playerTopPos < 1 || playerTopPos > 99999) {
+        throw Error(`invalid playerTopPos: ${playerTopPos}`);
+    }
+
+    if (serverId !== undefined && (serverId < 0 || serverId > 9999)) {
+        throw Error(`invalid serverId: ${serverId}`);
+    }
 
     let playerId: string = '';
 
@@ -143,8 +148,6 @@ async function findByName(
     serverId?: number,
 ): Promise<void> {
     const { state } = this;
-
-    if (!state) throw Error('no state');
 
     serverId = serverId || await state.game.getCurrentServerId();
 

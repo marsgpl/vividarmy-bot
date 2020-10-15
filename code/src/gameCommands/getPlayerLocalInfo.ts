@@ -8,8 +8,6 @@ import { PlayerLocalInfo } from 'gameTypes/PlayerLocalInfo';
 export default async function(game: GameBot, options: {
     playerId: string;
 }): Promise<PlayerLocalInfo | null> {
-    // game.reporter(`getPlayerLocalInfo: ${options.playerId}`);
-
     const r = await game.wsRPC(630, {
         uid: String(options.playerId),
     });

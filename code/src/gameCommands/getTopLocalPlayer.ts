@@ -7,8 +7,6 @@ const PLAYERS_PER_REQUEST = 30;
 export default async function(game: GameBot, options: {
     rank: number;
 }): Promise<TopLocalPlayer | null> {
-    // game.reporter(`getTopLocalPlayer: ${options.rank}`);
-
     const rankIndex = options.rank - 1;
     const offsetFrom = rankIndex - rankIndex % PLAYERS_PER_REQUEST;
     const offsetTo = offsetFrom + PLAYERS_PER_REQUEST - 1;

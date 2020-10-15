@@ -25,8 +25,13 @@ type DiscordBotCommandsCache = {
 };
 
 export class DiscordBot extends BaseBot {
-    protected state?: DiscordBotState;
+    protected _state?: DiscordBotState;
     protected commandsCache: DiscordBotCommandsCache = {};
+
+    public get state(): DiscordBotState {
+        if (!this._state) throw Error('DiscordBot: no state');
+        return this._state;
+    }
 
     constructor(config: Config) {
         super('DiscordBot', config);
@@ -38,7 +43,7 @@ export class DiscordBot extends BaseBot {
         const gameBot = await this.createGameBot(mongoState);
         const gameBotSvS = await this.createGameBotSvS(mongoState);
 
-        this.state = {
+        this._state = {
             mongo: mongoState,
             discord: discordState,
             game: gameBot,
@@ -124,8 +129,6 @@ export class DiscordBot extends BaseBot {
     protected async onDiscordMessage(message: Discord.Message): Promise<void> {
         const { config, log, state } = this;
 
-        if (!state) throw Error('no state');
-
         const userId = message.author.id;
         const userName = message.author.username;
         const userTag = '#' + message.author.discriminator;
@@ -161,14 +164,14 @@ export class DiscordBot extends BaseBot {
             return;
         }
 
-        state.game.reporter = (text: string): void => {
-            const msg = `GameBot: ${text}`;
+        state.gameSvS.reporter = (text: string): void => {
+            const msg = `GameBot SvS: ${text}`;
             message.channel.send(msg);
             log(msg);
         };
 
-        state.gameSvS.reporter = (text: string): void => {
-            const msg = `GameBot SvS: ${text}`;
+        state.game.reporter = (text: string): void => {
+            const msg = `GameBot: ${text}`;
             message.channel.send(msg);
             log(msg);
         };
@@ -209,26 +212,20 @@ export class DiscordBot extends BaseBot {
     }
 
     protected findPlayerInMongo(name: string, serverId: number): Promise<Player | null> {
-        if (!this.state) throw Error('no state');
-
-        return this.state?.mongo.collections.players.findOne({
+        return this.state.mongo.collections.players.findOne({
             nameLowercase: name.toLowerCase(),
             serverId,
         });
     }
 
     protected findPlayerInMongoById(playerId: string): Promise<Player | null> {
-        if (!this.state) throw Error('no state');
-
-        return this.state?.mongo.collections.players.findOne({
+        return this.state.mongo.collections.players.findOne({
             playerId,
         });
     }
 
     protected async indexPlayer(player: Player): Promise<void> {
-        if (!this.state) throw Error('no state');
-
-        await this.state?.mongo.collections.players.updateOne({
+        await this.state.mongo.collections.players.updateOne({
             playerId: player.playerId,
         }, {
             $set: {

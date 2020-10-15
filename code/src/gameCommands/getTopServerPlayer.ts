@@ -9,8 +9,6 @@ export default async function(game: GameBot, options: {
     rank: number;
     serverId: number;
 }): Promise<TopServerPlayer | null> {
-    // game.reporter(`getTopServerPlayer: ${options.rank}, server ${options.serverId}`);
-
     const indexInResponse = options.rank - 1;
 
     const r = await game.wsRPC(1659, {

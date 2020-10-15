@@ -4,6 +4,7 @@ import { DiscordBot } from 'class/DiscordBot';
 import getTopLocalPlayers from 'gameCommands/getTopLocalPlayers';
 import asyncForeach from 'modules/asyncForeach';
 import createPlayerFromInfo from 'helpers/createPlayerFromInfo';
+import { TopLocalPlayer } from 'gameTypes/TopLocalPlayer';
 
 const USAGE = [
     'how to use:',
@@ -42,8 +43,9 @@ async function index(
 ): Promise<void> {
     const { state } = this;
 
-    if (!state) throw Error('no state');
-    if (offsetFrom < 0 || offsetFrom > offsetTo) throw Error(`invalid offset: ${offsetFrom} -> ${offsetTo}`);
+    if (offsetFrom < 0 || offsetFrom > offsetTo) {
+        throw Error(`invalid offset: ${offsetFrom} -> ${offsetTo}`);
+    }
 
     message.channel.send(`indexing ${isSvS ? 'svs' : 'local'} players: ${offsetFrom} -> ${offsetTo}`);
 
@@ -73,7 +75,7 @@ async function index(
             throw Error(`indexing ${offsetFrom} -> ${to} failed`);
         }
 
-        await asyncForeach(players, async topLocalPlayer => {
+        await asyncForeach<TopLocalPlayer>(players, async topLocalPlayer => {
             const player = createPlayerFromInfo({
                 currentServerId,
                 topLocalPlayer,

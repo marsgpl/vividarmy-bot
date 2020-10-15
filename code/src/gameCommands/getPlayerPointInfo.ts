@@ -8,8 +8,6 @@ import { PlayerPointInfo } from 'gameTypes/PlayerPointInfo';
 export default async function(game: GameBot, options: {
     playerId: string;
 }): Promise<PlayerPointInfo | null> {
-    // game.reporter(`getPlayerPointInfo: ${options.playerId}`);
-
     const r = await game.wsRPC(909, {
         targetId: String(options.playerId),
     });
