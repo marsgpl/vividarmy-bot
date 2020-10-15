@@ -418,4 +418,8 @@ export class Puppet {
 
         return this.done(key);
     }
+
+    public async useFreeRedHeroToken(): Promise<void> {
+        //
+    }
 }
