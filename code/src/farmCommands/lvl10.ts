@@ -13,19 +13,8 @@ export default async function(this: Farm): Promise<void> {
     await puppet.relocateOldTankToLeft();
     await puppet.removeObstacle(1023, { x:20, y:20 }, 'Stone');
     await puppet.removeObstacle(1022, { x:20, y:16 }, 'Ad chest');
-
-
-
-
-    // spawn some units from bag
-    // {"c":202,"o":"123","p":{"armyId":10004,"x":24,"y":28}}
-    // {"c":202,"o":"124","p":{"armyId":10004,"x":22,"y":30}}
-    // {"c":202,"o":"125","p":{"armyId":10004,"x":23,"y":29}}
-
-    // {"c":202,"o":"125","p":{"armyId":10005,"x":26,"y":26,"id":"1710811465084658695"}}
-    // {"c":202,"o":"125","p":{"armyId":10005,"x":27,"y":25,"id":"1710811447837680643"}}
-    // {"c":202,"o":"125","p":{"armyId":10005,"x":28,"y":24,"id":"1710811486039401475"}}
-    // {"c":202,"o":"125","p":{"armyId":10005,"x":29,"y":25,"id":"1710812353807344645"}}
+    await puppet.spawnLvl4TanksFromBag();
+    await puppet.spawnLvl5TanksFromBag();
 
     // merge units until: lvl6x3 oldtankx1
 

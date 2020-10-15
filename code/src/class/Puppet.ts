@@ -14,6 +14,7 @@ import relocateUnit from 'gameCommands/relocateUnit';
 import build from 'gameCommands/build';
 import researchScience from 'gameCommands/researchScience';
 import { Pos } from 'localTypes/Pos';
+import spawnUnitFromBag from 'gameCommands/spawnUnitFromBag';
 
 const js = JSON.stringify;
 
@@ -187,8 +188,6 @@ export class Puppet {
         const r = await this.gameBot.wsRPC(1652, { type: Number(tankStage) });
         if (r?.stat !== tankStage) throw Error(`fail: ${js(r)}`);
 
-        this.log(`ancient tank stage -> ${tankStage}`);
-
         r.endTime && await this.done('doAncientTank:endTime', r.endTime);
 
         return this.done(key);
@@ -202,8 +201,6 @@ export class Puppet {
 
         const r = await this.gameBot.wsRPC(814, { text: String(tutorialStage) });
         if (r?.text !== String(tutorialStage)) throw Error(`fail: ${js(r)}`);
-
-        this.log(`tutorial stage -> ${tutorialStage}`);
 
         return this.done(key);
     }
@@ -273,8 +270,6 @@ export class Puppet {
         const r = await this.gameBot.wsRPC(117, { id: Number(baseMapAreaId) });
         if (!r?.unlockArea) throw Error(`fail: ${js(r)}`);
 
-        this.log(`base map area bought/unlocked: ${baseMapAreaId}`);
-
         // @TODO apply unlockArea
 
         return this.done(key);
@@ -283,6 +278,29 @@ export class Puppet {
         // {"c":10708,"s":0,"d":"{\"allAreaWar\":[{\"areaId\":805,\"chapterId\":1,\"pve_node\":{\"icon\":\"boss1\",\"name\":\"104117\",\"order\":1},\"extInfos\":[{\"itsBoss\":0,\"award\":0,\"levelPoint\":1}],\"finish\":0,\"pve_level\":{\"reward\":100101,\"node\":1,\"using\":1,\"player_number\":1,\"id\":101,\"enemy_type\":0,\"enemy_config\":\"10001\",\"cost_energy\":0,\"player_type\":0,\"order\":1,\"level_count\":1},\"pveId\":101}]}","o":null}
         // {"c":10707,"s":0,"d":"{\"msgType\":0,\"nowAreaWar\":{\"areaId\":805,\"chapterId\":1,\"pve_node\":{\"icon\":\"boss1\",\"name\":\"104117\",\"order\":1},\"extInfos\":[{\"itsBoss\":0,\"award\":0,\"levelPoint\":1}],\"finish\":0,\"pve_level\":{\"reward\":100101,\"node\":1,\"using\":1,\"player_number\":1,\"id\":101,\"enemy_type\":0,\"enemy_config\":\"10001\",\"cost_energy\":0,\"player_type\":0,\"order\":1,\"level_count\":1},\"pveId\":101}}","o":null}
         // {"c":10053,"s":0,"d":"{\"unlockArea\":\"1\"}","o":null}
+    }
+
+    public async spawnLvl4TanksFromBag(): Promise<Done> {
+        const key = `spawnLvl4TanksFromBag`;
+        if (!this.can(key)) return this.cant();
+
+        await spawnUnitFromBag(this.gameBot, 10004, { x:24, y:28 });
+        await spawnUnitFromBag(this.gameBot, 10004, { x:22, y:30 });
+        await spawnUnitFromBag(this.gameBot, 10004, { x:23, y:29 });
+
+        return this.done(key);
+    }
+
+    public async spawnLvl5TanksFromBag(): Promise<Done> {
+        const key = `spawnLvl5TanksFromBag`;
+        if (!this.can(key)) return this.cant();
+
+        await spawnUnitFromBag(this.gameBot, 10005, { x:26, y:26 });
+        await spawnUnitFromBag(this.gameBot, 10005, { x:27, y:25 });
+        await spawnUnitFromBag(this.gameBot, 10005, { x:28, y:24 });
+        await spawnUnitFromBag(this.gameBot, 10005, { x:29, y:25 });
+
+        return this.done(key);
     }
 
     // {"c":695,"o":"107","p":{"code":"topwar888"}} // 200 diamonds
@@ -299,8 +317,6 @@ export class Puppet {
             this.log(`usePromoCode fail: ${js(r)}`);
             return this.done(key);
         }
-
-        this.log(`promo code applied: ${promoCode}`);
 
         // @TODO apply reward
 
@@ -336,8 +352,6 @@ export class Puppet {
             throw Error(`fightBaseMapArea fail: ${js(r)}`);
         }
 
-        this.log(`base map area stage cleared: ${baseMapAreaId}:${baseMapAreaStageId}`);
-
         // @TODO apply reward
 
         return this.done(key);
@@ -366,8 +380,6 @@ export class Puppet {
         }
 
         // @TODO apply reward
-
-        this.log(`obstacle removed: ${obstacleId}`);
 
         return this.done(key);
     }
