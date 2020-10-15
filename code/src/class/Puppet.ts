@@ -388,10 +388,16 @@ export class Puppet {
         if (!this.can(key)) return this.cant();
 
         const building = await this.gameBot.getBuildingsByTypeId(buildingTypeId);
+
+        if (building.length < 1) {
+            throw Error(`repairBuildingByTypeId: ${buildingTypeId}: expected more than 1; note: ${note}`);
+        }
+
         const reparable = building.filter(b => b.broken === 1);
 
-        if (reparable.length < 1) {
-            throw Error(`repairBuildingByTypeId: ${buildingTypeId}: expected more than 1; note: ${note}`);
+        if (!reparable.length) {
+            this.log(`building type=${buildingTypeId} already repaired (${note})`);
+            return this.done(key);
         }
 
         await asyncForeach<Building>(reparable, async building => {
