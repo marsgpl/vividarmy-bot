@@ -4,6 +4,8 @@ export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
     const puppet = await this.getPuppetById(puppetId);
 
+    // @TODO check for already done
+
     if (puppet.can(`researchScienceById:310006`)) {
         throw Error('researchScienceById 310006 not done');
     }
