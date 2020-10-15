@@ -47,4 +47,8 @@ export interface AuthData {
         dailyQuests: [];
         nextRewardTime: number; // 1602777600
     };
+    sciences: {
+        scienceId: number; // 320006
+        group: number; // 320000
+    }[];
 }

@@ -927,6 +927,14 @@ export class GameBot {
         }
     }
 
+    public async isScienceAlreadyResearched(scienceId: number): Promise<boolean> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+
+        return Boolean(this.state.authData.sciences.find(sc =>
+            sc.scienceId === scienceId));
+    }
+
     protected warn(subject: string | number, text: string): void {
         this.reporter(`----------\n WARNING: bad ${subject}: ${text}\n----------`);
     }

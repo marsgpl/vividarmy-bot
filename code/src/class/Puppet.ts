@@ -386,6 +386,11 @@ export class Puppet {
         const key = `researchScienceById:${scienceId}`;
         if (!this.can(key)) return this.cant();
 
+        if (await this.gameBot.isScienceAlreadyResearched(scienceId)) {
+            this.log(`science already researched: ${scienceId}`);
+            return this.done(key);
+        }
+
         const r = await researchScience(this.gameBot, { scienceId });
         if (!r) {
             throw Error(`researchScienceById: ${scienceId} failed; note: ${note}`);
