@@ -1,8 +1,7 @@
 import { Farm } from 'class/Farm';
 import sleep from 'modules/sleep';
 
-export default async function(this: Farm): Promise<void> {
-    const puppetId = process.argv[3];
+async function newPuppet(this: Farm, puppetId: string): Promise<void> {
     const puppet = await this.getPuppetById(puppetId);
 
     await puppet.gameBot.switchToServerId({ targetServerId: puppet.state.targetServerId });
@@ -83,4 +82,21 @@ export default async function(this: Farm): Promise<void> {
     // await puppet.relocateLvl5Units();
 
     await sleep(3000);
+}
+
+export default async function(this: Farm): Promise<void> {
+    const puppetIdFrom = Number(process.argv[3]) || 0;
+    const puppetIdTo = Number(process.argv[4]) || 0;
+
+    if (!puppetIdFrom || !puppetIdTo) {
+        throw Error(`usage: new 1 10\n1 - puppet id from\n10 - puppet id to`);
+    }
+
+    const promises = [];
+
+    for (let i = puppetIdFrom; i <= puppetIdTo; ++i) {
+        promises.push(newPuppet.call(this, String(i)));
+    }
+
+    await Promise.all(promises);
 }
