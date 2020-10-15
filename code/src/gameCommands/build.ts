@@ -11,6 +11,11 @@ export default async function(
     buildingTypeId: number,
     pos: Pos,
 ): Promise<boolean> {
+    if (await game.isBuildingAlreadyBuilt(buildingTypeId, pos)) {
+        game.reporter(`building already built: ${buildingTypeId} at ${JSON.stringify(pos)}`);
+        return true;
+    }
+
     const r = await game.wsRPC(100, {
         x: Number(pos.x),
         y: Number(pos.y),

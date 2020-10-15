@@ -9,6 +9,11 @@ export default async function(game: GameBot, {
 }: {
     scienceId: number;
 }): Promise<boolean> {
+    if (await game.isScienceAlreadyResearched(scienceId)) {
+        game.reporter(`science already researched: ${scienceId}`);
+        return true;
+    }
+
     const r = await game.wsRPC(816, {
         scienceId: Number(scienceId),
         gold: 0,

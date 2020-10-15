@@ -21,6 +21,7 @@ import { Resources } from 'gameTypes/Resources';
 import { Building } from 'gameTypes/Building';
 import claimTreasureTask from 'gameCommands/claimTreasureTask';
 import { Science } from 'gameTypes/Science';
+import { Pos } from 'localTypes/Pos';
 
 const js = JSON.stringify;
 
@@ -941,6 +942,16 @@ export class GameBot {
         if (!updated) {
             this.state.authData?.sciences.push(science);
         }
+    }
+
+    public async isBuildingAlreadyBuilt(buildingTypeId: number, pos: Pos): Promise<boolean> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+
+        return Boolean(this.state.authData.buildings.find(b =>
+            b.buildingId === buildingTypeId &&
+            b.x === pos.x &&
+            b.y === pos.y));
     }
 
     public async isScienceAlreadyResearched(scienceId: number): Promise<boolean> {
