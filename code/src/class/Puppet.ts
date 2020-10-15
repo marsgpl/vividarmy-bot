@@ -175,7 +175,13 @@ export class Puppet {
         if (!this.can(key)) return this.cant();
 
         const r = await this.gameBot.wsRPC(1652, { type: Number(tankStage) });
-        if (r?.stat !== tankStage) throw Error(`fail: ${js(r)}`);
+        if (r?.stat !== tankStage) {
+            if (tankStage === 2) {
+                this.gameBot.reporter(`doAncientTank:${tankStage} fail: ${js(r)}`);
+            } else {
+                throw Error('fail: ${js(r)}`');
+            }
+        }
 
         r.endTime && await this.done('doAncientTank:endTime', r.endTime);
 
