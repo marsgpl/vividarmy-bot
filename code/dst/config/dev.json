@@ -1,0 +1,76 @@
+{
+    "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36",
+        "userAgentTemplate": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/:v1: (KHTML, like Gecko) Chrome/:v2: Safari/:v1:"
+    },
+    "proxy": {
+        "required": true,
+        "socks5": [
+            {
+                "host": "127.0.0.1",
+                "port": 19254
+            }
+        ]
+    },
+    "mongo": {
+        "connectUrl": "mongodb://root:R1PDlGcd2xiDvCHD5fZEMX7gBj82BCls@127.0.0.1:54017/?authSource=admin&useUnifiedTopology=true",
+        "db": "bot"
+    },
+    "discord": {
+        "app": {
+            "name": "G123-dev",
+            "clientId": "763330023422689311",
+            "clientSecret": "vyjXj4m9nVHmkBldc9bODbxSeUOjYIMw",
+            "bot": {
+                "name": "G123-dev",
+                "nametag": "6467",
+                "token": "NzYzMzMwMDIzNDIyNjg5MzEx.X32Iew.I4-5ikScUlAWJUIaC8IqYNeOgRU"
+            },
+            "allowedChannelsIds": {
+                "760478969203130429": "g123-dev"
+            },
+            "adminUsersIds": {
+                "725701621044215889": "Füriend"
+            }
+        },
+        "gameAccount": {
+            "gpToken": "X7GpK52IGlRTkoctuw7xo9RgmXDbRed2Vcmn65CW6UFw8hv8CJoCGIJa7gBPn3KdbbddPHz2LCaORxkSm10wwjze4p370kG0CAH2k1EfPfv0e6M1EIn7GS7frPiUuZsp",
+            "cookieDocId": "discord"
+        },
+        "gameAccountSvS": {
+            "gpToken": "z8UTkLSChCLYpFGNQ1hZyJrBCIoqKh7yUB0hOXt42gWAK1LDxG5o6DuCUW4qL8Ox9JXpQDjBBIANOyz6zJF6SueJJ344smMbffenX74Zu4fapkXZcWpTQmn78c0zqAzr",
+            "cookieDocId": "discordSvS"
+        }
+    },
+    "game": {
+        "printWsPackets": true,
+        "printWsPacketsMaxLength": 256000,
+        "checkIp": {
+            "required": true,
+            "url": "https://eki.one/ipcc",
+            "expectedAnswer": "45.32.27.226 (JP)\n"
+        },
+        "gpTokenCookie": {
+            "name": "gp_token",
+            "params": {
+                "host": "g123.jp",
+                "path": "/"
+            }
+        },
+        "urls": {
+            "shell": "https://h5.g123.jp/game/vividarmy",
+            "game": "https://knight-g123.akamaized.net/worldbattlerelease/index.html?platform=ctw&code=:code:",
+            "getSession": "https://h5.g123.jp/api/session?appId=vividarmy&from=:from:",
+            "getClientVersion": "https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/worldbattlerelease/LatestVersion.txt?__ts__=:ts:",
+            "getClientVersion_referer": "https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/",
+            "getServerInfo": "https://knight-us.topwargame.com/serverList?__ts__=:ts:&token=:token:&pf=g123&platform=g123&channel=g123_g123&appVersion=:appVersion:&tag=1&isTest=0",
+            "getServerInfo_origin": "https://knight-g123.akamaized.net",
+            "getServerInfo_referer": "https://knight-us.topwargame.com/",
+            "gameWs_origin": "https://knight-g123.akamaized.net"
+        }
+    },
+    "farm": {
+        "targetServerId": 602,
+        "resetServerId": 707
+    }
+}
