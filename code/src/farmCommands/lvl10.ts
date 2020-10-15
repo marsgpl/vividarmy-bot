@@ -15,6 +15,7 @@ export default async function(this: Farm): Promise<void> {
     await puppet.removeObstacle(1022, { x:20, y:16 }, 'Ad chest');
     await puppet.spawnLvl4TanksFromBag();
     await puppet.spawnLvl5TanksFromBag();
+    await puppet.mergeUnitsWhilePossible('initial:land6');
 
     // merge units until: lvl6x3 oldtankx1
 
