@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ps ax|grep '[n]ode /home' | wc -l
