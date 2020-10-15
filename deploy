@@ -1,0 +1,4 @@
+#!/bin/bash
+
+lol kek || exit 1
+ssh g123farm@g123farm 'cd ~/vividarmy-bot && git pull'
