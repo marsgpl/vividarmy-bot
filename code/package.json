@@ -6,7 +6,7 @@
     "discord-dev": "NODE_PATH=src ts-node src/discord-dev.ts",
     "discord-prod": "NODE_PATH=src ts-node src/discord-prod.ts",
     "farm-dev": "NODE_PATH=src ts-node src/farm-dev.ts",
-    "farm-prod": "NODE_PATH=dst node dst/farm-prod.ts",
+    "farm-prod": "NODE_PATH=dst node dst/farm-prod.js",
     "web-dev": "NODE_PATH=src ts-node src/web-dev.ts",
     "web-prod": "NODE_PATH=src ts-node src/web-prod.ts"
   },
