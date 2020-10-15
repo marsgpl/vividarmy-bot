@@ -14,7 +14,7 @@ export interface CookieJarStorageConfig {
     docId: string;
 }
 
-interface CookieParams {
+export interface CookieParams {
     [key: string]: string;
 }
 

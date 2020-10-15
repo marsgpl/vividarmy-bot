@@ -1,3 +1,4 @@
+import { AreaWar } from './AreaWar';
 import { Building } from './Building';
 import { Item } from './Item';
 import { PlayerInfo } from './PlayerInfo';
@@ -18,6 +19,8 @@ export interface AuthData {
     armys: Unit[];
     sciences: Science[];
     buildings: Building[];
+    areas: number[]; // [705, 706, 805, 806, 807]
+    areaWars: AreaWar[];
     star: number; // star=power
     regTime: number; // 1602713063
     registk: number; // 602

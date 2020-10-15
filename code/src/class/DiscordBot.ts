@@ -7,14 +7,14 @@ import { DiscordState } from 'state/DiscordState';
 import { MongoState } from 'state/MongoState';
 import { Player } from 'localTypes/Player';
 
-interface DiscordBotState {
+export interface DiscordBotState {
     mongo: MongoState;
     discord: DiscordState;
     game: GameBot;
     gameSvS: GameBot;
 }
 
-type DiscordBotCommand = (
+export type DiscordBotCommand = (
     this: DiscordBot,
     message: Discord.Message,
     isUserAdmin: boolean,

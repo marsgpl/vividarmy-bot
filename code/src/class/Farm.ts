@@ -3,13 +3,13 @@ import { BaseBot } from './BaseBot';
 import { Config } from './Config';
 import { Puppet } from './Puppet';
 
-interface FarmState {
+export interface FarmState {
     mongo: MongoState;
 }
 
-type FarmCommand = (this: Farm) => Promise<void>;
+export type FarmCommand = (this: Farm) => Promise<void>;
 
-type FarmCommandsCache = {
+export type FarmCommandsCache = {
     [commandName: string]: FarmCommand;
 };
 

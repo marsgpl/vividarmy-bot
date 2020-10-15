@@ -18,12 +18,12 @@ const js = JSON.stringify;
 
 type Done = { done: boolean };
 
-interface PuppetOptions {
+export interface PuppetOptions {
     puppetId: string;
     mongo: MongoState;
 }
 
-interface PuppetState {
+export interface PuppetState {
     targetServerId: number;
     gpToken: string;
     userAgent: string;
@@ -251,6 +251,11 @@ export class Puppet {
         const key = `buyBaseMapArea:${baseMapAreaId}`;
         if (!this.can(key)) return this.cant();
 
+        if (await this.gameBot.isBaseMapAreaAlreadyBought(baseMapAreaId)) {
+            this.log(`base map area id=${baseMapAreaId} was already bought`);
+            return this.done(key);
+        }
+
         const r = await this.gameBot.wsRPC(117, { id: Number(baseMapAreaId) });
         if (!r?.unlockArea) throw Error(`fail: ${js(r)}`);
 
@@ -275,7 +280,8 @@ export class Puppet {
         });
 
         if (!r?.reward) {
-            throw Error(`usePromoCode fail: ${js(r)}`);
+            this.log(`usePromoCode fail: ${js(r)}`);
+            return this.done(key);
         }
 
         // @TODO apply reward
@@ -292,6 +298,11 @@ export class Puppet {
     ): Promise<Done> {
         const key = `fightBaseMapArea:${baseMapAreaId}:${baseMapAreaStageId}`;
         if (!this.can(key)) return this.cant();
+
+        if (await this.gameBot.isMapAreaStageAlreadyFought(baseMapAreaId, baseMapAreaStageId)) {
+            this.log(`base map area id=${baseMapAreaId} pveId=${baseMapAreaStageId} was already fought for`);
+            return this.done(key);
+        }
 
         // @TODO heroList
         // @TODO trapList
@@ -315,7 +326,6 @@ export class Puppet {
         // {"c":10104,"s":0,"d":"{\"areaId\":805}","o":null}
         // {"c":10124,"s":0,"d":"{\"treasureTasks\":[{\"num\":1.0,\"state\":0,\"taskId\":5}],\"isUpdate\":1}","o":null}
         // {"c":10708,"s":0,"d":"{\"allAreaWar\":[]}","o":null}
-        // {"c":10707,"s":0,"d":"{\"msgType\":2,\"nowAreaWar\":{\"areaId\":805,\"chapterId\":1,\"pve_node\":{\"icon\":\"boss1\",\"name\":\"104117\",\"order\":1},\"extInfos\":[{\"itsBoss\":0,\"award\":0,\"levelPoint\":1}],\"finish\":1,\"pve_level\":{\"reward\":100101,\"node\":1,\"using\":1,\"player_number\":1,\"id\":101,\"enemy_type\":0,\"enemy_config\":\"10001\",\"cost_energy\":0,\"player_type\":0,\"order\":1,\"level_count\":1},\"pveId\":101}}","o":null}
         // {"c":10031,"s":0,"d":"{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":1000.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0}","o":null}
     }
 

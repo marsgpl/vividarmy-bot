@@ -22,6 +22,7 @@ import { Building } from 'gameTypes/Building';
 import claimTreasureTask from 'gameCommands/claimTreasureTask';
 import { Science } from 'gameTypes/Science';
 import { Pos } from 'localTypes/Pos';
+import { AreaWar } from 'gameTypes/AreaWar';
 
 const js = JSON.stringify;
 
@@ -53,7 +54,7 @@ export interface GameWsIncomingPacket {
     [WS_FIELD_INCOMING_DATA]: GameWsIncomingData;
 }
 
-interface GameBotOptions {
+export interface GameBotOptions {
     gpToken: string;
     cookieDocId?: string;
     cookieCollection?: MongoCollection;
@@ -62,7 +63,7 @@ interface GameBotOptions {
     aliSAFDataDetail?: string;
 }
 
-interface GameBotServerInfo {
+export interface GameBotServerInfo {
     serverId: number; // 601
     serverInfoToken: string; // 'NjAxLGcxMjMsR0g2SkhKTTAsd3NzOi8va25pZ2h0LXVzLTU3Ni50b3B3YXJnYW1lLmNvbS9zNjAxLDE2MDIxNjgwNDU5MjMsZGJlZWUzNzAzNWZjOWZhYmFiMWNjZDBhNmI4YWRjYzMsLA=='
     g123Url: string; // 'wss://knight-us-576.topwargame.com/s601'
@@ -90,13 +91,13 @@ interface GameBotServerInfo {
     now?: number; // 1602168045
 }
 
-interface GameBotClientVersion {
+export interface GameBotClientVersion {
     value: string;
     //
     notes?: string;
 }
 
-interface GameBotSession {
+export interface GameBotSession {
     code: string; // KvNBccM8H0KQojZzpXBixGrvpOU3sSCGY01W6lKa6y6TOC3P8lcOR5CoaeyVQzxN
     isPlatformNewUser?: boolean;
     //
@@ -105,7 +106,7 @@ interface GameBotSession {
     providers?: [];
 }
 
-interface GameBotState {
+export interface GameBotState {
     clientVersion?: GameBotClientVersion;
     session?: GameBotSession;
     serverInfo?: GameBotServerInfo;
@@ -131,7 +132,7 @@ interface GameBotState {
 type GameBotWsCallbackRemoveMe = boolean | void;
 type GameBotWsCallback = (data: GameWsIncomingData) => Promise<GameBotWsCallbackRemoveMe>;
 
-interface GameBotWsConnectOptions {
+export interface GameBotWsConnectOptions {
     switchServer?: true;
 }
 
@@ -914,6 +915,21 @@ export class GameBot {
         }
     }
 
+    public updateAreaWar(areaWar: AreaWar): void {
+        let updated = false;
+
+        this.state.authData?.areaWars.forEach(aw => {
+            if (aw.areaId === aw.areaId) {
+                Object.assign(aw, areaWar);
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            this.state.authData?.areaWars.push(areaWar);
+        }
+    }
+
     public updateBuilding(building: Building): void {
         let updated = false;
 
@@ -942,6 +958,48 @@ export class GameBot {
         if (!updated) {
             this.state.authData?.sciences.push(science);
         }
+    }
+
+    public async isBaseMapAreaAlreadyBought(baseMapAreaId: number): Promise<boolean> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+
+        if (await this.isMapAreaAlreadyOpened(baseMapAreaId)) return true;
+        if (await this.getAreaWarByMapAreaId(baseMapAreaId)) return true;
+
+        return false;
+    }
+
+    public async getAreaWarByMapAreaId(baseMapAreaId: number): Promise<AreaWar | undefined> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+
+        return this.state.authData.areaWars.find(aw =>
+            aw.areaId === baseMapAreaId);
+    }
+
+    public async isMapAreaAlreadyOpened(baseMapAreaId: number): Promise<boolean> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+
+        return this.state.authData.areas.includes(baseMapAreaId);
+    }
+
+    public async isMapAreaStageAlreadyFought(
+        baseMapAreaId: number,
+        baseMapAreaStageId: number,
+    ): Promise<boolean> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+
+        if (await this.isMapAreaAlreadyOpened(baseMapAreaId)) return true;
+
+        const areaWar = await this.getAreaWarByMapAreaId(baseMapAreaId);
+        if (!areaWar) return false;
+
+        if (areaWar.pveId > baseMapAreaStageId) return true;
+
+        return false;
     }
 
     public async isBuildingAlreadyBuilt(buildingTypeId: number, pos: Pos): Promise<boolean> {
@@ -1030,6 +1088,13 @@ export class GameBot {
 
             authData.level = data.level;
             authData.exp = data.exp;
+        });
+
+        // {"c":10707,"s":0,"d":"{\"msgType\":2,\"nowAreaWar\":{\"areaId\":805,\"chapterId\":1,\"pve_node\":{\"icon\":\"boss1\",\"name\":\"104117\",\"order\":1},\"extInfos\":[{\"itsBoss\":0,\"award\":0,\"levelPoint\":1}],\"finish\":1,\"pve_level\":{\"reward\":100101,\"node\":1,\"using\":1,\"player_number\":1,\"id\":101,\"enemy_type\":0,\"enemy_config\":\"10001\",\"cost_energy\":0,\"player_type\":0,\"order\":1,\"level_count\":1},\"pveId\":101}}","o":null}
+        this.wsSetCallbackByCommandId(10707, async data => {
+            if (!data?.nowAreaWar) return warn(10707, js(data));
+            await this.updateAreaWar(data.nowAreaWar);
+            reporter(`areaWars Δ: areaId=${data.nowAreaWar.areaId} pveId=${data.nowAreaWar.pveId}`);
         });
 
         // @TODO async

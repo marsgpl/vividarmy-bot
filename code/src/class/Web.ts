@@ -1,7 +1,7 @@
 import { BaseBot } from './BaseBot';
 import { Config } from './Config';
 
-interface WebState {
+export interface WebState {
 }
 
 export class Web extends BaseBot {
