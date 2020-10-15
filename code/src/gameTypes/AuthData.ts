@@ -2,6 +2,7 @@ import { Building } from './Building';
 import { Item } from './Item';
 import { PlayerInfo } from './PlayerInfo';
 import { Resources } from './Resources';
+import { Science } from './Science';
 import { Unit } from './Unit';
 
 export interface AuthData {
@@ -15,11 +16,15 @@ export interface AuthData {
     resource: Resources;
     items: Item[];
     armys: Unit[];
+    sciences: Science[];
     buildings: Building[];
     star: number; // star=power
     regTime: number; // 1602713063
     registk: number; // 602
     currk: number; // 602
+    k: number; // 601
+    level: number; // 5
+    exp: number; // 4080
     regAppVersion: string; // "1.124.2"
     regCountry: string; // "JP"
     refugee_camp: number; // 0
@@ -47,8 +52,4 @@ export interface AuthData {
         dailyQuests: [];
         nextRewardTime: number; // 1602777600
     };
-    sciences: {
-        scienceId: number; // 320006
-        group: number; // 320000
-    }[];
 }

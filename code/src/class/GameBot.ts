@@ -20,6 +20,7 @@ import { Unit } from 'gameTypes/Unit';
 import { Resources } from 'gameTypes/Resources';
 import { Building } from 'gameTypes/Building';
 import claimTreasureTask from 'gameCommands/claimTreasureTask';
+import { Science } from 'gameTypes/Science';
 
 const js = JSON.stringify;
 
@@ -927,6 +928,21 @@ export class GameBot {
         }
     }
 
+    public updateScience(science: Science): void {
+        let updated = false;
+
+        this.state.authData?.sciences.forEach(sc => {
+            if (sc.scienceId === science.scienceId) {
+                Object.assign(sc, science);
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            this.state.authData?.sciences.push(science);
+        }
+    }
+
     public async isScienceAlreadyResearched(scienceId: number): Promise<boolean> {
         await this.connectToWs();
         if (!this.state.authData) throw Error('no authData');
@@ -989,6 +1005,20 @@ export class GameBot {
                     await claimTreasureTask(this, { taskId: task.taskId });
                 }
             });
+        });
+
+        // {"c":10041,"s":0,"d":"{\"level\":5,\"exp\":2880.0}","o":null}
+        this.wsSetCallbackByCommandId(10041, async data => {
+            if (!data?.level || !data?.exp) return warn(10041, js(data));
+
+            const levelDelta = data.level - authData.level;
+
+            if (levelDelta) {
+                reporter(`level up: ${authData.level} -> ${data.level}`);
+            }
+
+            authData.level = data.level;
+            authData.exp = data.exp;
         });
 
         // @TODO async
