@@ -174,6 +174,15 @@ export class Puppet {
         const key = `doAncientTank:${tankStage}`;
         if (!this.can(key)) return this.cant();
 
+        if (tankStage === 3) {
+            const oldTanks = await this.gameBot.getUnitsByTypeId(99999);
+
+            if (oldTanks.length > 0) {
+                this.log(`old tank already claimed`);
+                return this.done(key);
+            }
+        }
+
         const r = await this.gameBot.wsRPC(1652, { type: Number(tankStage) });
         if (r?.stat !== tankStage) throw Error(`fail: ${js(r)}`);
 
