@@ -23,6 +23,9 @@
         docker-compose restart discord
         docker-compose restart farm
 
+        for ID in {1..170}; do npm run farm-prod new $ID; done
+        for ID in {1..170}; do npm run farm-prod new2 $ID; done
+
 ## Discord bots
 
     prod:
