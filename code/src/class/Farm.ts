@@ -57,7 +57,7 @@ export class Farm extends BaseBot {
         }
     }
 
-    protected getCommandByName(commandName: string): FarmCommand | undefined {
+    public getCommandByName(commandName: string): FarmCommand | undefined {
         if (commandName.length === 0) return;
 
         const commandFromCache = this.commandsCache[commandName];

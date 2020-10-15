@@ -24,8 +24,10 @@
         docker-compose restart farm
 
         for ID in {1..170}; do npm run farm-prod lvl3 $ID; done
+        npm run farm-prod lvl3 1
         npm run farm-prod lvl5 1
         npm run farm-prod codes 1
+        npm run farm-prod all lvl3 1 170
 
 ## Discord bots
 
