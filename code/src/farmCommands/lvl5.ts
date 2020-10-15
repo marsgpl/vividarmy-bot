@@ -8,6 +8,10 @@ export default async function(this: Farm): Promise<void> {
         throw Error('doAncientTank 2 not done');
     }
 
+    if (!puppet.can(`researchScienceById:310006`)) {
+        return this.log('already done');
+    }
+
     await puppet.doAncientTank(3);
     await puppet.buyBaseMapArea(705);
     await puppet.fightBaseMapArea(705, 201, [
