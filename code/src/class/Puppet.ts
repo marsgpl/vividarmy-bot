@@ -429,6 +429,23 @@ export class Puppet {
         }
     }
 
+    // {"c":1152,"o":"140","p":{"multiple":0}}
+    // {"c":1152,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":0.0},\"build\":[],\"armys\":[{\"itemId\":10008,\"itemCount\":1}],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"fakeAlReward\":1}","o":"140"}
+    public async receiveUnitFromNpc(note: string): Promise<Done> {
+        const key = `receiveUnitFromNpc:${note}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await this.gameBot.wsRPC(1152, {
+            multiple: 100,
+        });
+
+        if (!r?.reward) {
+            throw Error(`receiveUnitFromNpc fail: ${js(r)}`);
+        }
+
+        return this.done(key);
+    }
+
     // {"c":109,"o":"50","p":{"x":20,"y":20,"id":1023}}
     // {"c":109,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":500.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"x\":20,\"y\":20}","o":"50"}
     public async removeObstacle(obstacleId: number, pos: Pos, note: string): Promise<Done> {

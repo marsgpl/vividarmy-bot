@@ -55,10 +55,7 @@ export default async function(this: Farm): Promise<void> {
     await puppet.researchScienceById(320008, 'Army units 7->8');
     await puppet.repairBuildingsByTypeId(2101, 'Repair Factory');
     await puppet.claimEventReward({ aid:37, tid: 1139 });
-
-    // receive unit from npc
-    // {"c":1152,"o":"140","p":{"multiple":0}}
-    // {"c":1152,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":0.0},\"build\":[],\"armys\":[{\"itemId\":10008,\"itemCount\":1}],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"fakeAlReward\":1}","o":"140"}
+    await puppet.receiveUnitFromNpc('initial');
 
     // use free red hero token
     // {"c":862,"o":"186","p":{"extractId":2,"num":1,"useDiamond":false,"isFree":true,"useHaveNum":false}}
