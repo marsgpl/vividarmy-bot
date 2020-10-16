@@ -55,7 +55,7 @@ export default async function(this: Farm): Promise<void> {
     await puppet.researchScienceById(320008, 'Army units 7->8');
     await puppet.repairBuildingsByTypeId(2101, 'Repair Factory');
     await puppet.claimEventReward({ aid:37, tid: 1139 });
-    await puppet.receiveUnitFromNpc('initial');
+    // await puppet.receiveUnitFromNpc('initial');
 
     // use free red hero token
     // {"c":862,"o":"186","p":{"extractId":2,"num":1,"useDiamond":false,"isFree":true,"useHaveNum":false}}

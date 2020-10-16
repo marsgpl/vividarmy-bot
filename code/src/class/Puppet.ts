@@ -420,6 +420,7 @@ export class Puppet {
         const key = `claimEventReward:${aid}:${tid}`;
         if (!this.can(key)) return this.cant();
 
+        for (let i = 0; i < 100; ++i) claimEventReward(this.gameBot, { aid, tid });
         const r = await claimEventReward(this.gameBot, { aid, tid });
 
         if (r) {
