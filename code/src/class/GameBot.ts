@@ -583,7 +583,7 @@ export class GameBot {
 
         if (config.game.printWsPackets) {
             console.log(
-                colors.gray('💎 in:'),
+                colors.gray('in:'),
                 colors.gray(crop(rawData, config.game.printWsPacketsMaxLength)));
         }
 
