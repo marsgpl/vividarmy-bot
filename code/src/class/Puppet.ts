@@ -16,6 +16,7 @@ import researchScience from 'gameCommands/researchScience';
 import { Pos } from 'localTypes/Pos';
 import spawnUnitFromBag from 'gameCommands/spawnUnitFromBag';
 import claimEventReward from 'gameCommands/claimEventReward';
+import reloadEventInfo from 'gameCommands/reloadEventInfo';
 
 const js = JSON.stringify;
 
@@ -426,6 +427,15 @@ export class Puppet {
         } else {
             return this.cant();
         }
+    }
+
+    public async reloadInitialEventInfo(): Promise<Done> {
+        const key = `reloadInitialEventInfo`;
+        if (!this.can(key)) return this.cant();
+
+        await reloadEventInfo(this.gameBot);
+
+        return this.done(key);
     }
 
     // {"c":109,"o":"50","p":{"x":20,"y":20,"id":1023}}

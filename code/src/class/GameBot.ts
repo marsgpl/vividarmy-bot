@@ -111,6 +111,7 @@ export interface GameBotState {
     session?: GameBotSession;
     serverInfo?: GameBotServerInfo;
     authData?: AuthData;
+    eventInfo?: { r1: any; r2: any; r3: any; };
     wsConnected: boolean;
     wsConnecting: boolean;
     wsAuthed: boolean;
@@ -528,6 +529,7 @@ export class GameBot {
                 data.userInfo = JSON.parse(data.userInfo);
 
                 state.authData = data as AuthData;
+                delete state.eventInfo;
 
                 state.wsAuthed = true;
                 state.wsLocalTimeMs = Date.now();
@@ -560,6 +562,10 @@ export class GameBot {
                 changeServer: options.switchServer ? 1 : undefined,
             });
         });
+    }
+
+    public setEventInfo(r1: any, r2: any, r3: any):void {
+        this.state.eventInfo = { r1, r2, r3 };
     }
 
     protected wsSetCallbackByCommandId(commandId: number, cb: GameBotWsCallback): void {
@@ -687,6 +693,7 @@ export class GameBot {
         options.switchServer || delete state.session;
         options.switchServer || delete state.serverInfo;
         delete state.authData;
+        delete state.eventInfo;
 
         state.wsConnected = false;
         state.wsConnecting = false;
