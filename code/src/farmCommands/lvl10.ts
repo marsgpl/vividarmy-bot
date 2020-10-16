@@ -49,7 +49,7 @@ export default async function(this: Farm): Promise<void> {
     await puppet.claimTimerTask();
     await puppet.researchScienceById(320007, 'Army units 6->7');
     await puppet.researchScienceById(320008, 'Army units 7->8');
-    await puppet.repairBuildingsByTypeId(1111111, 'Repair Factory');
+    await puppet.repairBuildingsByTypeId(2101, 'Repair Factory');
 
     // receive unit from npc
     // {"c":1152,"o":"140","p":{"multiple":0}}
