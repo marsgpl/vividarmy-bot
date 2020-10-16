@@ -15,7 +15,7 @@ export default async function(game: GameBot, {
     });
 
     if (!r?.building || r?.building?.broken) {
-        throw Error(`failed: ${JSON.stringify(r)}`);
+        throw Error(`repairBuilding failed: ${JSON.stringify(r)}`);
     }
 
     const building = r.building as Building;

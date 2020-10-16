@@ -14,7 +14,7 @@ export default async function(game: GameBot, {
     });
 
     if (!r?.reward) {
-        throw Error(`failed: ${JSON.stringify(r)}`);
+        throw Error(`claimTreasureTask failed: ${JSON.stringify(r)}`);
     }
 
     game.reporter(`treasure task id=${taskId} claimed`);

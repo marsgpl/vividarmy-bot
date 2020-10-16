@@ -46,6 +46,6 @@ export default async function(this: Farm): Promise<void> {
         ...(await puppet.gameBot.getStrongestUnitsForFight(3)),
     ]);
     await puppet.repairBuildingsByTypeId(2001, 'Finance Center');
-    await puppet.researchScienceById(320006, 'Army units 5->6');
+    await puppet.researchScienceById(320006, 'Tank 5->6');
     await puppet.researchScienceById(310006, 'Gold mine merge 5->6');
 }

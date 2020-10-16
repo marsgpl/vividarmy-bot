@@ -14,7 +14,7 @@ export default async function(game: GameBot, {
     });
 
     if (r?.targetUID != accountId) {
-        throw Error(`failed: ${JSON.stringify(r)}`);
+        throw Error(`deleteAccount failed: ${JSON.stringify(r)}`);
     }
 
     game.reporter(`account id=${accountId} deleted`);

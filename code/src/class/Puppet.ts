@@ -17,6 +17,7 @@ import { Pos } from 'localTypes/Pos';
 import spawnUnitFromBag from 'gameCommands/spawnUnitFromBag';
 import claimEventReward from 'gameCommands/claimEventReward';
 import reloadEventInfo from 'gameCommands/reloadEventInfo';
+import claimEventMilestone from 'gameCommands/claimEventMilestone';
 
 const js = JSON.stringify;
 
@@ -403,25 +404,38 @@ export class Puppet {
         // {"c":10031,"s":0,"d":"{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":1000.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0}","o":null}
     }
 
-    // {"c":825,"o":"118","p":{}}
-    // {"c":825,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":0.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[{\"itemId\":800001,\"itemCount\":1}],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"timeReward\":{\"rewardTime\":1602803007,\"times\":1}}","o":"118"}
-    public async claimTimerTask(): Promise<void> {
-        const r = await this.gameBot.wsRPC(825, {});
-
-        if (!r?.reward) {
-            this.log(`claimTimerTask failed: ${js(r)}`);
-        } else {
-            this.log(`claimTimerTask success`);
-            // @TODO apply reward
-        }
-    }
-
-    public async claimEventReward({ aid, tid }: { aid: number; tid: number }): Promise<Done> {
+    public async claimEventReward({
+        aid,
+        tid,
+    }: {
+        aid: number;
+        tid: number;
+    }): Promise<Done> {
         const key = `claimEventReward:${aid}:${tid}`;
         if (!this.can(key)) return this.cant();
 
-        for (let i = 0; i < 100; ++i) claimEventReward(this.gameBot, { aid, tid });
         const r = await claimEventReward(this.gameBot, { aid, tid });
+
+        if (r) {
+            return this.done(key);
+        } else {
+            return this.cant();
+        }
+    }
+
+    public async claimEventMilestone({
+        id,
+        score,
+        adv,
+    }: {
+        id: number;
+        score: number;
+        adv: number;
+    }): Promise<Done> {
+        const key = `claimEventMilestone:${id}:${score}:${adv}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await claimEventMilestone(this.gameBot, { id, score, adv });
 
         if (r) {
             return this.done(key);
@@ -597,6 +611,41 @@ export class Puppet {
         }
 
         this.log(note);
+
+        return this.done(key);
+    }
+
+    public async buildBookCenter(): Promise<Done> {
+        const key = `buildBookCenter`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await build(this.gameBot, 2401, { x:20, y:20 });
+
+        if (!r) {
+            throw Error(`failed to build`);
+        }
+
+        return this.done(key);
+    }
+
+    public async build3barracksLvl2(): Promise<Done> {
+        const key = `build3barracksLvl2`;
+        if (!this.can(key)) return this.cant();
+
+        const bot = this.gameBot;
+
+        if (!await build(bot, 1042, { x:22, y:22 })) throw Error(`failed to build`);
+        if (!await build(bot, 1042, { x:24, y:20 })) throw Error(`failed to build`);
+        if (!await build(bot, 1042, { x:22, y:18 })) throw Error(`failed to build`);
+
+        // wait for building delta apply
+        await sleep(2000);
+
+        const barracks = await bot.getBuildingsByTypeId(1042);
+
+        if (barracks.length != 4) {
+            throw Error(`expected 4 buildings of type 1042, got: ${barracks.length}`);
+        }
 
         return this.done(key);
     }
