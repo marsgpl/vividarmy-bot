@@ -1,4 +1,5 @@
 import { Farm } from 'class/Farm';
+import reloadEventInfo from 'gameCommands/reloadEventInfo';
 
 export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
@@ -41,7 +42,9 @@ export default async function(this: Farm): Promise<void> {
         ...(await puppet.gameBot.getStrongestUnitsForFight(3)),
     ]);
     await puppet.spawnLvl7TanksFromBag();
-    await puppet.reloadInitialEventInfo();
+
+    await reloadEventInfo(puppet.gameBot);
+
     await puppet.claimEventReward({ aid: 194, tid: 6901 });
     await puppet.claimEventReward({ aid: 194, tid: 6903 });
     await puppet.claimEventReward({ aid: 194, tid: 6915 });

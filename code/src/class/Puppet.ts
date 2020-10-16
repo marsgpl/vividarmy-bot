@@ -429,15 +429,6 @@ export class Puppet {
         }
     }
 
-    public async reloadInitialEventInfo(): Promise<Done> {
-        const key = `reloadInitialEventInfo`;
-        if (!this.can(key)) return this.cant();
-
-        await reloadEventInfo(this.gameBot);
-
-        return this.done(key);
-    }
-
     // {"c":109,"o":"50","p":{"x":20,"y":20,"id":1023}}
     // {"c":109,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":500.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"x\":20,\"y\":20}","o":"50"}
     public async removeObstacle(obstacleId: number, pos: Pos, note: string): Promise<Done> {
