@@ -1053,6 +1053,16 @@ export class GameBot {
             reporter(`unit added: ${unit.id}`);
         });
 
+        // {"c":10109,"s":0,"d":"{\"buildings\":[{\"broken\":0,\"proStartTime\":0,\"buildingId\":1042,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":20,\"y\":28,\"proCount\":0.0,\"state\":1,\"id\":\"1710390561376658434\",\"proTime\":0.0,\"proLastTime\":0.0}]}","o":null}
+        this.wsSetCallbackByCommandId(10109, async data => {
+            if (!data?.buildings) return warn(10109, js(data));
+            const buildings = data as Building[];
+            await asyncForeach<Building>(buildings, async building => {
+                await this.updateBuilding(building);
+                reporter(`building updated: ${building.id}`);
+            });
+        });
+
         // {"c":10202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":22,\"y\":26,\"id\":\"1710042903487277063\",\"state\":0,\"march\":0}","o":null}
         this.wsSetCallbackByCommandId(10202, async data => {
             if (!data?.id) return warn(10202, js(data));
