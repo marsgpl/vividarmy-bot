@@ -436,7 +436,7 @@ export class Puppet {
         if (!this.can(key)) return this.cant();
 
         const r = await this.gameBot.wsRPC(1152, {
-            multiple: 100,
+            multiple: 0,
         });
 
         if (!r?.reward) {
