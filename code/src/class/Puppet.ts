@@ -15,6 +15,7 @@ import build from 'gameCommands/build';
 import researchScience from 'gameCommands/researchScience';
 import { Pos } from 'localTypes/Pos';
 import spawnUnitFromBag from 'gameCommands/spawnUnitFromBag';
+import claimEventReward from 'gameCommands/claimEventReward';
 
 const js = JSON.stringify;
 
@@ -399,6 +400,32 @@ export class Puppet {
         // {"c":10124,"s":0,"d":"{\"treasureTasks\":[{\"num\":1.0,\"state\":0,\"taskId\":5}],\"isUpdate\":1}","o":null}
         // {"c":10708,"s":0,"d":"{\"allAreaWar\":[]}","o":null}
         // {"c":10031,"s":0,"d":"{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":1000.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0}","o":null}
+    }
+
+    // {"c":825,"o":"118","p":{}}
+    // {"c":825,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":0.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[{\"itemId\":800001,\"itemCount\":1}],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"timeReward\":{\"rewardTime\":1602803007,\"times\":1}}","o":"118"}
+    public async claimTimerTask(): Promise<void> {
+        const r = await this.gameBot.wsRPC(825, {});
+
+        if (!r?.reward) {
+            this.log(`claimTimerTask failed: ${js(r)}`);
+        } else {
+            this.log(`claimTimerTask success`);
+            // @TODO apply reward
+        }
+    }
+
+    public async claimEventReward({ aid, tid }: { aid: number; tid: number }): Promise<Done> {
+        const key = `claimEventReward:${aid}:${tid}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await claimEventReward(this.gameBot, { aid, tid });
+
+        if (r) {
+            return this.done(key);
+        } else {
+            return this.cant();
+        }
     }
 
     // {"c":109,"o":"50","p":{"x":20,"y":20,"id":1023}}

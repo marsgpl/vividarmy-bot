@@ -38,7 +38,7 @@
     },
     "game": {
         "printWsPackets": true,
-        "printWsPacketsMaxLength": 128,
+        "printWsPacketsMaxLength": 256000,
         "checkIp": {
             "required": true,
             "url": "https://eki.one/ipcc",

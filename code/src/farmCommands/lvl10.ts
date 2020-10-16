@@ -41,30 +41,15 @@ export default async function(this: Farm): Promise<void> {
         ...(await puppet.gameBot.getStrongestUnitsForFight(3)),
     ]);
     await puppet.spawnLvl7TanksFromBag();
-
-    // claim lvlup reward
-    // {"c":842,"o":"98","p":{"aid":194,"tid":6901}}
-    // {"c":842,"o":"101","p":{"aid":194,"tid":6903}}
-        // {"c":842,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":300000.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[{\"itemId\":311001,\"itemCount\":10}],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"num\":5.0,\"state\":2,\"aid\":194,\"tid\":6903,\"key\":\"atarget\"}","o":"101"}
-        // {"c":10901,"s":0,"d":"{\"num\":1.0,\"state\":2,\"aid\":194,\"tid\":6901,\"key\":\"atarget\",\"quality\":0}","o":null}
-        // {"c":10401,"s":0,"d":"{\"itemId\":200003,\"amount\":2}","o":null}
-    // {"c":842,"o":"110","p":{"aid":194,"tid":6915}}
-
-    // claim battery path task
-    // {"c":842,"o":"112","p":{"aid":30000,"tid":10065}}
-    // {"c":842,"o":"114","p":{"aid":30000,"tid":10066}}
-
-    // claim timer task
-    // {"c":825,"o":"118","p":{}}
-    // {"c":825,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":0.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[{\"itemId\":800001,\"itemCount\":1}],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"timeReward\":{\"rewardTime\":1602803007,\"times\":1}}","o":"118"}
-
-    // 6->7 tanks
-    // {"c":816,"o":"124","p":{"scienceId":320007,"gold":0}}
-    // 7->8
-    // {"c":816,"o":"129","p":{"scienceId":320008,"gold":0}}
-
-    // repair Repair Factory
-    // {"c":113,"o":"132","p":{"id":"1710380319574156295"}}
+    await puppet.claimEventReward({ aid: 194, tid: 6901 });
+    await puppet.claimEventReward({ aid: 194, tid: 6903 });
+    await puppet.claimEventReward({ aid: 194, tid: 6915 });
+    await puppet.claimEventReward({ aid: 30000, tid: 10065 });
+    await puppet.claimEventReward({ aid: 30000, tid: 10066 });
+    await puppet.claimTimerTask();
+    await puppet.researchScienceById(320007, 'Army units 6->7');
+    await puppet.researchScienceById(320008, 'Army units 7->8');
+    await puppet.repairBuildingsByTypeId(1111111, 'Repair Factory');
 
     // receive unit from npc
     // {"c":1152,"o":"140","p":{"multiple":0}}
