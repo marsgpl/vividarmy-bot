@@ -13,13 +13,13 @@ export default async function(game: GameBot, {
     score: number;
     adv: number;
 }): Promise<boolean> {
-    const r = await game.wsRPC(842, {
+    const r = await game.wsRPC(1642, {
         id: Number(id),
         score: Number(score),
         adv: Number(adv),
     });
 
-    if (!r?.reward) {
+    if (!r?.resource) {
         game.reporter(`claimEventMilestone failed: ${JSON.stringify(r)}`);
         return false;
     }
