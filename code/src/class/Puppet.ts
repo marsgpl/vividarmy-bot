@@ -649,4 +649,8 @@ export class Puppet {
 
         return this.done(key);
     }
+
+    public disconnectFromGame(): void {
+        this.gameBot.disconnectFromWs();
+    }
 }

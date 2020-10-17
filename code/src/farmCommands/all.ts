@@ -35,5 +35,7 @@ export default async function(this: Farm): Promise<void> {
             this.log(`subcommand failed: ${commandName}`);
             // throw error;
         }
+
+        this.lastPuppet?.disconnectFromGame();
     }
 }

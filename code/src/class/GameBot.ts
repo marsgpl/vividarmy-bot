@@ -706,7 +706,7 @@ export class GameBot {
         });
     }
 
-    protected disconnectFromWs(options: GameBotWsConnectOptions = {}): void {
+    public disconnectFromWs(options: GameBotWsConnectOptions = {}): void {
         const { state, reporter } = this;
 
         if (state.ws) {

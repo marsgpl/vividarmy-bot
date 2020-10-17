@@ -16,6 +16,7 @@ export type FarmCommandsCache = {
 export class Farm extends BaseBot {
     protected _state?: FarmState;
     protected commandsCache: FarmCommandsCache = {};
+    protected lastPuppet?: Puppet;
 
     public get state(): FarmState {
         if (!this._state) throw Error('Farm: no state');
@@ -86,6 +87,8 @@ export class Farm extends BaseBot {
         });
 
         await puppet.init();
+
+        this.lastPuppet = puppet;
 
         return puppet;
     }
