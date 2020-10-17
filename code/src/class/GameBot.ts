@@ -341,7 +341,7 @@ export class GameBot {
         commandId: number,
         payload: GameWsOutgoingPayload,
     ): Promise<GameWsIncomingData> {
-        if (!this.state.wsConnected) {
+        if (!this.state.ws) {
             return Promise.resolve(null);
         }
 
