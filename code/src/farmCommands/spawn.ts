@@ -4,6 +4,7 @@ import claimTimerTask from 'gameCommands/claimTimerTask';
 import reloadEventInfo from 'gameCommands/reloadEventInfo';
 import useFreeRedHeroToken from 'gameCommands/useFreeRedHeroToken';
 import useFreeSkillToken from 'gameCommands/useFreeSkillToken';
+import sleep from 'modules/sleep';
 
 export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
@@ -29,6 +30,8 @@ export default async function(this: Farm): Promise<void> {
     await puppet.relocateInitialLvl4Unit();
     await puppet.build5goldMinesLvl1();
     await puppet.doAncientTank(2);
+
+    await sleep(3 * 60 * 1000 + 1000);
 
     await puppet.doAncientTank(3);
     await puppet.buyBaseMapArea(705);
