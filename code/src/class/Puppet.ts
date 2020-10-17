@@ -193,10 +193,10 @@ export class Puppet {
 
         r.endTime && await this.done('doAncientTank:endTime', r.endTime);
 
-        if (tankStage === 2) {
-            this.log('waiting for 3m ...');
-            await sleep(3 * 60 * 1000 + 1000);
-        }
+        // if (tankStage === 2) {
+        //     this.log('waiting for 3m ...');
+        //     await sleep(3 * 60 * 1000 + 1000);
+        // }
 
         return this.done(key);
     }
