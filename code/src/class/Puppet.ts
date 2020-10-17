@@ -535,6 +535,49 @@ export class Puppet {
         return this.done(key);
     }
 
+    // {"c":902,"o":"65","p":{"marchType":19,"x":256,"y":512,"armyList":[{"pos":1,"armyId":99999,"armyNum":1}],"armyListNew":[{"pos":1,"armyId":99999,"armyNum":1}],"heroList":[101],"trapList":[]}}
+    // {"c":902,"s":0,"d":"{\"marchInfo\":{\"gatherStartTime\":0,\"armyLoad\":\"0.0\",\"marchArrive\":1602959167,\"language\":\"ja\",\"k\":601,\"returnStartTime\":0,\"marchSkin\":0,\"target\":{\"itemId\":1001,\"tx\":256,\"ty\":512,\"tk\":601,\"targetType\":10},\"uid\":318506795609,\"marchType\":19,\"marchStartTime\":1602958938,\"armySkin\":\"\",\"gatherspeed\":\"0.0\",\"name\":\"UTH1\",\"returnArriveTime\":0,\"marchIcon\":0,\"state\":1,\"marchId\":\"1713513073350370313\",\"aid\":100109657,\"begin\":{\"bx\":28,\"by\":524,\"bk\":601,\"k\":601}}}","o":"139"}
+    public async reinforceCapitalWithSingleUnit(unitTypeId: number): Promise<void> {
+        const r = await this.gameBot.wsRPC(902, {
+            marchType: 19,
+            x: 256,
+            y: 512,
+            armyList: [{pos:1,armyId:unitTypeId,armyNum:1}],
+            armyListNew: [{pos:1,armyId:unitTypeId,armyNum:1}],
+            heroList: [],
+            trapList: [],
+        });
+
+        if (!r?.marchInfo) {
+            throw Error(`reinforceCapitalWithSingleUnit failed: ${js(r)}`);
+        }
+    }
+
+    // {"c":1100,"o":"118","p":{"name":"UTH1","tag":"UTH1","symbolTotem":2,"joinType":0,"levelLimit":0,"provinceLimit":-1,"lang":""}}
+    // {"c":1100,"s":0,"d":"{\"allianceInfo\":{\"joinTime\":1602958914,\"memberCount\":1,\"memberMax\":50,\"serverId\":601,\"createTime\":1602958914,\"leaderName\":\"UTH1\",\"rank\":5,\"power\":6803.0,\"basic\":{\"addMembersMax\":0,\"giftLevel\":0,\"symbolColor\":9,\"provinceLimit\":-1,\"giftExp\":0,\"type\":0,\"giftKey\":0,\"sid\":601,\"levelLimit\":0,\"maxMembers\":50,\"symbolTotem\":2,\"createTime\":1602958914,\"joinType\":0,\"members\":1,\"name\":\"UTH1\",\"tag\":\"UTH1\",\"lang\":\"\",\"haveBadge\":\"1,2,100\",\"symbolBase\":0,\"starNum\":0},\"manifesto\":\"\",\"aid\":100109657,\"leaderUid\":318506795609,\"slogan\":\"\",\"notice\":\"\",\"addmemberMax\":0},\"statusCode\":0}","o":"118"}
+    public async createAlliance(allianceName: string): Promise<Done> {
+        const key = `createAlliance:${allianceName}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await this.gameBot.wsRPC(1100, {
+            name: String(allianceName),
+            tag: String(allianceName),
+            symbolTotem: 2,
+            joinType: 0,
+            levelLimit: 0,
+            provinceLimit: -1,
+            lang: '',
+        });
+
+        if (!r?.allianceInfo) {
+            throw Error(`createAlliance fail: ${js(r)}`);
+        }
+
+        this.log(`alliance created: aid=${r?.allianceInfo?.aid}`);
+
+        return this.done(key);
+    }
+
     // {"c":109,"o":"50","p":{"x":20,"y":20,"id":1023}}
     // {"c":109,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":500.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"x\":20,\"y\":20}","o":"50"}
     public async removeObstacle(obstacleId: number, pos: Pos, note: string): Promise<Done> {
