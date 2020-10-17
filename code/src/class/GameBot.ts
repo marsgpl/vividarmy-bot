@@ -341,6 +341,10 @@ export class GameBot {
         commandId: number,
         payload: GameWsOutgoingPayload,
     ): Promise<GameWsIncomingData> {
+        if (!this.state.wsConnected) {
+            return Promise.resolve(null);
+        }
+
         return new Promise((resolve, reject) => {
             const { state } = this;
 
