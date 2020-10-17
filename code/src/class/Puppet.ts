@@ -540,6 +540,24 @@ export class Puppet {
         return this.done(key);
     }
 
+    // {"c":815,"o":"61","p":{"itemid":5100302,"amount":1}}
+    // {"c":815,"s":0,"d":"{\"itemId\":5100302,\"amount\":0}","o":"61"}
+    public async useMarchQueuePlus1(): Promise<Done> {
+        const key = `useMarchQueuePlus1`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await this.gameBot.wsRPC(815, {
+            itemid: 5100302,
+            amount: 1,
+        });
+
+        if (r?.itemId !== 5100302) {
+            throw Error(`useMarchQueuePlus1 failed: ${js(r)}`);
+        }
+
+        return this.done(key);
+    }
+
     // {"c":902,"o":"65","p":{"marchType":19,"x":256,"y":512,"armyList":[{"pos":1,"armyId":99999,"armyNum":1}],"armyListNew":[{"pos":1,"armyId":99999,"armyNum":1}],"heroList":[101],"trapList":[]}}
     // {"c":902,"s":0,"d":"{\"marchInfo\":{\"gatherStartTime\":0,\"armyLoad\":\"0.0\",\"marchArrive\":1602959167,\"language\":\"ja\",\"k\":601,\"returnStartTime\":0,\"marchSkin\":0,\"target\":{\"itemId\":1001,\"tx\":256,\"ty\":512,\"tk\":601,\"targetType\":10},\"uid\":318506795609,\"marchType\":19,\"marchStartTime\":1602958938,\"armySkin\":\"\",\"gatherspeed\":\"0.0\",\"name\":\"UTH1\",\"returnArriveTime\":0,\"marchIcon\":0,\"state\":1,\"marchId\":\"1713513073350370313\",\"aid\":100109657,\"begin\":{\"bx\":28,\"by\":524,\"bk\":601,\"k\":601}}}","o":"139"}
     public async reinforceCapitalWithSingleUnit(unitTypeId: number): Promise<void> {
