@@ -11,4 +11,7 @@ export default async function(this: Farm): Promise<void> {
     }
 
     await puppet.joinAlliance(allianceId);
+
+    // tmp
+        await puppet.reinforceCapitalWithSingleUnit(99999);
 }
