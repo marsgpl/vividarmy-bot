@@ -18,7 +18,7 @@ export default async function(this: Farm): Promise<void> {
 
     await puppet.gameBot.switchToServerId({ targetServerId: puppet.state.targetServerId });
     await puppet.saveGpToken();
-    await puppet.gameBot.deleteAllAccountsExceptCurrent();
+    // await puppet.gameBot.deleteAllAccountsExceptCurrent();
 
     await puppet.doAncientTank(1);
     await puppet.moveTutorial(1);
