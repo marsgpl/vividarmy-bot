@@ -4,9 +4,9 @@ export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
     const puppet = await this.getPuppetById(puppetId);
 
-    await puppet.leaveAlliance();
+    // await puppet.leaveAlliance();
 
-    const tag = `UTH${3 + (this.counter++)}`;
+    const tag = `UT${3 + (this.counter++)}`;
 
     if (!tag) {
         throw Error(`tag not specified (arg[4])`);
