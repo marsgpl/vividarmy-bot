@@ -706,6 +706,10 @@ export class GameBot {
         });
     }
 
+    public setEventInfo(r1: any, r2: any, r3: any):void {
+        this.state.eventInfo = { r1, r2, r3 };
+    }
+
     public disconnectFromWs(options: GameBotWsConnectOptions = {}): void {
         const { state, reporter } = this;
 
