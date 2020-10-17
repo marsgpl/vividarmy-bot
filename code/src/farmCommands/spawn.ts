@@ -4,6 +4,7 @@ import claimTimerTask from 'gameCommands/claimTimerTask';
 import reloadEventInfo from 'gameCommands/reloadEventInfo';
 import useFreeRedHeroToken from 'gameCommands/useFreeRedHeroToken';
 import useFreeSkillToken from 'gameCommands/useFreeSkillToken';
+import sleep from 'modules/sleep';
 // import sleep from 'modules/sleep';
 
 export default async function(this: Farm): Promise<void> {
@@ -145,5 +146,6 @@ export default async function(this: Farm): Promise<void> {
     await puppet.claimEventReward({ aid: 37, tid: 1141 });
 
     await puppet.joinAlliance(allianceId);
+    await sleep(3000);
     await puppet.reinforceCapitalWithSingleUnit(99999);
 }
