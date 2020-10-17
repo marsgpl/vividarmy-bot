@@ -37,6 +37,7 @@ export default async function(this: Farm): Promise<void> {
             await command.call(this);
         }  catch (error) {
             this.log(`subcommand failed: ${commandName}`);
+            this.log(error);
             // throw error;
         }
 
