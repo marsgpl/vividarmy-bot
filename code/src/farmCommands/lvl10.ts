@@ -1,4 +1,5 @@
 import { Farm } from 'class/Farm';
+import reloadEventInfo from 'gameCommands/reloadEventInfo';
 
 export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
@@ -9,6 +10,8 @@ export default async function(this: Farm): Promise<void> {
     if (puppet.can(`changeGender:1`)) {
         throw Error('lvl7 not ready');
     }
+
+    await reloadEventInfo(puppet.gameBot);
 
     await puppet.useAllBlueScienceBoxes();
 
