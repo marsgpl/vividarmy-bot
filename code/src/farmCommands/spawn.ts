@@ -36,9 +36,6 @@ export default async function(this: Farm): Promise<void> {
     await puppet.relocateInitialLvl4Unit();
     await puppet.build5goldMinesLvl1();
     await puppet.doAncientTank(2);
-
-    await sleep(3 * 60 * 1000 + 1000);
-
     await puppet.doAncientTank(3);
     await puppet.buyBaseMapArea(705);
     await puppet.fightBaseMapArea(705, 201, [
