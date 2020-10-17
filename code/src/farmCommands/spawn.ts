@@ -146,6 +146,6 @@ export default async function(this: Farm): Promise<void> {
     await puppet.claimEventReward({ aid: 37, tid: 1141 });
 
     await puppet.joinAlliance(allianceId);
-    await sleep(3000);
-    await puppet.reinforceCapitalWithSingleUnit(99999);
+    // await sleep(3000);
+    // await puppet.reinforceCapitalWithSingleUnit(99999);
 }
