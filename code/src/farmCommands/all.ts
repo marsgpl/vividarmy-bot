@@ -30,6 +30,10 @@ export default async function(this: Farm): Promise<void> {
     for (let puppetIndex = puppetIdFrom; puppetIndex <= puppetIdTo; ++puppetIndex) {
         try {
             process.argv[3] = String(puppetIndex);
+            process.argv[4] = process.argv[6];
+            process.argv[5] = process.argv[7];
+            process.argv[6] = process.argv[8];
+            process.argv[7] = process.argv[9];
             await command.call(this);
         }  catch (error) {
             this.log(`subcommand failed: ${commandName}`);
