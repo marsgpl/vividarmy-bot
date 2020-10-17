@@ -461,6 +461,80 @@ export class Puppet {
         return this.done(key);
     }
 
+    // {"c":835,"o":"48","p":{"username":"UTH1"}}
+    // {"c":835,"s":0,"d":"{\"changeUserNameTimes\":1,\"username\":\"UTH1\"}","o":"48"}
+    public async changeName(newName: string): Promise<Done> {
+        const key = `changeName:${newName}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await this.gameBot.wsRPC(835, {
+            username: String(newName),
+        });
+
+        if (r?.username !== newName) {
+            throw Error(`changeName failed: ${js(r)}`);
+        }
+
+        return this.done(key);
+    }
+
+    // {"c":1344,"o":"52","p":{"flag":233}}
+    // {"c":1344,"s":0,"d":"{\"nationalFlag\":233,\"changeNationalFlagTimes\":1}","o":"52"}
+    public async changeFlag(newFlagId: number): Promise<Done> {
+        const key = `changeFlag:${newFlagId}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await this.gameBot.wsRPC(1344, {
+            flag: Number(newFlagId),
+        });
+
+        if (r?.nationalFlag !== newFlagId) {
+            throw Error(`changeFlag failed: ${js(r)}`);
+        }
+
+        return this.done(key);
+    }
+
+    // {"c":851,"o":"54","p":{"userGender":1}}
+    // {"c":851,"s":0,"d":"{\"userGender\":1,\"changeUserGenderTimes\":1}","o":"54"}
+    public async changeGender(newGender: number): Promise<Done> {
+        const key = `changeGender:${newGender}`;
+        if (!this.can(key)) return this.cant();
+
+        const r = await this.gameBot.wsRPC(851, {
+            userGender: Number(newGender),
+        });
+
+        if (r?.userGender !== newGender) {
+            throw Error(`changeGender failed: ${js(r)}`);
+        }
+
+        return this.done(key);
+    }
+
+    // {"c":815,"o":"92","p":{"itemid":1800001,"amount":250}}
+    public async useAllBlueScienceBoxes(): Promise<Done> {
+        const key = `useAllBlueScienceBoxes`;
+        if (!this.can(key)) return this.cant();
+
+        const bb = await this.gameBot.getItemByTypeId(1800001);
+
+        if (!bb) {
+            throw Error(`blue science boxes not found`);
+        }
+
+        const r = await this.gameBot.wsRPC(815, {
+            itemid: Number(1800001),
+            amount: bb.amount,
+        });
+
+        if (typeof r === 'string') {
+            throw Error(`useAllBlueScienceBoxes failed: ${js(r)}`);
+        }
+
+        return this.done(key);
+    }
+
     // {"c":109,"o":"50","p":{"x":20,"y":20,"id":1023}}
     // {"c":109,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":500.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"x\":20,\"y\":20}","o":"50"}
     public async removeObstacle(obstacleId: number, pos: Pos, note: string): Promise<Done> {

@@ -26,6 +26,7 @@ import { TopLocalPlayer } from 'gameTypes/TopLocalPlayer';
 import getTopLocalPlayers from 'gameCommands/getTopLocalPlayers';
 import { Resources } from 'gameTypes/Resources';
 import claimTreasureTask from 'gameCommands/claimTreasureTask';
+import { Item } from 'gameTypes/Item';
 
 const js = JSON.stringify;
 
@@ -996,6 +997,17 @@ export class GameBot {
         await this.connectToWs();
         if (!this.state.authData) throw Error('no authData');
         return this.state.authData.areas;
+    }
+
+    public async getAllItems(): Promise<Item[]> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+        return this.state.authData.items;
+    }
+
+    public async getItemByTypeId(itemId: number): Promise<Item | undefined> {
+        return (await this.getAllItems())
+            .find(i => i.itemId === itemId);
     }
 
     public async getBuildingsByTypeId(buildingTypeId: number): Promise<Building[]> {
