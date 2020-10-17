@@ -1,19 +1,13 @@
-const cache: {[key: string]: {[value: string]: true}} = {};
+const cache: {[key: string]: true} = {};
 
-const unique = function(key: string, value: any): any {
-    if (!cache[key]) {
-        cache[key] = {};
+const unique = function(key: any): any {
+    if (cache[key]) {
+        throw Error(`key "${key}" is not unique`);
     }
 
-    value = String(value);
+    cache[key] = true;
 
-    if (cache[key][value]) {
-        throw Error(`value ${value} is not unique for key ${key}`);
-    }
-
-    cache[key][value] = true;
-
-    return value;
+    return key;
 };
 
 export default unique;

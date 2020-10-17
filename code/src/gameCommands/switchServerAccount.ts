@@ -1,4 +1,5 @@
 import { GameBot } from 'class/GameBot';
+import unique from 'modules/unique';
 
 // create new:
 
@@ -12,6 +13,8 @@ import { GameBot } from 'class/GameBot';
 
 // {"c":848,"s":0,"d":"{\"uid\":489051796176,\"region\":\"cn-beijing\"}","o":"299"}
 
+const COMMAND_ID = unique(848);
+
 export default async function(game: GameBot, {
     targetServerId,
     targetAccountId,
@@ -19,7 +22,7 @@ export default async function(game: GameBot, {
     targetServerId: number;
     targetAccountId: string;
 }): Promise<void> {
-    const r = await game.wsRPC(848, {
+    const r = await game.wsRPC(COMMAND_ID, {
         serverId: Number(targetServerId),
         uid: targetAccountId || "0",
         deviceType: 'wxMiniProgram',

@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import colors from 'colors';
 import md5 from 'md5';
 import { Collection as MongoCollection } from 'mongodb';
@@ -11,18 +12,20 @@ import { Browser } from 'modules/Browser';
 import crop from 'modules/crop';
 import { AuthData } from 'gameTypes/AuthData';
 import randomString from 'modules/randomString';
-import getAllServers from 'gameCommands/getAllServers';
-import switchServerAccount from 'gameCommands/switchServerAccount';
 import asyncForeach from 'modules/asyncForeach';
 import { MyAccountOnServer } from 'gameTypes/MyAccountOnServer';
-import deleteAccount from 'gameCommands/deleteAccount';
 import { Unit } from 'gameTypes/Unit';
-import { Resources } from 'gameTypes/Resources';
 import { Building } from 'gameTypes/Building';
-import claimTreasureTask from 'gameCommands/claimTreasureTask';
 import { Science } from 'gameTypes/Science';
 import { Pos } from 'localTypes/Pos';
-import { AreaWar } from 'gameTypes/AreaWar';
+import { BaseMapAreaWar } from 'gameTypes/BaseMapAreaWar';
+import deleteAccount from 'gameCommands/deleteAccount';
+import getAllServers from 'gameCommands/getAllServers';
+import switchServerAccount from 'gameCommands/switchServerAccount';
+import { TopLocalPlayer } from 'gameTypes/TopLocalPlayer';
+import getTopLocalPlayers from 'gameCommands/getTopLocalPlayers';
+import { Resources } from 'gameTypes/Resources';
+import claimTreasureTask from 'gameCommands/claimTreasureTask';
 
 const js = JSON.stringify;
 
@@ -143,6 +146,7 @@ export class GameBot {
     protected _cookieJar?: CookieJar;
     protected _browser?: Browser;
     protected state: GameBotState;
+    protected gameNotificationsHandlers: {[key: string]: Function} = {};
     public reporter: (msg: string) => void = (msg: string) => console.log(msg);
 
     public get cookieJar(): CookieJar {
@@ -182,6 +186,20 @@ export class GameBot {
             cookieJar: this.cookieJar,
             socks5: config.proxy.required ? config.proxy.socks5?.[0] : undefined,
         });
+
+        await this.initGameNotificationsHandlers();
+    }
+
+    protected async initGameNotificationsHandlers(): Promise<void> {
+        this.gameNotificationsHandlers = {};
+
+        const names = await fs.readdir('gameNotificationsHandlers');
+
+        names.forEach(name => {
+            this.gameNotificationsHandlers[name] = require(`gameNotificationsHandlers/${name}`);
+        });
+
+        console.log('🔸 this.gameNotificationsHandlers:', this.gameNotificationsHandlers);
     }
 
     protected async initCookieJar(): Promise<void> {
@@ -418,9 +436,9 @@ export class GameBot {
             throw error;
         }
 
-        this.startWsPings();
-        this.restartWsInactivityTimeout();
         this.subscribeToAllNotifications();
+        this.restartWsInactivityTimeout();
+        this.startWsPings();
     }
 
     protected openWs(options: GameBotWsConnectOptions): Promise<void> {
@@ -564,10 +582,6 @@ export class GameBot {
         });
     }
 
-    public setEventInfo(r1: any, r2: any, r3: any):void {
-        this.state.eventInfo = { r1, r2, r3 };
-    }
-
     protected wsSetCallbackByCommandId(commandId: number, cb: GameBotWsCallback): void {
         const { state } = this;
 
@@ -597,17 +611,23 @@ export class GameBot {
             // because server may return string with just id instead of json
         }
 
-        await this.applyCallbacksByCommandId(packet);
-        await this.applyCallbacksByIndex(packet);
+        const wasAppliedById = await this.applyCallbacksByCommandId(packet);
+        const wasAppliedByIndex = await this.applyCallbacksByIndex(packet);
+
+        if (!wasAppliedById && !wasAppliedByIndex) {
+            throw Error(`unsupported packet received: ${packet[WS_FIELD_COMMAND_ID]}`);
+        }
     }
 
-    protected async applyCallbacksByCommandId(packet: GameWsIncomingPacket): Promise<void> {
+    protected async applyCallbacksByCommandId(packet: GameWsIncomingPacket): Promise<boolean> {
         const { state } = this;
 
         const commandId = packet[WS_FIELD_COMMAND_ID];
         const cbs = state.wsCallbacksByCommandId[commandId];
 
-        if (!cbs) return;
+        if (!cbs || cbs.length < 1) {
+            return false;
+        }
 
         const newCbs: GameBotWsCallback[] = [];
 
@@ -625,20 +645,24 @@ export class GameBot {
         } else {
             delete state.wsCallbacksByCommandId[commandId];
         }
+
+        return true;
     }
 
-    protected async applyCallbacksByIndex(packet: GameWsIncomingPacket): Promise<void> {
+    protected async applyCallbacksByIndex(packet: GameWsIncomingPacket): Promise<boolean> {
         const { state } = this;
 
         const packetIndex = packet[WS_FIELD_PACKET_INDEX];
         const cb = state.wsCallbacksByPacketIndex[packetIndex];
 
-        if (!cb) return;
+        if (!cb) return false;
 
         await cb(packet[WS_FIELD_INCOMING_DATA]);
 
         // always remove
         delete state.wsCallbacksByPacketIndex[packetIndex];
+
+        return true;
     }
 
     protected startWsPings(): void {
@@ -718,47 +742,6 @@ export class GameBot {
         reporter(`disconnected from ws${options.switchServer ? ' for reconnection' : ''}`);
     }
 
-    public async getCurrentServerTime(): Promise<number> {
-        const { state } = this;
-
-        await this.connectToWs();
-
-        if (!state.wsLocalTimeMs || !state.wsServerTimeMs) {
-            throw Error('wsLocalTimeMs or wsServerTimeMs is missing');
-        }
-
-        const deltaMs = state.wsLocalTimeMs - state.wsServerTimeMs;
-        const localMs = Date.now();
-        const serverMs = localMs - deltaMs;
-
-        return Math.floor(serverMs / 1000);
-    }
-
-    public getGpToken(): string {
-        if (this.cookieJar) {
-            const cookieKey = this.cookieJar.getCookieKey(
-                this.config.game.gpTokenCookie.params.host,
-                this.config.game.gpTokenCookie.name);
-
-            const cookieValue = this.cookieJar.getCookieValueByKey(cookieKey);
-
-            if (cookieValue) {
-                return cookieValue;
-            }
-        }
-
-        return this.options.gpToken;
-    }
-
-    public async getCurrentServerId(): Promise<number> {
-        const { state } = this;
-
-        if (!state.serverInfo) await this.getServerInfo();
-        if (!state.serverInfo) throw Error('no state.serverInfo');
-
-        return state.serverInfo.serverId;
-    }
-
     public async switchToServerId({
         targetServerId,
     }: {
@@ -779,7 +762,6 @@ export class GameBot {
         this.reporter(`switching server: ${currentServerId} -> ${targetServerId}`);
 
         const allServers = await getAllServers(this);
-        if (!allServers) throw Error('no allServers');
 
         const targetServer = allServers.showServerList.serverList.find(s =>
             s.id === targetServerId &&
@@ -815,216 +797,35 @@ export class GameBot {
 
     public async deleteAllAccountsExceptCurrent(): Promise<void> {
         const currentServerId = await this.getCurrentServerId();
-
         const allServers = await getAllServers(this);
-        if (!allServers) throw Error('no allServers');
 
         await asyncForeach<MyAccountOnServer>(allServers.serverList, async acc => {
             if (acc.serverId === currentServerId) return;
             if (!acc.canDel) return;
             if (acc.level >= 60) return; // do not delete precious accounts!
 
-            this.reporter(`deleting account: s${acc.serverId} lvl ${acc.level} ...`);
-
             await deleteAccount(this, { accountId: String(acc.uid) });
         });
     }
 
-    public async getAllUnits(): Promise<Unit[]> {
-        await this.connectToWs();
-        if (!this.state.authData) throw Error('no authData');
-        return this.state.authData.armys;
-    }
+    public async getTopLocalPlayer(rank: number): Promise<TopLocalPlayer | null> {
+        const PLAYERS_PER_REQUEST = 30;
 
-    public async getAllBuildings(): Promise<Building[]> {
-        await this.connectToWs();
-        if (!this.state.authData) throw Error('no authData');
-        return this.state.authData.buildings;
-    }
+        const rankIndex = rank - 1;
+        const offsetFrom = rankIndex - rankIndex % PLAYERS_PER_REQUEST;
+        const offsetTo = offsetFrom + PLAYERS_PER_REQUEST - 1;
+        const indexInResponse = rankIndex - offsetFrom;
 
-    public async getBuildingsByTypeId(buildingTypeId: number): Promise<Building[]> {
-        return (await this.getAllBuildings()).filter(b =>
-            b.buildingId === buildingTypeId);
-    }
+        const players = await getTopLocalPlayers(this, { offsetFrom, offsetTo });
 
-    // @TODO what about warehouse?
-    public async getMergeableUnits(): Promise<Unit[]> {
-        return (await this.getAllUnits()).filter(u =>
-            // not marching
-            u.march === 0 &&
-            // not damaged
-            u.state === 0);
-    }
+        const player = players?.[indexInResponse];
 
-    public async getFightableUnits(): Promise<Unit[]> {
-        return (await this.getAllUnits()).filter(u =>
-            // not marching
-            u.march === 0 &&
-            // not damaged
-            u.state === 0);
-    }
-
-    public async getUnitsByTypeId(unitTypeId: number): Promise<Unit[]> {
-        return (await this.getAllUnits()).filter(u =>
-            u.armyId === unitTypeId);
-    }
-
-    public async getMergeableUnitsGroups(): Promise<{[key: string]: Unit[]}> {
-        const groups: {[key: string]: Unit[]} = {};
-
-        const mergeableUnits = await this.getMergeableUnits();
-
-        mergeableUnits.forEach(u => {
-            groups[u.armyId] = groups[u.armyId] || [];
-            groups[u.armyId].push(u);
-        });
-
-        return groups;
-    }
-
-    public async getStrongestUnitsForFight(perfectUnitsAmount: number = 1): Promise<Unit[]> {
-        if (perfectUnitsAmount < 1 || perfectUnitsAmount > 9) {
-            throw Error(`invalid perfectUnitsAmount: ${perfectUnitsAmount}`);
+        if (!player) {
+            this.reporter(`getTopLocalPlayer fail`);
+            return null;
         }
 
-        const units = await this.getFightableUnits();
-
-        if (units.length < 1) {
-            throw Error(`not enough fightable units for fight. minimum: 1`);
-        }
-
-        // @TODO army units are always weakest because 10001 is less than 20001
-        units.sort((u1, u2) => u1.armyId > u2.armyId ? -1 : u1.armyId < u2.armyId ? 1 : 0);
-
-        return units.slice(0, perfectUnitsAmount);
-    }
-
-    public updateUnitTypeId(unitId: string, unitTypeId: number): void {
-        this.state.authData?.armys.forEach(u => {
-            if (u.id === unitId) {
-                u.armyId = unitTypeId;
-            }
-        });
-    }
-
-    public updateUnit(unit: Unit): void {
-        let updated = false;
-
-        this.state.authData?.armys.forEach(u => {
-            if (u.id === unit.id) {
-                Object.assign(u, unit);
-                updated = true;
-            }
-        });
-
-        if (!updated) {
-            this.state.authData?.armys.push(unit);
-        }
-    }
-
-    public updateAreaWar(areaWar: AreaWar): void {
-        let updated = false;
-
-        this.state.authData?.areaWars.forEach(aw => {
-            if (aw.areaId === aw.areaId) {
-                Object.assign(aw, areaWar);
-                updated = true;
-            }
-        });
-
-        if (!updated) {
-            this.state.authData?.areaWars.push(areaWar);
-        }
-    }
-
-    public updateBuilding(building: Building): void {
-        let updated = false;
-
-        this.state.authData?.buildings.forEach(b => {
-            if (b.id === building.id) {
-                Object.assign(b, building);
-                updated = true;
-            }
-        });
-
-        if (!updated) {
-            this.state.authData?.buildings.push(building);
-        }
-    }
-
-    public updateScience(science: Science): void {
-        let updated = false;
-
-        this.state.authData?.sciences.forEach(sc => {
-            if (sc.scienceId === science.scienceId) {
-                Object.assign(sc, science);
-                updated = true;
-            }
-        });
-
-        if (!updated) {
-            this.state.authData?.sciences.push(science);
-        }
-    }
-
-    public async isBaseMapAreaAlreadyBought(baseMapAreaId: number): Promise<boolean> {
-        await this.connectToWs();
-        if (!this.state.authData) throw Error('no authData');
-
-        if (await this.isMapAreaAlreadyOpened(baseMapAreaId)) return true;
-        if (await this.getAreaWarByMapAreaId(baseMapAreaId)) return true;
-
-        return false;
-    }
-
-    public async getAreaWarByMapAreaId(baseMapAreaId: number): Promise<AreaWar | undefined> {
-        await this.connectToWs();
-        if (!this.state.authData) throw Error('no authData');
-
-        return this.state.authData.areaWars.find(aw =>
-            aw.areaId === baseMapAreaId);
-    }
-
-    public async isMapAreaAlreadyOpened(baseMapAreaId: number): Promise<boolean> {
-        await this.connectToWs();
-        if (!this.state.authData) throw Error('no authData');
-
-        return this.state.authData.areas.includes(baseMapAreaId);
-    }
-
-    public async isMapAreaStageAlreadyFought(
-        baseMapAreaId: number,
-        baseMapAreaStageId: number,
-    ): Promise<boolean> {
-        await this.connectToWs();
-        if (!this.state.authData) throw Error('no authData');
-
-        if (await this.isMapAreaAlreadyOpened(baseMapAreaId)) return true;
-
-        const areaWar = await this.getAreaWarByMapAreaId(baseMapAreaId);
-        if (!areaWar) return false;
-
-        if (areaWar.pveId > baseMapAreaStageId) return true;
-
-        return false;
-    }
-
-    public async isBuildingAlreadyBuilt(buildingTypeId: number, pos: Pos): Promise<boolean> {
-        await this.connectToWs();
-        if (!this.state.authData) throw Error('no authData');
-
-        return Boolean(this.state.authData.buildings.find(b =>
-            b.buildingId === buildingTypeId &&
-            b.x === pos.x &&
-            b.y === pos.y));
-    }
-
-    public async isScienceAlreadyResearched(scienceId: number): Promise<boolean> {
-        await this.connectToWs();
-        if (!this.state.authData) throw Error('no authData');
-
-        return Boolean(this.state.authData.sciences.find(sc =>
-            sc.scienceId === scienceId));
+        return player;
     }
 
     protected warn(subject: string | number, text: string): void {
@@ -1119,5 +920,251 @@ export class GameBot {
 
         // @TODO async
         // {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":22,\"y\":26,\"li\":[]}]}","o":null}
+
+    }
+
+    public async getCurrentServerTime(): Promise<number> {
+        const { state } = this;
+
+        await this.connectToWs();
+
+        if (!state.wsLocalTimeMs || !state.wsServerTimeMs) {
+            throw Error('wsLocalTimeMs or wsServerTimeMs is missing');
+        }
+
+        const deltaMs = state.wsLocalTimeMs - state.wsServerTimeMs;
+        const localMs = Date.now();
+        const serverMs = localMs - deltaMs;
+
+        return Math.floor(serverMs / 1000);
+    }
+
+    public getGpToken(): string {
+        if (this.cookieJar) {
+            const cookieKey = this.cookieJar.getCookieKey(
+                this.config.game.gpTokenCookie.params.host,
+                this.config.game.gpTokenCookie.name);
+
+            const cookieValue = this.cookieJar.getCookieValueByKey(cookieKey);
+
+            if (cookieValue) {
+                return cookieValue;
+            }
+        }
+
+        return this.options.gpToken;
+    }
+
+    public async getCurrentServerId(): Promise<number> {
+        const { state } = this;
+
+        if (!state.serverInfo) await this.getServerInfo();
+        if (!state.serverInfo) throw Error('no state.serverInfo');
+
+        return state.serverInfo.serverId;
+    }
+
+    public async getAllUnits(): Promise<Unit[]> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+        return this.state.authData.armys;
+    }
+
+    public async getAllBuildings(): Promise<Building[]> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+        return this.state.authData.buildings;
+    }
+
+    public async getAllAreaWars(): Promise<BaseMapAreaWar[]> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+        return this.state.authData.areaWars;
+    }
+
+    public async getAllSciences(): Promise<Science[]> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+        return this.state.authData.sciences;
+    }
+
+    public async getAllBaseMapAreas(): Promise<number[]> {
+        await this.connectToWs();
+        if (!this.state.authData) throw Error('no authData');
+        return this.state.authData.areas;
+    }
+
+    public async getBuildingsByTypeId(buildingTypeId: number): Promise<Building[]> {
+        return (await this.getAllBuildings()).filter(b =>
+            b.buildingId === buildingTypeId);
+    }
+
+    // @TODO what about warehouse?
+    public async getMergeableUnits(): Promise<Unit[]> {
+        return (await this.getAllUnits()).filter(u =>
+            // not marching
+            u.march === 0 &&
+            // not damaged
+            u.state === 0);
+    }
+
+    public async getFightableUnits(): Promise<Unit[]> {
+        return (await this.getAllUnits()).filter(u =>
+            // not marching
+            u.march === 0 &&
+            // not damaged
+            u.state === 0);
+    }
+
+    public async getUnitsByTypeId(unitTypeId: number): Promise<Unit[]> {
+        return (await this.getAllUnits()).filter(u =>
+            u.armyId === unitTypeId);
+    }
+
+    public async getMergeableUnitsGroups(): Promise<{[key: string]: Unit[]}> {
+        const groups: {[key: string]: Unit[]} = {};
+
+        const mergeableUnits = await this.getMergeableUnits();
+
+        mergeableUnits.forEach(u => {
+            groups[u.armyId] = groups[u.armyId] || [];
+            groups[u.armyId].push(u);
+        });
+
+        return groups;
+    }
+
+    public async getStrongestUnitsForFight(maxUnitsAmount: number = 1): Promise<Unit[]> {
+        if (maxUnitsAmount < 1 || maxUnitsAmount > 9) {
+            throw Error(`invalid maxUnitsAmount: ${maxUnitsAmount}`);
+        }
+
+        const units = await this.getFightableUnits();
+
+        if (units.length < 1) {
+            throw Error(`not enough units for fight`);
+        }
+
+        // @TODO army units are always weakest because 10001 is less than 20001
+        units.sort((u1, u2) => u1.armyId > u2.armyId ? -1 : u1.armyId < u2.armyId ? 1 : 0);
+
+        return units.slice(0, maxUnitsAmount);
+    }
+
+    public async updateUnitTypeId(unitId: string, unitTypeId: number): Promise<void> {
+        const units = await this.getAllUnits();
+
+        units.forEach(u => {
+            if (u.id === unitId) {
+                u.armyId = unitTypeId;
+            }
+        });
+    }
+
+    public async updateUnit(unit: Unit): Promise<void> {
+        const units = await this.getAllUnits();
+        let updated = false;
+
+        units.forEach(u => {
+            if (u.id === unit.id) {
+                Object.assign(u, unit);
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            units.push(unit);
+        }
+    }
+
+    public async updateAreaWar(areaWar: BaseMapAreaWar): Promise<void> {
+        const areaWars = await this.getAllAreaWars();
+        let updated = false;
+
+        areaWars.forEach(aw => {
+            if (aw.areaId === aw.areaId) {
+                Object.assign(aw, areaWar);
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            areaWars.push(areaWar);
+        }
+    }
+
+    public async updateBuilding(building: Building): Promise<void> {
+        const buildings = await this.getAllBuildings();
+        let updated = false;
+
+        buildings.forEach(b => {
+            if (b.id === building.id) {
+                Object.assign(b, building);
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            buildings.push(building);
+        }
+    }
+
+    public async updateScience(science: Science): Promise<void> {
+        const sciences = await this.getAllSciences();
+        let updated = false;
+
+        sciences.forEach(sc => {
+            if (sc.scienceId === science.scienceId) {
+                Object.assign(sc, science);
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            sciences.push(science);
+        }
+    }
+
+    public async isBaseMapAreaAlreadyBought(baseMapAreaId: number): Promise<boolean> {
+        if (await this.isBaseMapAreaAlreadyOpened(baseMapAreaId)) return true;
+        if (await this.getAreaWarByMapAreaId(baseMapAreaId)) return true;
+        return false;
+    }
+
+    public async isBaseMapAreaAlreadyOpened(baseMapAreaId: number): Promise<boolean> {
+        const areas = await this.getAllBaseMapAreas();
+        return areas.includes(baseMapAreaId);
+    }
+
+    public async getAreaWarByMapAreaId(baseMapAreaId: number): Promise<BaseMapAreaWar | undefined> {
+        const areaWars = await this.getAllAreaWars();
+        return areaWars.find(aw => aw.areaId === baseMapAreaId);
+    }
+
+    public async isBaseMapAreaStageAlreadyFought(
+        baseMapAreaId: number,
+        baseMapAreaStageId: number,
+    ): Promise<boolean> {
+        if (await this.isBaseMapAreaAlreadyOpened(baseMapAreaId)) return true;
+
+        const areaWar = await this.getAreaWarByMapAreaId(baseMapAreaId);
+        if (!areaWar) return false;
+
+        if (areaWar.pveId > baseMapAreaStageId) return true;
+
+        return false;
+    }
+
+    public async isBuildingAlreadyBuilt(buildingTypeId: number, pos: Pos): Promise<boolean> {
+        const buildings = await this.getAllBuildings();
+        return Boolean(buildings.find(b =>
+            b.buildingId === buildingTypeId &&
+            b.x === pos.x &&
+            b.y === pos.y));
+    }
+
+    public async isScienceAlreadyResearched(scienceId: number): Promise<boolean> {
+        const sciences = await this.getAllSciences();
+        return Boolean(sciences.find(sc => sc.scienceId === scienceId));
     }
 }

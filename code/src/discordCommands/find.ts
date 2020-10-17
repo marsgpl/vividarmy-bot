@@ -5,7 +5,6 @@ import createPlayerFromInfo from 'helpers/createPlayerFromInfo';
 import getPlayerLocalInfo from 'gameCommands/getPlayerLocalInfo';
 import getPlayerPointInfo from 'gameCommands/getPlayerPointInfo';
 import printFormattedPlayerInfo from 'helpers/printFormattedPlayerInfo';
-import getTopLocalPlayer from 'gameCommands/getTopLocalPlayer';
 import getTopServerPlayer from 'gameCommands/getTopServerPlayer';
 import { GameBot } from 'class/GameBot';
 import { Player } from 'localTypes/Player';
@@ -114,10 +113,10 @@ async function findByTopPos(
     }
 
     if (serverId === currentServerId) {
-        const topLocalPlayer = await getTopLocalPlayer(state.game, { rank: playerTopPos });
+        const topLocalPlayer = await state.game.getTopLocalPlayer(playerTopPos);
         playerId = topLocalPlayer?.uid || '';
     } else if (serverId === currentServerIdSvS) {
-        const topLocalPlayer = await getTopLocalPlayer(state.gameSvS, { rank: playerTopPos });
+        const topLocalPlayer = await state.gameSvS.getTopLocalPlayer(playerTopPos);
         playerId = topLocalPlayer?.uid || '';
     } else { // global
         const topServerPlayer = await getTopServerPlayer(state.game, { serverId, rank: playerTopPos });

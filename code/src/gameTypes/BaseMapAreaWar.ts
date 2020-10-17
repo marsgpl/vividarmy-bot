@@ -1,11 +1,11 @@
-export interface AreaWarInfo {
+export interface BaseMapAreaWarInfo {
     itsBoss: number; // 0/1
     award: number; // 0/1
     levelPoint: number; // 1/2/3/...
-    reward?: AreaWarReward;
+    reward?: BaseMapAreaWarReward;
 }
 
-export interface AreaWarReward {
+export interface BaseMapAreaWarReward {
     coin: string; // "20400.0"
     id: string; // "110404"
     item: string; // "310001"
@@ -14,10 +14,10 @@ export interface AreaWarReward {
     type: string; // "0"
 }
 
-export interface AreaWar {
+export interface BaseMapAreaWar {
     areaId: number; // 707
     chapterId: number; // 4
-    extInfos: AreaWarInfo[];
+    extInfos: BaseMapAreaWarInfo[];
     finish: number; // 0/1
     pveId: number; // 403
     pve_level: {

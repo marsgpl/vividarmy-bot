@@ -374,7 +374,7 @@ export class Puppet {
         const key = `fightBaseMapArea:${baseMapAreaId}:${baseMapAreaStageId}`;
         if (!this.can(key)) return this.cant();
 
-        if (await this.gameBot.isMapAreaStageAlreadyFought(baseMapAreaId, baseMapAreaStageId)) {
+        if (await this.gameBot.isBaseMapAreaStageAlreadyFought(baseMapAreaId, baseMapAreaStageId)) {
             this.log(`base map area id=${baseMapAreaId} pveId=${baseMapAreaStageId} was already fought for`);
             return this.done(key);
         }
