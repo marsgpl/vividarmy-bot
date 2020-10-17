@@ -17,6 +17,7 @@ export class Farm extends BaseBot {
     protected _state?: FarmState;
     protected commandsCache: FarmCommandsCache = {};
     protected lastPuppet?: Puppet;
+    public counter: number = 0;
 
     public get state(): FarmState {
         if (!this._state) throw Error('Farm: no state');
