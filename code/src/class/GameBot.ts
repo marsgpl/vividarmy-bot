@@ -614,9 +614,9 @@ export class GameBot {
         const wasAppliedById = await this.applyCallbacksByCommandId(packet);
         const wasAppliedByIndex = await this.applyCallbacksByIndex(packet);
 
-        if (!wasAppliedById && !wasAppliedByIndex) {
-            throw Error(`unsupported packet received: ${packet[WS_FIELD_COMMAND_ID]}`);
-        }
+        // if (!wasAppliedById && !wasAppliedByIndex) {
+        //     throw Error(`unsupported packet received: ${packet[WS_FIELD_COMMAND_ID]}`);
+        // }
     }
 
     protected async applyCallbacksByCommandId(packet: GameWsIncomingPacket): Promise<boolean> {
