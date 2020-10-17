@@ -553,6 +553,18 @@ export class Puppet {
         }
     }
 
+    // {"c":1114,"o":"37","p":{"allianceId":100109669}}
+    // {"c":1114,"s":0,"d":"{\"allianceInfo\":{\"joinTime\":1602960914,\"memberCount\":2,\"memberMax\":50,\"serverId\":601,\"firstJoin\":1,\"createTime\":1602960765,\"leaderName\":\"wy.318511096409\",\"rank\":1,\"power\":5813.0,\"basic\":{\"addMembersMax\":0,\"giftLevel\":1,\"symbolColor\":1,\"provinceLimit\":-1,\"giftExp\":0,\"type\":0,\"giftKey\":0,\"sid\":601,\"levelLimit\":0,\"maxMembers\":50,\"symbolTotem\":2,\"createTime\":1602960765,\"joinType\":0,\"members\":2,\"name\":\"UTH51\",\"tag\":\"UTH2\",\"lang\":\"\",\"haveBadge\":\"1,2,100\",\"symbolBase\":0,\"starNum\":0},\"manifesto\":\"\",\"aid\":100109669,\"leaderUid\":318511096409,\"slogan\":\"\",\"notice\":\"\",\"addmemberMax\":0}}","o":"37"}
+    public async joinAlliance(allianceId: number): Promise<void> {
+        const r = await this.gameBot.wsRPC(1114, {
+            allianceId: Number(allianceId),
+        });
+
+        if (!r?.allianceInfo) {
+            throw Error(`joinAlliance failed: ${js(r)}`);
+        }
+    }
+
     // {"c":1100,"o":"118","p":{"name":"UTH1","tag":"UTH1","symbolTotem":2,"joinType":0,"levelLimit":0,"provinceLimit":-1,"lang":""}}
     // {"c":1100,"s":0,"d":"{\"allianceInfo\":{\"joinTime\":1602958914,\"memberCount\":1,\"memberMax\":50,\"serverId\":601,\"createTime\":1602958914,\"leaderName\":\"UTH1\",\"rank\":5,\"power\":6803.0,\"basic\":{\"addMembersMax\":0,\"giftLevel\":0,\"symbolColor\":9,\"provinceLimit\":-1,\"giftExp\":0,\"type\":0,\"giftKey\":0,\"sid\":601,\"levelLimit\":0,\"maxMembers\":50,\"symbolTotem\":2,\"createTime\":1602958914,\"joinType\":0,\"members\":1,\"name\":\"UTH1\",\"tag\":\"UTH1\",\"lang\":\"\",\"haveBadge\":\"1,2,100\",\"symbolBase\":0,\"starNum\":0},\"manifesto\":\"\",\"aid\":100109657,\"leaderUid\":318506795609,\"slogan\":\"\",\"notice\":\"\",\"addmemberMax\":0},\"statusCode\":0}","o":"118"}
     public async createAlliance({ name, tag }: { name: string; tag: string; }): Promise<Done> {
