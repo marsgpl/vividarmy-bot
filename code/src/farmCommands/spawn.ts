@@ -4,7 +4,7 @@ import claimTimerTask from 'gameCommands/claimTimerTask';
 import reloadEventInfo from 'gameCommands/reloadEventInfo';
 import useFreeRedHeroToken from 'gameCommands/useFreeRedHeroToken';
 import useFreeSkillToken from 'gameCommands/useFreeSkillToken';
-import sleep from 'modules/sleep';
+// import sleep from 'modules/sleep';
 
 export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
@@ -16,26 +16,26 @@ export default async function(this: Farm): Promise<void> {
         throw Error(`invalid allianceId: ${allianceId}`);
     }
 
-    await puppet.gameBot.switchToServerId({ targetServerId: puppet.state.targetServerId });
-    await puppet.saveGpToken();
+    // await puppet.gameBot.switchToServerId({ targetServerId: puppet.state.targetServerId });
+    // await puppet.saveGpToken();
     // await puppet.gameBot.deleteAllAccountsExceptCurrent();
 
-    await puppet.doAncientTank(1);
-    await puppet.moveTutorial(1);
-    await puppet.moveTutorial(2);
-    await puppet.mergeUnitsWhilePossible('initial:land4');
-    await puppet.moveTutorial(3);
-    await puppet.buyBaseMapArea(805);
-    await puppet.fightBaseMapArea(805, 101, [
-        ...(await puppet.gameBot.getStrongestUnitsForFight(1)),
-    ]);
-    await puppet.moveTutorial(5);
-    await puppet.moveTutorial(6);
-    await puppet.repairBuildingsByTypeId(1701, 'Gold Mine lvl1');
-    await puppet.moveTutorial(99);
-    await puppet.relocateInitialLvl4Unit();
-    await puppet.build5goldMinesLvl1();
-    await puppet.doAncientTank(2);
+    // await puppet.doAncientTank(1);
+    // await puppet.moveTutorial(1);
+    // await puppet.moveTutorial(2);
+    // await puppet.mergeUnitsWhilePossible('initial:land4');
+    // await puppet.moveTutorial(3);
+    // await puppet.buyBaseMapArea(805);
+    // await puppet.fightBaseMapArea(805, 101, [
+    //     ...(await puppet.gameBot.getStrongestUnitsForFight(1)),
+    // ]);
+    // await puppet.moveTutorial(5);
+    // await puppet.moveTutorial(6);
+    // await puppet.repairBuildingsByTypeId(1701, 'Gold Mine lvl1');
+    // await puppet.moveTutorial(99);
+    // await puppet.relocateInitialLvl4Unit();
+    // await puppet.build5goldMinesLvl1();
+    // await puppet.doAncientTank(2);
     await puppet.doAncientTank(3);
     await puppet.buyBaseMapArea(705);
     await puppet.fightBaseMapArea(705, 201, [
