@@ -193,13 +193,13 @@ export class GameBot {
     protected async initGameNotificationsHandlers(): Promise<void> {
         this.gameNotificationsHandlers = {};
 
-        const names = await fs.readdir('gameNotificationsHandlers');
+        // const names = await fs.readdir('gameNotificationsHandlers');
 
-        names.forEach(name => {
-            this.gameNotificationsHandlers[name] = require(`gameNotificationsHandlers/${name}`);
-        });
+        // names.forEach(name => {
+        //     this.gameNotificationsHandlers[name] = require(`gameNotificationsHandlers/${name}`);
+        // });
 
-        console.log('🔸 this.gameNotificationsHandlers:', this.gameNotificationsHandlers);
+        // console.log('🔸 this.gameNotificationsHandlers:', this.gameNotificationsHandlers);
     }
 
     protected async initCookieJar(): Promise<void> {
