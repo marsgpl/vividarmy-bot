@@ -385,7 +385,7 @@ export class GameBot {
 
         if (config.game.printWsPackets) {
             console.log(
-                colors.gray('🔸 out:'),
+                colors.gray('🔸 <<'),
                 colors.gray(crop(bytes, config.game.printWsPacketsMaxLength)));
         }
 
@@ -597,7 +597,7 @@ export class GameBot {
 
         if (config.game.printWsPackets) {
             console.log(
-                colors.gray('in:'),
+                colors.gray('>>'),
                 colors.gray(crop(rawData, config.game.printWsPacketsMaxLength)));
         }
 
