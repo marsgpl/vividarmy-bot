@@ -555,13 +555,13 @@ export class Puppet {
 
     // {"c":1100,"o":"118","p":{"name":"UTH1","tag":"UTH1","symbolTotem":2,"joinType":0,"levelLimit":0,"provinceLimit":-1,"lang":""}}
     // {"c":1100,"s":0,"d":"{\"allianceInfo\":{\"joinTime\":1602958914,\"memberCount\":1,\"memberMax\":50,\"serverId\":601,\"createTime\":1602958914,\"leaderName\":\"UTH1\",\"rank\":5,\"power\":6803.0,\"basic\":{\"addMembersMax\":0,\"giftLevel\":0,\"symbolColor\":9,\"provinceLimit\":-1,\"giftExp\":0,\"type\":0,\"giftKey\":0,\"sid\":601,\"levelLimit\":0,\"maxMembers\":50,\"symbolTotem\":2,\"createTime\":1602958914,\"joinType\":0,\"members\":1,\"name\":\"UTH1\",\"tag\":\"UTH1\",\"lang\":\"\",\"haveBadge\":\"1,2,100\",\"symbolBase\":0,\"starNum\":0},\"manifesto\":\"\",\"aid\":100109657,\"leaderUid\":318506795609,\"slogan\":\"\",\"notice\":\"\",\"addmemberMax\":0},\"statusCode\":0}","o":"118"}
-    public async createAlliance(allianceName: string): Promise<Done> {
-        const key = `createAlliance:${allianceName}`;
+    public async createAlliance({ name, tag }: { name: string; tag: string; }): Promise<Done> {
+        const key = `createAlliance:${name}:${tag}`;
         if (!this.can(key)) return this.cant();
 
         const r = await this.gameBot.wsRPC(1100, {
-            name: String(allianceName),
-            tag: String(allianceName),
+            name: String(name),
+            tag: String(tag),
             symbolTotem: 2,
             joinType: 0,
             levelLimit: 0,
