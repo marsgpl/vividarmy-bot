@@ -10,6 +10,12 @@ export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
     const puppet = await this.getPuppetById(puppetId);
 
+    const allianceId = Number(process.argv[4]) || 0;
+
+    if (allianceId < 100000000) {
+        throw Error(`invalid allianceId: ${allianceId}`);
+    }
+
     await puppet.gameBot.switchToServerId({ targetServerId: puppet.state.targetServerId });
     await puppet.saveGpToken();
     await puppet.gameBot.deleteAllAccountsExceptCurrent();
@@ -141,18 +147,6 @@ export default async function(this: Farm): Promise<void> {
     await puppet.claimEventReward({ aid: 37, tid: 1140 });
     await puppet.claimEventReward({ aid: 37, tid: 1141 });
 
-    await reloadEventInfo(puppet.gameBot);
-
-    await puppet.useAllBlueScienceBoxes();
-
-    await puppet.researchScienceById(320009, 'Tank 8->9');
-    await puppet.claimEventReward({ aid: 194, tid: 6904 });
-    await puppet.researchScienceById(301002, 'Barracks build 1->2');
-    await puppet.researchScienceById(311006, 'Barracks merge 5->6');
-    await puppet.researchScienceById(320010, 'Tank 9->10');
-    await puppet.researchScienceById(329001, 'Repair speed 0->1');
-    await puppet.researchScienceById(300002, 'Gold mine build 1->2');
-
-    await puppet.buildBookCenter();
-    await puppet.build3barracksLvl2();
+    await puppet.joinAlliance(allianceId);
+    await puppet.reinforceCapitalWithSingleUnit(99999);
 }
