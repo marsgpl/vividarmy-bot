@@ -3,6 +3,7 @@ import https from 'https';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 
 import { CookieJar } from 'modules/CookieJar';
+import safe from 'helpers/safe';
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 10000;
 const DEFAULT_ENCODING = 'utf-8';
@@ -14,6 +15,8 @@ const REQUEST_HEADER_ORIGIN = 'Origin';
 const REQUEST_HEADER_ACCEPT = 'Accept';
 const REQUEST_HEADER_ACCEPT_LANGUAGE = 'Accept-Language';
 const REQUEST_HEADER_DNT = 'Dnt';
+const REQUEST_HEADER_CONTENT_LENGTH = 'Content-Length';
+const REQUEST_HEADER_CONTENT_TYPE = 'Content-Type';
 
 const RESPONSE_NORMALIZED_HEADER_COOKIE = 'set-cookie';
 
@@ -30,6 +33,8 @@ export interface BrowserConfig {
 export interface BrowserRequestCustomOptions {
     referer?: string;
     origin?: string;
+    postData?: string;
+    contentType?: string;
 }
 
 export interface BrowserResponse {
@@ -64,6 +69,15 @@ export class Browser {
         return this.request(url, options, customOptions);
     }
 
+    post(
+        url: string | URL,
+        options: RequestOptions = {},
+        customOptions: BrowserRequestCustomOptions = {},
+    ): Promise<BrowserResponse> {
+        options.method = 'POST';
+        return this.request(url, options, customOptions);
+    }
+
     request(
         rawUrl: string | URL,
         options: RequestOptions = {},
@@ -72,8 +86,8 @@ export class Browser {
         return new Promise((resolve, reject) => {
             const { config } = this;
 
-            if (options.method !== 'GET') {
-                throw Error('Browser currently supports only GET method');
+            if (options.method !== 'GET' && options.method !== 'POST') {
+                throw Error('Browser currently supports only GET and POST methods');
             }
 
             const url = typeof rawUrl === 'string' ? new URL(rawUrl) : rawUrl;
@@ -108,6 +122,11 @@ export class Browser {
             options.headers[REQUEST_HEADER_DNT] =
                 options.headers[REQUEST_HEADER_DNT] || '1';
 
+            if (customOptions.contentType) {
+                options.headers[REQUEST_HEADER_CONTENT_TYPE] =
+                    customOptions.contentType;
+            }
+
             if (config.cookieJar) {
                 const cookiesFromJar = config.cookieJar.getCookiesAsHeader(url.host, new Date);
 
@@ -118,6 +137,14 @@ export class Browser {
                         cookiesFromOptions + '; ' + cookiesFromJar :
                         cookiesFromJar;
                 }
+            }
+
+            if (options.method === 'POST') {
+                options.headers[REQUEST_HEADER_CONTENT_LENGTH] =
+                    Buffer.byteLength(customOptions.postData || '', 'utf8');
+
+                console.log(safe(`>> POST: ${rawUrl}`));
+                console.log(safe(`>> POST headers: ${JSON.stringify(options.headers)}`));
             }
 
             const onResponse = (response: IncomingMessage): void => {
@@ -160,10 +187,11 @@ export class Browser {
                 reject('timeout');
             });
 
-            /**
-             * @TODO POST
-             */
-            // request.write(postData);
+            if (customOptions.postData) {
+                request.write(customOptions.postData);
+
+                console.log(safe(`>> POST data: ${customOptions.postData}`));
+            }
 
             request.end();
         });

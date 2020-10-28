@@ -4,12 +4,10 @@ export default async function(this: Farm): Promise<void> {
     const puppetId = process.argv[3];
     const puppet = await this.getPuppetById(puppetId);
 
-    if (!puppet.can(`doAncientTank:2`)) {
-        return this.log('already done');
-    }
+    const g123UserId = await puppet.gameBot.getG123UserId();
+    console.log('🔸 g123UserId:', g123UserId);
 
-    await puppet.gameBot.switchToServerId({ targetServerId: puppet.state.targetServerId });
-    await puppet.saveGpToken();
+    // await puppet.gameBot.switchToServerId({ targetServerId: puppet.state.targetServerId });
     // await puppet.gameBot.deleteAllAccountsExceptCurrent();
 
     await puppet.doAncientTank(1);
@@ -28,4 +26,6 @@ export default async function(this: Farm): Promise<void> {
     await puppet.relocateInitialLvl4Unit();
     await puppet.build5goldMinesLvl1();
     await puppet.doAncientTank(2);
+
+    await puppet.saveGpToken();
 }

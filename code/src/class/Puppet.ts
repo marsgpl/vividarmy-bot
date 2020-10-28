@@ -131,8 +131,10 @@ export class Puppet {
 
     protected generateUserAgent(): string {
         const userAgent = this.config.browser.userAgentTemplate
-            .replace(/:v1:/g, `${randomNumber(536, 537)}.${randomNumber(1, 99)}`)
-            .replace(/:v2:/g, `${randomNumber(81, 85)}.${randomNumber(0, 12)}.${randomNumber(1, 5000)}.${randomNumber(1, 200)}`);
+            // .replace(/:v1:/g, `${randomNumber(536, 537)}.${randomNumber(1, 99)}`)
+            .replace(/:v1:/g, `${randomNumber(75, 81)}.${randomNumber(0, 99)}`)
+            // .replace(/:v2:/g, `${randomNumber(81, 85)}.${randomNumber(0, 12)}.${randomNumber(1, 5000)}.${randomNumber(1, 200)}`)
+            ;
 
         this.log(`userAgent created: ${userAgent}`);
 

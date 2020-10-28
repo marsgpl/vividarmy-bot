@@ -272,7 +272,7 @@ export class GameBot {
         reporter(`server info: ${serverInfo.serverId} ${serverInfo.region}`);
     }
 
-    protected async getSession(): Promise<void> {
+    public async getSession(): Promise<void> {
         const { reporter, config, state, browser } = this;
 
         const url = config.game.urls.getSession
@@ -1182,5 +1182,21 @@ export class GameBot {
     public async isScienceAlreadyResearched(scienceId: number): Promise<boolean> {
         const sciences = await this.getAllSciences();
         return Boolean(sciences.find(sc => sc.scienceId === scienceId));
+    }
+
+    public async getCurrentLevel(): Promise<number> {
+        await this.connectToWs();
+
+        if (!this.state.authData) throw Error('no authData');
+
+        return this.state.authData.level;
+    }
+
+    public async getG123UserId(): Promise<string> {
+        await this.connectToWs();
+
+        if (!this.state.authData) throw Error('no authData');
+
+        return this.state.authData.deviceId;
     }
 }
