@@ -1,3 +1,5 @@
+import http from 'http';
+
 import { BaseBot } from './BaseBot';
 import { Config } from './Config';
 
@@ -17,6 +19,10 @@ export class Web extends BaseBot {
     }
 
     public async start(): Promise<void> {
-        //
+        const server = http.createServer((req, res) => {
+            //
+        });
+
+        server.listen(this.config.web.listen.port, this.config.web.listen.host);
     }
 }

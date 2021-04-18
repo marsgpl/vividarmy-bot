@@ -1,5 +1,5 @@
-import http, { RequestOptions, IncomingMessage, Agent, IncomingHttpHeaders } from 'http';
-import https from 'https';
+import http, { RequestOptions, IncomingMessage, IncomingHttpHeaders } from 'http';
+import https, { Agent } from 'https';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 
 import { CookieJar } from 'modules/CookieJar';

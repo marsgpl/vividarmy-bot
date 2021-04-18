@@ -3,15 +3,16 @@
 ## Local
 
     docker network create vividarmybot
-    cd ~/projects/vividarmy/bot
-    npm ci
+    cd ~/projects/vividarmy-bot
     docker-compose up -d mongo
     ./db
         db.disableFreeMonitoring()
         db.players.ensureIndex({ nameLowercase:1, serverId:1 }, { unique:false })
         db.players.ensureIndex({ playerId:1 }, { unique:true })
-    npm start discord-dev
-    npm start farm-dev
+    cd code
+    npm ci
+    npm run discord-dev
+    npm run farm-dev
 
 ## Prod
 

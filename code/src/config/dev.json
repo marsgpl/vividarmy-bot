@@ -4,7 +4,7 @@
         "userAgentTemplate": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/:v1:"
     },
     "proxy": {
-        "required": true,
+        "required": false,
         "socks5": [
             {
                 "host": "127.0.0.1",
@@ -38,17 +38,23 @@
             "cookieDocId": "discord"
         },
         "gameAccountSvS": {
-            "gpToken": "z8UTkLSChCLYpFGNQ1hZyJrBCIoqKh7yUB0hOXt42gWAK1LDxG5o6DuCUW4qL8Ox9JXpQDjBBIANOyz6zJF6SueJJ344smMbffenX74Zu4fapkXZcWpTQmn78c0zqAzr",
+            "gpToken": "TMAvncSAwiO6bCmVh6Yf9NidN0mgti6S78V7Zjggjl5rtPjh3Xzm0Bz8VYcDHP7utnmqS130tagNMisx8rW4r0Hxh9Asp51kPc0QXzTlzts6rgsWGm10LSD7slPeS5FW",
             "cookieDocId": "discordSvS"
         }
     },
+    "web": {
+        "listen": {
+            "host": "127.0.0.1",
+            "port": 43147
+        }
+    },
     "game": {
-        "printWsPackets": true,
+        "printWsPackets": false,
         "printWsPacketsMaxLength": 256000,
         "checkIp": {
             "required": true,
             "url": "https://eki.one/ipcc",
-            "expectedAnswer": "149.248.20.150 (US)\n"
+            "expectedAnswer": "45.77.225.250 (GB)\n"
         },
         "gpTokenCookie": {
             "name": "gp_token",

@@ -111,12 +111,12 @@ export class DiscordBot extends BaseBot {
 
     protected async bindToDiscord(): Promise<void> {
         const { log, state } = this;
-        const discordClient = state?.discord.client;
+        const discordClient = state && state.discord.client;
 
         if (!discordClient) throw Error('no discordClient');
 
         discordClient.on('ready', () => {
-            const usertag = discordClient.user?.tag;
+            const usertag = discordClient.user && discordClient.user.tag;
 
             if (!usertag) throw Error('no user.tag');
 

@@ -36,6 +36,12 @@ export interface Config {
             cookieDocId: string;
         };
     };
+    web: {
+        listen: {
+            host: string;
+            port: number;
+        };
+    };
     game: {
         printWsPackets: boolean;
         printWsPacketsMaxLength: number;
