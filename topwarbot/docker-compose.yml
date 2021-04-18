@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+    mongo:
+        image: mongo:4.4.1-bionic
+        networks:
+            - topwarbot
+        restart: always
+        volumes:
+            - ./mongo-data/:/data/db/:rw
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=j84lKQlYQYEyDWUlvUl9suIzgBCqHN5s
+        ports:
+            - 127.0.0.1:54017:27017
+        command: --quiet
+
+    bot:
+        build: .
+        networks:
+            - topwarbot
+        volumes:
+            - ./src/:/topwarbot/src/:ro
+        restart: always
+        command: npm start
+
+networks:
+    topwarbot:
+        external:
+            name: topwarbot

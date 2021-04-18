@@ -1,0 +1,29 @@
+{
+  "name": "topwarbot",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "NODE_ENV=development NODE_PATH=src ts-node src/topwarbot-dev.ts",
+    "prod": "NODE_ENV=production NODE_PATH=src ts-node src/topwarbot-prod.ts"
+  },
+  "author": "marsgpl",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.5"
+  },
+  "engineStrict": true,
+  "dependencies": {
+    "@types/md5": "^2.2.0",
+    "@types/mongodb": "^3.5.31",
+    "@types/uuid": "^8.3.0",
+    "@types/ws": "^7.2.7",
+    "colors": "^1.4.0",
+    "md5": "^2.3.0",
+    "mongodb": "^3.6.2",
+    "socks-proxy-agent": "^5.0.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3",
+    "uuid": "^8.3.1",
+    "ws": "^7.3.1"
+  }
+}
