@@ -1,0 +1,7 @@
+POST https://bi-tracker-global.rivergame.net/event/tracker
+
+content-type: application/json;charset=UTF-8
+
+{"rid":"3518cbd41600181251500700","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"load_start","temp_id":"3518cbd4-7cc7-4f9e-9b11-0eee73dab0a7","platform":"G123","qn":2,"time":1600181251,"debug":0,"sid":-1,"eventinfo":{"server_time":1600181251,"oltime":984,"country":"JP","channel":"G123"}}]}
+
+{"rid":"3518cbd41600181250586681","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"launch","temp_id":"3518cbd4-7cc7-4f9e-9b11-0eee73dab0a7","platform":"G123","qn":1,"time":1600181250435,"debug":0,"sid":-1,"eventinfo":{"oltime":0,"country":"JP","channel":"G123"}}]}

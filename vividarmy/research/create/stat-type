@@ -1,0 +1,34 @@
+POST https://h5.g123.jp/reports
+
+---
+
+:authority: h5.g123.jp
+:method: POST
+:path: /reports
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+content-length: 226
+content-type: application/json
+dnt: 1
+origin: https://h5.g123.jp
+referer: https://h5.g123.jp/game/vividarmy
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: same-origin
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+---
+
+{"type":"p_init","uuid":"4aca4295-68ca-4aac-b9d8-7f02c556f35a","ctwid":"G0000000","appid":"vividarmy","time":"1600436788227","page":{"referer":"","network_connection":"","url":"https://h5.g123.jp/game/vividarmy"},"payload":{}}
+
+{"type":"p_register","uuid":"3b25a973-79a3-4e31-92a5-3b322771814c","ctwid":"GGGDTIMG","appid":"vividarmy","time":"1600436790127","page":{"referer":"","network_connection":"","url":"https://h5.g123.jp/game/vividarmy"},"payload":{"display_name":"GGGDTIMG","providers":[]}}
+
+{"type":"p_game_loaded","uuid":"5e6378b6-13d3-428d-bf14-f53001384820","ctwid":"GGGDTIMG","appid":"vividarmy","time":"1600436796228","page":{"referer":"","network_connection":"","url":"https://h5.g123.jp/game/vividarmy"},"payload":{"display_name":"GGGDTIMG","providers":[]}}
+
+{"type":"g_register","uuid":"d2782c84-4806-4a7e-8c58-264b80b81fc9","ctwid":"GGGDTIMG","appid":"vividarmy","time":"1600436825162","page":{"referer":"","network_connection":"","url":"https://h5.g123.jp/game/vividarmy"},"payload":{"game_server_id":"692","game_user_id":"474001920692","role_id":"474001920692","role_level":1,"role_vip_level":0,"virtual_balance1":0,"role_exp":0,"role_vip_exp":0,"role_power":10,"role_custom":"{\"talent\":0,\"reg_server_id\":\"692\"}"}}
+
+{"type":"g_createrole","uuid":"2ca21d01-15b5-438e-bc73-893e8eb7b33e","ctwid":"GGGDTIMG","appid":"vividarmy","time":"1600436843555","page":{"referer":"","network_connection":"","url":"https://h5.g123.jp/game/vividarmy"},"payload":{"game_server_id":"692","game_user_id":"474001920692","role_id":"474001920692","role_level":1,"role_vip_level":0,"virtual_balance1":0,"role_exp":0,"role_vip_exp":0,"role_power":514,"role_custom":"{\"talent\":0,\"reg_server_id\":\"692\"}"}}
+
+{"type":"g_tutorial","uuid":"4896da31-83ed-4e3e-86f6-7d0639430c32","ctwid":"GGGDTIMG","appid":"vividarmy","time":"1600436861943","page":{"referer":"","network_connection":"","url":"https://h5.g123.jp/game/vividarmy"},"payload":{"game_server_id":"692","game_user_id":"474001920692","role_id":"474001920692","role_level":1,"role_vip_level":0,"virtual_balance1":0,"role_exp":0,"role_vip_exp":0,"role_power":514,"role_custom":"{\"talent\":\"0\",\"reg_server_id\":\"692\"}","item_id":"1","item_desc":"ラグノ装備準備命令"}}

@@ -1,0 +1,35 @@
+if received this:
+
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[\"10004\"],\"buildingTips\":[]}}","o":null} - army lvl 4
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[\"10005\"],\"buildingTips\":[\"1704\",\"1043\"]}}","o":null} - army lvl 5
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[\"99999\"],\"buildingTips\":[\"1704\",\"1043\"]}}","o":null} - old tank
+
+then you unlocked new unit type (levelled up max unit lvl)
+
+respond with this:
+
+check possibility of claim:
+
+{"c":828,"o":"99","p":{"type":1,"itemid":"10004"}}
+    {"c":828,"s":0,"d":"{\"result\":\"success\"}","o":"99"}
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[],\"buildingTips\":[]}}","o":null}
+
+if success, claim:
+
+{"c":823,"o":"148","p":{"armyid":10004}}
+    {"c":823,"s":0,"d":"{\"result\":\"success\"}","o":"148"}
+    {"c":10203,"s":0,"d":"{\"armyNum\":1,\"armyId\":10005,\"overdueTime\":0}","o":null}
+
+it will appear in your backpack
+
+---
+
+for buildings:
+
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[],\"buildingTips\":[\"1702\"]}}","o":null} - gold mine 2
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[],\"buildingTips\":[\"1703\"]}}","o":null} - gold mine 3
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[],\"buildingTips\":[\"1704\"]}}","o":null} - gold mine 4
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[],\"buildingTips\":[\"1704\",\"1042\"]}}","o":null} - 1042 - barracks 2
+    {"c":10709,"s":0,"d":"{\"shareTips\":{\"armyTips\":[],\"buildingTips\":[\"1704\",\"1043\"]}}","o":null} - 1043 - barracks 3
+
+do not react on this

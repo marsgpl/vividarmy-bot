@@ -1,0 +1,40 @@
+POST https://bisdk.rivergame.net/clientloading_switch.php
+
+- body
+
+TempID=2027edb4-8623-4a9f-b0ce-cb65408dd264549f63e5-5253-404e-aabf-8bbb706a82e4&prod=38
+
+- req hdr
+
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Connection: keep-alive
+Content-Length: 87
+Content-Type: application/x-www-form-urlencoded
+dnt: 1
+Host: bisdk.rivergame.net
+Origin: https://knight-g123.akamaized.net
+Referer: https://bisdk.rivergame.net/
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: cross-site
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+Access-Control-Allow-Methods: GET, POST ,OPTIONS
+Access-Control-Allow-Origin: *
+Connection: keep-alive
+Content-Encoding: gzip
+Content-Type: text/html
+Date: Fri, 18 Sep 2020 13:46:41 GMT
+Server: nginx
+Transfer-Encoding: chunked
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.30
+
+- resp body
+
+{"ELEX_POST_IS_QUEUE":true,"ELEX_POST_FAILE_RETRY":6,"ELEX_APP_ERROR":true,"ELEX_APP_STORAGE":true,"ELEX_STORAGE_MAX_LENGTH":200,"ELEX_STORAGE_TIMTS":100}

@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+    mongo:
+        image: mongo:4.4.1-bionic
+        networks:
+            - vividarmybotfarm
+        restart: "no"
+        volumes:
+            - ./mongo-data/:/data/db/:rw
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=R1PDlGcd2xiDvCHD5fZEMX7gBj82BCls
+        ports:
+            - 127.0.0.1:54017:27017
+        command: --quiet
+    bot:
+        build: ./bot
+        networks:
+            - vividarmybotfarm
+        restart: "no"
+        volumes:
+            - ./bot/src/:/vividarmy/bot/src/:ro
+        ports:
+            - 127.0.0.1:54080:54080
+
+networks:
+    vividarmybotfarm:
+        external:
+            name: vividarmybotfarm

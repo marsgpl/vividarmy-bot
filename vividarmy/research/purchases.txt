@@ -1,0 +1,54 @@
+
+        // growth fund
+        {"c":703,"o":"136","p":{"exchangeId":4100,"name":"成長基金","isTest":0,"pf":"ctw"}},
+
+        // tywin 1
+        // [12001, '英雄ギフト'],
+        // tywin 2
+        {"c":703,"o":"75","p":{"exchangeId":12011,"name":"英雄昇格ギフト","isTest":0,"pf":"ctw"}},
+
+        // valery skin
+        {"c":703,"o":"83","p":{"exchangeId":37,"name":"アリアボイス","isTest":0,"pf":"ctw"}},
+        // inoki skin
+        {"c":703,"o":"87","p":{"exchangeId":38,"name":"ジュリアボイス","isTest":0,"pf":"ctw"}},
+        // some hero
+        {"c":703,"o":"90","p":{"exchangeId":200091,"name":"メリルハロウィンスキン","isTest":0,"pf":"ctw"}},
+
+        // amalia skill set 1
+        {"c":703,"o":"95","p":{"exchangeId":101755,"name":"まどか専用スキルギフト","isTest":0,"pf":"ctw"}},
+
+        // some weekly sale item: 2 gold shards + something
+        {"c":703,"o":"98","p":{"exchangeId":912801,"name":"英雄育成ギフト","isTest":0,"pf":"ctw"}},
+        // some weekly sale item: feather
+        {"c":703,"o":"102","p":{"exchangeId":101759,"name":"キュゥべえギフト","isTest":0,"pf":"ctw"}},
+        // some weekly sale item: 60 gem + 4 def box
+        {"c":703,"o":"106","p":{"exchangeId":912601,"name":"防衛ギフト","isTest":0,"pf":"ctw"}},
+        // some weekly sale item: 60 gem + 4 atk box
+        {"c":703,"o":"110","p":{"exchangeId":912501,"name":"強襲ギフト","isTest":0,"pf":"ctw"}},
+        // some weekly sale item: 60 gems + 20 gold box
+        {"c":703,"o":"114","p":{"exchangeId":912201,"name":"経済発展ギフト","isTest":0,"pf":"ctw"}},
+        // some weekly sale item: 60 gems + 25 tech box
+        {"c":703,"o":"118","p":{"exchangeId":912301,"name":"科学強化ギフト","isTest":0,"pf":"ctw"}},
+
+        // monthly gem card
+        {"c":703,"o":"51","p":{"exchangeId":2006,"name":"ダイヤ週パス","isTest":0,"pf":"ctw"}},
+
+        // daily unit +1
+        {"c":703,"o":"55","p":{"exchangeId":6000,"name":"進化補給","isTest":0,"pf":"ctw"}},
+        // daily unit +2
+        {"c":703,"o":"60","p":{"exchangeId":6001,"name":"豪華補給","isTest":0,"pf":"ctw"}},
+        // daily mysterious bag 1
+        {"c":703,"o":"63","p":{"exchangeId":180001,"name":"進化福袋","isTest":0,"pf":"ctw"}},
+        // daily mystery bag 2
+        {"c":703,"o":"67","p":{"exchangeId":180002,"name":"豪華福袋","isTest":0,"pf":"ctw"}},
+        // daily mystery bag 3
+        {"c":703,"o":"71","p":{"exchangeId":180003,"name":"究極福袋","isTest":0,"pf":"ctw"}},
+
+        // 25980 gems
+        {"c":703,"o":"141","p":{"exchangeId":34,"name":"25980ダイヤ","isTest":0,"pf":"ctw"}},
+        // [13007, '新人ギフト'],
+        // [13010, '新人ギフト'],
+        // [20201016, '暁美ほむら'],
+        // [20201015, '鹿目まどか（魔法少女）'],
+        // [21501, 'Lv.15限定ギフト'],
+        // [5003, '月パス'],

@@ -1,0 +1,5 @@
+if received this:
+
+    {"c":10012,"s":0,"d":"{\"power\":\"516.0\"}","o":null}
+
+then your power (rating) was changed

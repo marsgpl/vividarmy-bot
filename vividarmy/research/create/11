@@ -1,0 +1,31 @@
+WSS wss://knight-cn-tencent-520.rivergame.net/s692
+
+- req hdr
+
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Cache-Control: no-cache
+Connection: Upgrade
+dnt: 1
+Host: knight-cn-tencent-520.rivergame.net
+Origin: https://knight-g123.akamaized.net
+Pragma: no-cache
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+Sec-WebSocket-Key: n0bvtR7YoG6iIWJ3yVvpvw==
+Sec-WebSocket-Version: 13
+Upgrade: websocket
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+alt-svc: h3-27=":443"; ma=86400, h3-28=":443"; ma=86400, h3-29=":443"; ma=86400
+CF-Cache-Status: DYNAMIC
+CF-RAY: 5d4b843b9b151d5f-NRT
+cf-request-id: 054310f94100001d5fd23e6200000001
+Connection: upgrade
+Date: Fri, 18 Sep 2020 13:47:02 GMT
+Expect-CT: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+sec-websocket-accept: A3+jxijjDEp5Ju/4wi8ZkYLH3vA=
+sec-websocket-extensions: permessage-deflate
+Server: cloudflare
+upgrade: websocket

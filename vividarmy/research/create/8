@@ -1,0 +1,41 @@
+GET https://knight-cdn.akamaized.net/DynRes/1.2.6119/assets/locale/ja_1.2.6119.txt
+
+- req hdr
+
+:authority: knight-cdn.akamaized.net
+:method: GET
+:path: /DynRes/1.2.6119/assets/locale/ja_1.2.6119.txt
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+content-type: text/plain;charset=UTF-8
+dnt: 1
+origin: https://knight-g123.akamaized.net
+referer: https://knight-g123.akamaized.net/worldbattlerelease/index.html?platform=ctw&code=vG7hrpxnQOroLsKVi1FII4pup5PBaQD1ba2eBXA1Aw2KzQDzkLdL6lkK3uUDPlsw
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: same-site
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+access-control-allow-methods: GET
+access-control-allow-origin: *
+access-control-max-age: 0
+cache-control: max-age=2587615
+content-encoding: gzip
+content-length: 269961
+content-md5: lz5Pc1CuFXRcId5vsqFAYA==
+content-type: text/plain
+date: Fri, 18 Sep 2020 13:46:44 GMT
+expires: Sun, 18 Oct 2020 12:33:39 GMT
+last-modified: Fri, 18 Sep 2020 12:33:55 GMT
+server: AliyunOSS
+status: 200
+vary: Accept-Encoding
+x-oss-hash-crc64ecma: 690929459982209641
+x-oss-object-type: Normal
+x-oss-request-id: 5F64A953939F2533392575A0
+x-oss-server-time: 6
+x-oss-storage-class: Standard

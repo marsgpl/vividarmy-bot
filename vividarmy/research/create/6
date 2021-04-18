@@ -1,0 +1,29 @@
+GET https://knight-us.topwargame.com/frontconfigget?__ts__=8891315&platform=g123&version=1.120.0
+
+- req hdr
+
+:authority: knight-us.topwargame.com
+:method: GET
+:path: /frontconfigget?__ts__=8891315&platform=g123&version=1.120.0
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+content-type: text/plain;charset=UTF-8
+dnt: 1
+origin: https://knight-g123.akamaized.net
+referer: https://knight-us.topwargame.com/
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: cross-site
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+access-control-allow-credentials: *
+access-control-allow-headers: *
+access-control-allow-methods: *
+access-control-allow-origin: *
+access-control-max-age: 3600
+date: Fri, 18 Sep 2020 13:46:41 GMT
+status: 200

@@ -1,0 +1,17 @@
+{
+  "name": "g123-discord-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_PATH=src node index.js"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "discord.js": "^12.3.1",
+    "md5": "^2.3.0",
+    "socks-proxy-agent": "^5.0.0",
+    "ws": "^7.3.1"
+  }
+}

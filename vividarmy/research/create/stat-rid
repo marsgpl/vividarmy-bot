@@ -1,0 +1,50 @@
+POST https://bi-tracker-global.rivergame.net/event/tracker
+
+---
+
+:authority: bi-tracker-global.rivergame.net
+:method: POST
+:path: /event/tracker
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+content-length: 274
+content-type: application/json;charset=UTF-8
+dnt: 1
+origin: https://knight-g123.akamaized.net
+referer: https://bi-tracker-global.rivergame.net/
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: cross-site
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+---
+
+{"rid":"fcbaff7d1600436798463115","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"launch","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":1,"time":1600436798313,"debug":0,"sid":-1,"eventinfo":{"oltime":0,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436799377177","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"load_start","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":2,"time":1600436799,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436799,"oltime":1007,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436798463115","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"launch","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":1,"time":1600436798313,"debug":0,"sid":-1,"eventinfo":{"oltime":0,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436799377177","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"load_start","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":2,"time":1600436799,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436799,"oltime":1007,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436804131498","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"load_config_start","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":3,"time":1600436804,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436804,"oltime":5730,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436805692445","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"load_res","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":4,"time":1600436805,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436805,"oltime":7332,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436806563550","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"load_config_finish","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":5,"time":1600436806,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436806,"oltime":8204,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436819809571","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"platform_login","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":7,"time":1600436819,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436819,"oltime":21417,"country":"JP","channel":"G123"}},{"event":"load_finish","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":6,"time":1600436819,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436819,"oltime":21304,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436819932400","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"serverlist","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":8,"time":1600436819,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436819,"oltime":21511,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436820963502","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"platform_login","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":9,"time":1600436820,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436820,"oltime":22602,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436822766210","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"login_start","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":10,"time":1600436822,"debug":0,"sid":-1,"eventinfo":{"server_time":1600436822,"oltime":24332,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436823955353","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"login","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":11,"time":1600436823,"debug":0,"uid":"474001920692","device_id":"GGGDTIMG","sid":692,"app_version":"1.120.0","eventinfo":{"isNew":1,"reg_time":1600436823,"user_level":1,"server_time":1600436823,"oltime":25621,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436834229603","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"enter_game","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":12,"time":1600436834,"debug":0,"uid":"474001920692","device_id":"GGGDTIMG","sid":692,"app_version":"1.120.0","eventinfo":{"server_time":1600436834,"oltime":35811,"country":"JP","channel":"G123"}}]}
+
+{"rid":"fcbaff7d1600436837930263","v":"0.1.0","s":"client","rc":0,"app":"102","l":[{"event":"rookie_start","temp_id":"fcbaff7d-efa7-412c-ad69-8e17f14ff247","platform":"G123","qn":13,"time":1600436837,"debug":0,"uid":"474001920692","device_id":"GGGDTIMG","sid":692,"app_version":"1.120.0","eventinfo":{"server_time":1600436837,"oltime":39556,"country":"JP","channel":"G123"}}]}

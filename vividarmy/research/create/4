@@ -1,0 +1,38 @@
+GET https://h5.g123.jp/pwa/vividarmy/sw
+
+- req hdr
+
+:authority: h5.g123.jp
+:method: GET
+:path: /pwa/vividarmy/sw
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+cache-control: max-age=0
+cookie: gp_token=2XsMtNI8tCk6Nd8aUPFQd7sRy4k4v7A84x7wSGbxNx8tWNUFqgl78Hww5KfNjaXp5stK4r4dsYighUTZ7D4zwsVuIwfu3Hbm9EjWRkgCKOa5i1NG22yDfQUOymKRv3uk; __ctw_uid=9762596f-1161-4f00-8fb8-7bfdc0a67913-1600436788683; _gcl_au=1.1.1734041161.1600436791; _ga=GA1.2.985987622.1600436792; _gid=GA1.2.1114345783.1600436792; _ts_yjad=1600436792437; _gat_UA-92779568-1=1
+referer: https://h5.g123.jp/game/vividarmy
+sec-fetch-dest: serviceworker
+sec-fetch-mode: same-origin
+sec-fetch-site: same-origin
+service-worker: script
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+content-encoding: br
+content-type: application/javascript; charset=utf-8
+date: Fri, 18 Sep 2020 13:46:36 GMT
+etag: "c51-luleuRfPjlAvdaPHsQXLXlrX/Mw"
+service-worker-allowed: /game/vividarmy
+status: 200
+vary: Accept-Encoding, Origin
+via: 1.1 e72e0d477a3b173c0d7c54332be184a5.cloudfront.net (CloudFront)
+x-amz-cf-id: asqEri96v6-IYfe-1NHK3T8LDKtoWPj5BML5E3Tz67x6EG4abf2b-w==
+x-amz-cf-pop: NRT12-C3
+x-cache: Miss from cloudfront
+x-response-time: 1ms
+
+-- resp body
+
+self.notiConfig={"appCode":"vividarmy","firebaseVersion":"7.19.1","firebaseConfig":{"apiKey":"AIzaSyBsMPSVgntud26CQ-CLU8rCcgfW4RABVRg","authDomain":"pro-g123-jp.firebaseapp.com","databaseURL":"https://pro-g123-jp.firebaseio.com","projectId":"pro-g123-jp","storageBucket":"pro-g123-jp.appspot.com","messagingSenderId":"193016696601","appId":"1:193016696601:web:2fcdbce5ca78393ca53f88","measurementId":"G-X19TCL42ZP"}};importScripts('https://noti.g123.jp/static/sw.js');!function(e){var t={};function r(o){if(t[o])return t[o].exports;var i=t[o]={i:o,l:!1,exports:{}};return e[o].call(i.exports,i,i.exports,r),i.l=!0,i.exports}r.m=e,r.c=t,r.d=function(e,t,o){r.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:o})},r.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},r.t=function(e,t){if(1&t&&(e=r(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var o=Object.create(null);if(r.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var i in e)r.d(o,i,function(t){return e[t]}.bind(null,i));return o},r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(t,"a",t),t},r.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},r.p="/static/",r(r.s=42)}({42:function(e,t,r){e.exports=r(43)},43:function(e,t,r){"use strict";importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");workbox.core.skipWaiting(),workbox.core.clientsClaim(),workbox.googleAnalytics.initialize();var o=[new workbox.expiration.Plugin({maxEntries:100,maxAgeSeconds:604800}),new workbox.cacheableResponse.Plugin({statuses:[0,200]})];"string"==typeof origin&&-1===origin.indexOf(".stg.")&&workbox.routing.registerRoute(/\/game\/.+/,new workbox.strategies.StaleWhileRevalidate({cacheName:"game",plugins:o})),workbox.routing.registerRoute(/\/api\/session/,new workbox.strategies.NetworkFirst({cacheName:"game",plugins:o})),workbox.routing.registerRoute(/\/static\/.+\.(?:js|css)$/,new workbox.strategies.StaleWhileRevalidate({cacheName:"game",plugins:o})),workbox.routing.registerRoute(/\/static\/.+\.(?:png|gif|jpg|jpeg|svg)$/,new workbox.strategies.CacheFirst({cacheName:"game",plugins:o})),workbox.routing.registerRoute(/^https:\/\/psp\..*\.g123\.jp\/.+\.js$/,new workbox.strategies.StaleWhileRevalidate({cacheName:"psp",plugins:o})),workbox.routing.registerRoute(/^https:\/\/cdn-new\.g123\.jp/,new workbox.strategies.StaleWhileRevalidate({cacheName:"cdn",plugins:o}));var i=[new workbox.cacheableResponse.Plugin({statuses:[0,200]}),new workbox.expiration.Plugin({maxAgeSeconds:31536e3})];workbox.routing.registerRoute(/^https:\/\/browser\.sentry-cdn\.com\/.*\/bundle.min.js$/,new workbox.strategies.CacheFirst({cacheName:"thirdparty",plugins:i})),workbox.routing.registerRoute(/^https:\/\/ajax\.googleapis\.com/,new workbox.strategies.CacheFirst({cacheName:"thirdparty",plugins:i})),workbox.routing.registerRoute(/^https:\/\/polyfill\.io/,new workbox.strategies.CacheFirst({cacheName:"thirdparty",plugins:i}))}});

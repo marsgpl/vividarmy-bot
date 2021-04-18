@@ -1,0 +1,7 @@
+POST https://bisdk.rivergame.net/clientloading_switch.php
+    TempID: b744fa8a-8e2e-404c-b324-d08e0cfb8df2a6fff37e-ca4f-438f-a9e5-f1880c5921cc
+    prod: 38
+
+--- response:
+
+{"ELEX_POST_IS_QUEUE":true,"ELEX_POST_FAILE_RETRY":6,"ELEX_APP_ERROR":true,"ELEX_APP_STORAGE":true,"ELEX_STORAGE_MAX_LENGTH":200,"ELEX_STORAGE_TIMTS":100}

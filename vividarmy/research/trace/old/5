@@ -1,0 +1,43 @@
+POST https://h5.g123.jp/reports
+
+--- req params:
+{
+appid: "vividarmy"
+ctwid: "GGC5O711"
+page: {referer: "", network_connection: "", url: "https://h5.g123.jp/game/vividarmy"}
+payload: {display_name: "GGC5O711", providers: []}
+time: "1600181240868"
+type: "p_register"
+uuid: "8609fc48-ec9b-4f54-8bcd-38663ae0f7cf"
+}
+--- req headers:
+
+:authority: h5.g123.jp
+:method: POST
+:path: /reports
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+content-length: 270
+content-type: text/plain;charset=UTF-8
+cookie: gp_token=nkFEtw6lM0tdcZxYZ9IZR6glXAeaOsW84uo1a67K9KboBbKcJkZX7L3pezFuuLMrOG39VXm8CnnBbU0eDYQodvAxsO8s65Jc6ddycZliwqsFRBq600CdMQercbodLcNX; __ctw_uid=b699ab85-1a52-4eee-a983-d1dafff5e554-1600181238838; _gcl_au=1.1.1114699938.1600181240
+dnt: 1
+origin: https://h5.g123.jp
+referer: https://h5.g123.jp/game/vividarmy
+sec-fetch-dest: empty
+sec-fetch-mode: no-cors
+sec-fetch-site: same-origin
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+--- resp headers:
+
+access-control-allow-origin: https://h5.g123.jp
+date: Tue, 15 Sep 2020 14:47:21 GMT
+status: 204
+vary: Accept-Encoding, Origin
+via: 1.1 5937fca00485f2f0f4c9df4dd6632614.cloudfront.net (CloudFront)
+x-amz-cf-id: fgPF5PuTw-I1OtqghAEZ6jfb33z46cRuzWtOCxM9KjOncnD8u1xotQ==
+x-amz-cf-pop: NRT12-C3
+x-cache: Miss from cloudfront
+x-response-time: 1ms

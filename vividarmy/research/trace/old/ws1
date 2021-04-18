@@ -1,0 +1,27 @@
+{
+    c: 1
+    o: "0"
+    p: {
+        aliSAFData: {
+            detail: "134#5+XIN6XwXGiwEy/sTgN7oJ0D3QROwKOlAOzBtZ26EXkEHKhYtSUkA7UgvaRgn6KcNcaKw+sGr36+29ke3FKnB/0Q5vmCkk4N3ayLBuZf+JdqKXL3ZtWwTq1qijRmNyd3OOH8qkuJ+Jd8qcHAZXnw+cy8qqK7OOK1Q7egXJ9Xv2/5Utf35LYJ1CyzgAcNF7+PboB9AchxMBsOzDoScLTcTQlcFSpsAX2JDeIWenUewzlT2gRHNj1NQZCzxq+yTZX+TAm7B5PZYvRHk9EjHUjq0/FhoyHVN5WBxAu3naZ994TT7AYSiJr494a/pwLadIgoUdFdXy9rTUU4gs+spOiKak8Ay+kTKx2+m2XXVNxuwcRStyamOig3JzxqIR19Xg9jtCXXA1aAhv8sZchgPcTWsN+0k0RdFozQTeTWTICPxByNzan01Sq2nJMey1KAFR6AIeJxVGmtRvCJ98jLHXdQjYJQvwzkqQ42dHqp1pWyLHLMyPteHaE6Wi+tdDkCAOsjzFV6C35MhU4dgEyTaaSG6z5PH261wdr5w9Jbou2c/jIfNZ7RVb+4y0hqNkFHgU4LPDJtiYdlQwdjRWLLlpjJ67EgjDRU5ONj46qRDIteYmIFfYgS50tQXh6jtbUGKMj8OPOrP+yn5mb4y0ZIvdFzcqbKTt11o8Dbq0TTptwqRdrHBX+S3QgvXBRkrBmXKtNt5uppZHJQE1WG91OW7wWHYg8o+3q6KvKhZu496V5hD9utUr5lJe6sMQOLqMLSJr4m8OX5qUaqubOtf7wFSBjCTVG9nG5TjlZJRHRuEAgBDiGBksYAHlpl8m0/W4o9dCJzNb1GQsj93NRdxlwoaaCFNUmfcyfz4Mi="
+            fphash: "5746fe97a90475efb3cbf29ad2a74588"
+            hash: "T2gAeqetSycByVFFGdnqUGtWUD96VCFZ-dce5cUlA91Z1tNf7McoMwpJe_0A93OhdFL9bQ0qQBoOjyNNMWFu894c"
+        }
+        appVersion: "1.118.3"
+
+        channel: "g123_undefined"
+        country: "JP"
+        g123test: 0
+        gaid: ""
+        ip: "0"
+        itemId: ""
+        lang: "ja"
+        nationalFlag: 114
+        pf: "g123"
+        platform: "G123"
+        platformVer: "1.118.3"
+        serverId: 684
+        serverInfoToken: "Njg0LGcxMjMsR0dDNU83MTEsd3NzOi8va25pZ2h0LWNuLXRlbmNlbnQtNTIwLnJpdmVyZ2FtZS5uZXQvczY4NCwxNjAwMTgxMjY0Njk1LGFjMmIzMGIwNzEwYWE4ZGQyNmVhMmY5MGZkODZkMGEwLCw="
+        token: "h4GmCZfIdIHn3mLwBTsZaLPu4xtk8heRzvqcL5MSgkHGoBMF5ZiSgdVZrf5F6Mlr"
+    }
+}

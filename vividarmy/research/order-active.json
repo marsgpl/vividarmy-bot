@@ -1,0 +1,112 @@
+{
+    "paymentMethods": [
+        {
+        "code": "googlepay",
+        "label": "Google Pay",
+        "limit": 200000
+    }, {
+        "code": "creditucc",
+        "label": "クレジットカード",
+        "label_en": "Credit Card",
+        "limit": 200000
+    }, {
+        "code": "paypay",
+        "label": "PayPay",
+        "limit": 200000
+    }, {
+        "code": "amazon",
+        "label": "Amazon Pay",
+        "limit": 200000
+    }, {
+        "code": "bitcash",
+        "label": "BitCash",
+        "limit": 200000
+    }, {
+        "code": "webmoney",
+        "label": "WebMoney",
+        "limit": 200000
+    }, {
+        "code": "paypal",
+        "label": "PayPal(ペイパル)",
+        "label_en": "PayPal",
+        "limit": 200000
+    }, {
+        "code": "paidy",
+        "label": "Paidy翌月払い",
+        "limit": 200000
+    }, {
+        "code": "netcash",
+        "label": "NET CASH",
+        "limit": 40000
+    }, {
+        "code": "suica",
+        "label": "モバイルSuica",
+        "limit": 20000
+    }, {
+        "code": "edy",
+        "label": "Edy",
+        "limit": 50000
+    }],
+    "order": {
+        "id": 19967605,
+        "orderNo": "0202010269676057",
+        "appCode": "vividarmy",
+        "status": "inProgress",
+        "userId": "GHYKZ4U9",
+        "paymentCode": null,
+        "retryCount": 0,
+        "custom": "{\"uid\":\"495509271261\",\"server\":\"733\",\"exchangeId\":\"13007\",\"level\":\"4\",\"pf\":\"ctw\",\"game_server_id\":\"733\",\"role_id\":\"495509271261\",\"role_level\":\"4\",\"role_vip_level\":\"0\",\"reason\":\"新人ギフト\",\"virtual_currency_amount\":\"0\"}",
+        "error": null,
+        "createdAt": "2020-10-26T13:25:54.000Z",
+        "updatedAt": "2020-10-26T13:25:55.651Z",
+        "extra": {
+            "referer": "",
+            "network_connection": "",
+            "url": "https://h5.g123.jp/game/vividarmy",
+            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36 request_id=0Vgx-WV7wpX-ogp_GXnzm1LK4aFuWkMNpGuUg7VT2IKddCyguwdUCw=="
+        },
+        "items": [{
+            "id": 19967597,
+            "orderId": 19967605,
+            "code": "13007",
+            "name": "新人ギフト",
+            "desc": "",
+            "amt": 10,
+            "qty": 1,
+            "taxamt": 0,
+            "url": "",
+            "createdAt": "2020-10-26T13:25:54.000Z",
+            "updatedAt": "2020-10-26T13:25:54.000Z"
+        }]
+    },
+    "paymentHistory": {
+        "defaultPayment": "creditucc",
+        "canCreditCardRT": false,
+        "canPaypalRT": false,
+        "canWebmoneyQuick": false,
+        "canAmazonAutoPay": false,
+        "canPaidyTokenPay": false
+    },
+    "amazonInfo": {
+        "applicationId": "amzn1.application-oa2-client.271a608f8ac14400a076bf90a2dca446",
+        "sellerId": "A8QZ2MH9VN2TW"
+    },
+    "userInfo": {
+        "ageVerified": true
+    },
+    "config": {
+        "googlepay": {
+            "environment": "PRODUCTION",
+            "merchantInfo": {
+                "merchantId": "09422806997652432849"
+            },
+            "gateway": "gmopg",
+            "gatewayMerchantId": "9200000210572",
+            "allowedAuthMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+            "allowedCardNetworks": ["VISA", "MASTERCARD"]
+        },
+        "creditucc": {
+            "canCreditUccRT": false
+        }
+    }
+}

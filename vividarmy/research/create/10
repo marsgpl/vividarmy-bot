@@ -1,0 +1,44 @@
+GET https://knight-us.topwargame.com/serverList?__ts__=1600436819824&token=vG7hrpxnQOroLsKVi1FII4pup5PBaQD1ba2eBXA1Aw2KzQDzkLdL6lkK3uUDPlsw&pf=g123&platform=g123&channel=g123_g123&appVersion=1.120.0&tag=1&isTest=0
+
+- get params
+
+__ts__: 1600436819824
+token: vG7hrpxnQOroLsKVi1FII4pup5PBaQD1ba2eBXA1Aw2KzQDzkLdL6lkK3uUDPlsw
+pf: g123
+platform: g123
+channel: g123_g123
+appVersion: 1.120.0
+tag: 1
+isTest: 0
+
+- req hdr
+
+:authority: knight-us.topwargame.com
+:method: GET
+:path: /serverList?__ts__=1600436819824&token=vG7hrpxnQOroLsKVi1FII4pup5PBaQD1ba2eBXA1Aw2KzQDzkLdL6lkK3uUDPlsw&pf=g123&platform=g123&channel=g123_g123&appVersion=1.120.0&tag=1&isTest=0
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+content-type: text/plain;charset=UTF-8
+dnt: 1
+origin: https://knight-g123.akamaized.net
+referer: https://knight-us.topwargame.com/
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: cross-site
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+access-control-allow-credentials: *
+access-control-allow-headers: *
+access-control-allow-methods: *
+access-control-allow-origin: *
+access-control-max-age: 3600
+date: Fri, 18 Sep 2020 13:47:00 GMT
+status: 200
+
+- resp body
+
+{"msg":"","pfuid":"GGGDTIMG","country":"","log":"sslChatToken:0|queryDeviceMapping:368|get new server info :368|","appUrl":"wss://server-knight-s80.rivergame.net/s692","serverId":692,"url":"wss://knight-cn-tencent-520.rivergame.net/s692","ruUrl":"wss://knight-cn-tencent-520.rivergame.net/s692","badDev":"com.nmmpnjmfmemjmfji.lhs,com.xxlhsx.xx,com.angel.nrzs,com.cyjh.gundam","serverInfoToken":"NjkyLGcxMjMsR0dHRFRJTUcsd3NzOi8va25pZ2h0LWNuLXRlbmNlbnQtNTIwLnJpdmVyZ2FtZS5uZXQvczY5MiwxNjAwNDM2ODIwNDAwLDBiZWRkODdjZDUwNGMwNzcxZWJmNWIzMjM0ODNmNjE0LCw=","globalUrl":"wss://knight-cn-tencent-520.rivergame.net/s692","t":368,"v":"1.0.42","showType":0,"g123Url":"wss://knight-cn-tencent-520.rivergame.net/s692","region":"cn-beijing","wssLines":"knight-cn-me.rivergame.net|wss://knight-cn-me.rivergame.net/s692,knight-cn.topwarapp.com|wss://knight-cn.topwarapp.com/s692,knight-cn-ru.rivergame.net|wss://knight-cn-ru.rivergame.net/s692,knight-cn-tencent-520.rivergame.net|wss://knight-cn-tencent-520.rivergame.net/s692,knight-cn-x.topwarapp.com|wss://knight-cn-x.topwarapp.com/s692","status":0,"wssLinesCN":"serverlist-knight.rivergame.net|wss://server-knight-s80.rivergame.net/s692,knight-cn-tencent.rivergame.net|wss://knight-cn-tencent-520.rivergame.net/s692"}

@@ -1,0 +1,41 @@
+GET https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/worldbattlerelease/LatestVersion.txt?__ts__=8891315
+
+- req hdr
+
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Connection: keep-alive
+content-type: text/plain;charset=UTF-8
+dnt: 1
+Host: knight-h5-client.oss-ap-northeast-1.aliyuncs.com
+Origin: https://knight-g123.akamaized.net
+Referer: https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: cross-site
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+Accept-Ranges: bytes
+Access-Control-Allow-Methods: GET
+Access-Control-Allow-Origin: *
+Access-Control-Max-Age: 0
+Connection: keep-alive
+Content-Length: 24
+Content-MD5: +2lqIbDsq4e8+TSxR9MfHg==
+Content-Type: text/plain; charset=utf-8
+Date: Fri, 18 Sep 2020 13:46:42 GMT
+ETag: "FB696A21B0ECAB87BCF934B147D31F1E"
+Last-Modified: Fri, 18 Sep 2020 11:21:59 GMT
+Server: AliyunOSS
+x-oss-hash-crc64ecma: 17636963834470954756
+x-oss-object-type: Normal
+x-oss-request-id: 5F64BA427393FC39302C79BF
+x-oss-server-time: 1
+x-oss-storage-class: Standard
+
+- resp body
+
+1.120.0|NO_FORCE_UPDATE

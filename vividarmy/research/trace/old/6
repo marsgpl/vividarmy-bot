@@ -1,0 +1,138 @@
+GET https://knight-g123.akamaized.net/worldbattlerelease/index.html?platform=ctw&code=h4GmCZfIdIHn3mLwBTsZaLPu4xtk8heRzvqcL5MSgkHGoBMF5ZiSgdVZrf5F6Mlr
+
+--- req headers:
+
+:authority: knight-g123.akamaized.net
+:method: GET
+:path: /worldbattlerelease/index.html?platform=ctw&code=h4GmCZfIdIHn3mLwBTsZaLPu4xtk8heRzvqcL5MSgkHGoBMF5ZiSgdVZrf5F6Mlr
+:scheme: https
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+dnt: 1
+referer: https://knight-g123.akamaized.net/
+sec-fetch-dest: iframe
+sec-fetch-mode: navigate
+sec-fetch-site: cross-site
+upgrade-insecure-requests: 1
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+--- resp headers:
+
+access-control-allow-credentials: false
+access-control-allow-headers: *
+access-control-allow-methods: GET,POST
+access-control-allow-origin: *
+access-control-max-age: 86400
+cache-control: max-age=2592000
+content-encoding: gzip
+content-length: 1402
+content-md5: 5i1cpxiZcrcxVa8q8QTlxg==
+content-type: text/html; charset=utf-8
+date: Tue, 15 Sep 2020 14:47:22 GMT
+expires: Thu, 15 Oct 2020 14:47:22 GMT
+last-modified: Mon, 14 Sep 2020 07:10:33 GMT
+server: AliyunOSS
+status: 200
+vary: Accept-Encoding
+x-oss-hash-crc64ecma: 2979383027822133781
+x-oss-object-type: Normal
+x-oss-request-id: 5F60D3FA3E0D6837340FA9F1
+x-oss-server-time: 1
+x-oss-storage-class: Standard
+
+--- response:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <title>Cocos Creator | WorldBattle</title>
+
+  <!--http://www.html5rocks.com/en/mobile/mobifying/-->
+  <meta name="viewport"
+        content="width=device-width,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1"/>
+
+  <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- force webkit on 360 -->
+  <meta name="renderer" content="webkit"/>
+  <meta name="force-rendering" content="webkit"/>
+  <!-- force edge on IE -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- force full screen on some browser -->
+  <meta name="full-screen" content="yes"/>
+  <meta name="x5-fullscreen" content="true"/>
+  <meta name="360-fullscreen" content="true"/>
+
+  <!-- force screen orientation on some browser -->
+  <meta name="screen-orientation" content="portrait"/>
+  <meta name="x5-orientation" content="portrait">
+
+  <!--fix fireball/issues/3568 -->
+  <!--<meta name="browsermode" content="application">-->
+  <meta name="x5-page-mode" content="app">
+
+  <!-- no cache fix -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <!--<link rel="apple-touch-icon" href=".png" />-->
+  <!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
+
+  <link rel="stylesheet" type="text/css" href="style-mobile.beb35.css"/>
+</head>
+<body>
+   <div id="GameDiv" class="gamediv maxlimit">
+      <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
+  </div>
+ <!--  <div id="splash">
+    <div class="progress-bar stripes">
+      <span style="width: 0%"></span>
+    </div>
+  </div> -->
+<script src="src/settings.6bc27.js" charset="utf-8"></script>
+<script src="main.73444.js" charset="utf-8"></script>
+<script src="socket-io.07c3a.js" charset="utf-8"></script>
+<script src="./utils/elex_stats_web_0_0_6.js" charset="utf-8"></script>
+<script src="./utils/river_bi_min_0_0_4.js" charset="utf-8"></script>
+<!-- 正式 -->
+<script src="https://psp.g123.jp/static/cp_sdk.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+// Developed by RiverGame Limited
+// Copyright Ⓒ 2019 RiverGame Limited
+(function () {
+    // open web debugger console
+    if (typeof VConsole !== 'undefined') {
+        window.vConsole = new VConsole();
+    }
+
+    window.channel="G123"
+    window.OnlineServer=false
+
+    // var splash = document.getElementById('splash');
+    // splash.style.display = 'block';
+
+    var cocos2d = document.createElement('script');
+    cocos2d.async = true;
+    cocos2d.src = window._CCSettings.debug ? 'cocos2d-js.js' : 'cocos2d-js-min.6c8a7.js';
+
+    var engineLoaded = function () {
+        document.body.removeChild(cocos2d);
+        cocos2d.removeEventListener('load', engineLoaded, false);
+        window.boot();
+    };
+    cocos2d.addEventListener('load', engineLoaded, false);
+    document.body.appendChild(cocos2d);
+})();
+</script>
+</body>
+</html>

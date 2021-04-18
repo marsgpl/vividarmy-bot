@@ -1,0 +1,10 @@
+POST https://h5.g123.jp/reports
+{
+appid: "vividarmy"
+ctwid: "GGC5O711"
+page: {referer: "", network_connection: "", url: "https://h5.g123.jp/game/vividarmy"}
+payload: {display_name: "GGC5O711", providers: []}
+time: "1600181248432"
+type: "p_game_loaded"
+uuid: "e13cab7f-d7b3-4580-a3ea-be08d0fc873e"
+}

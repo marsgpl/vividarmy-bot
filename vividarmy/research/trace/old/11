@@ -1,0 +1,19 @@
+GET https://h5.g123.jp/pwa/vividarmy/sw
+
+--- req headers:
+
+:authority: h5.g123.jp
+:method: GET
+:path: /pwa/vividarmy/sw
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+cache-control: max-age=0
+cookie: gp_token=nkFEtw6lM0tdcZxYZ9IZR6glXAeaOsW84uo1a67K9KboBbKcJkZX7L3pezFuuLMrOG39VXm8CnnBbU0eDYQodvAxsO8s65Jc6ddycZliwqsFRBq600CdMQercbodLcNX; __ctw_uid=b699ab85-1a52-4eee-a983-d1dafff5e554-1600181238838; _gcl_au=1.1.1114699938.1600181240; _ga=GA1.2.644502210.1600181242; _gid=GA1.2.75189524.1600181242; _ts_yjad=1600181243032; _gat_UA-92779568-1=1
+referer: https://h5.g123.jp/game/vividarmy
+sec-fetch-dest: serviceworker
+sec-fetch-mode: same-origin
+sec-fetch-site: same-origin
+service-worker: script
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36

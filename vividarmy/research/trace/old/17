@@ -1,0 +1,5 @@
+GET https://knight-h5-client.oss-ap-northeast-1.aliyuncs.com/worldbattlerelease/LatestVersion.txt?__ts__=8889895
+
+--- response:
+
+1.118.3|NO_FORCE_UPDATE

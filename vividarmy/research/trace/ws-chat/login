@@ -1,0 +1,7 @@
+422["bind","315342508633"]
+
+423["proxy",{"url":"http://chatapiinner.rivergame.net:8000/chat/loadHistory","query":{"appId":102,"roomId":"102_1_601g123;102_3_cross_601_622g123","time":"1600268760054","sign":"a9eabddbd23a2e83d6d0c86ddde33f02"},"body":""}]
+
+424["proxy",{"url":"http://chatapiinner.rivergame.net:8000/pm/loadChatList","query":{"appId":102,"uid":"315342508633","channel":4,"time":"1600268761160","sign":"02c3815234f813a8c0aa84e90e1a862d"},"body":""}]
+
+425["proxy",{"url":"http://chatapiinner.rivergame.net:8000/pm/loadChatList","query":{"appId":102,"uid":"315342508633","channel":1,"time":"1600268761162","sign":"281a150f56deec4e3eabf581a1fbf3a7"},"body":""}]

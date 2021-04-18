@@ -1,0 +1,34 @@
+GET https://platformapi-jp.rivergame.net/share/getConfigs?appId=102&time=1600436823925&sign=9e321b36eae6adfd28d370c22c1a14ec
+
+- get params
+
+appId: 102
+time: 1600436823925
+sign: 9e321b36eae6adfd28d370c22c1a14ec
+
+- req hdr
+
+:authority: platformapi-jp.rivergame.net
+:method: GET
+:path: /share/getConfigs?appId=102&time=1600436823925&sign=9e321b36eae6adfd28d370c22c1a14ec
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+content-type: text/plain;charset=UTF-8
+dnt: 1
+origin: https://knight-g123.akamaized.net
+referer: https://platformapi-jp.rivergame.net/
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: cross-site
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+access-control-allow-origin: *
+content-length: 18018
+content-type: application/json;charset=utf-8
+date: Fri, 18 Sep 2020 13:47:05 GMT
+server: EasySwoole
+status: 200

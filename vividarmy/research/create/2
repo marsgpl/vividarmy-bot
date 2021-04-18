@@ -1,0 +1,42 @@
+GET https://h5.g123.jp/api/session?appId=vividarmy&from=https%3A%2F%2Fh5.g123.jp%2Fgame%2Fvividarmy
+
+- req hdr
+
+:authority: h5.g123.jp
+:method: GET
+:path: /api/session?appId=vividarmy&from=https%3A%2F%2Fh5.g123.jp%2Fgame%2Fvividarmy
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+dnt: 1
+referer: https://h5.g123.jp/game/vividarmy
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: same-origin
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- get params
+
+appId: vividarmy
+from: https://h5.g123.jp/game/vividarmy
+
+- resp hdr
+
+cache-control: private, no-cache, no-store
+content-length: 388
+content-type: application/json; charset=utf-8
+date: Fri, 18 Sep 2020 13:46:28 GMT
+set-cookie: gp_token=2XsMtNI8tCk6Nd8aUPFQd7sRy4k4v7A84x7wSGbxNx8tWNUFqgl78Hww5KfNjaXp5stK4r4dsYighUTZ7D4zwsVuIwfu3Hbm9EjWRkgCKOa5i1NG22yDfQUOymKRv3uk; path=/; expires=Wed, 18 Sep 2030 13:46:28 GMT; domain=g123.jp; samesite=lax; secure; httponly
+status: 200
+vary: Accept-Encoding, Origin
+via: 1.1 e72e0d477a3b173c0d7c54332be184a5.cloudfront.net (CloudFront)
+x-amz-cf-id: EQp6ceX2oDyNsuXYp-lqODqXU3ClkABKIiZTzE_WePviGqHIig4X6A==
+x-amz-cf-pop: NRT12-C3
+x-cache: Miss from cloudfront
+x-response-time: 70ms
+x-user-hash: ad6f5dae745bd5a421632c12c32d59d8
+
+- resp body
+
+{"code":"vG7hrpxnQOroLsKVi1FII4pup5PBaQD1ba2eBXA1Aw2KzQDzkLdL6lkK3uUDPlsw","providers":[],"userId":"GGGDTIMG","isPlatformNewUser":true,"sessionKey":"JxC1trfcXCCsmEbV7t7bmuQAff89utHIhL7G4uyU8R2a2YFwEKeIRZZ4ye8AU0FcFiporuFaDCwAWs9BDZRcznhDPjvEsvgwGaf4Iov0shj75Rl04JsmZwt0snM6mqUoWqYNwqUFG6JGJVZFW31F8M3anezPVJ38mdwGvj8Fil2QZ5qkJeUHXq11YsiGRmp6dCBmUaiXKe6xpF3BmomnOhg.i0cDA2xKpOpRD1ZRa3TNx"}

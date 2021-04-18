@@ -1,0 +1,24 @@
+{
+    "discord": {
+        "app": {
+            "name": "G123",
+            "clientId": "760167618790555668",
+            "clientSecret": "vyjXj4m9nVHmkBldc9bODbxSeUOjYIMw",
+            "bot": {
+                "name": "G123",
+                "token": "NzYwMTY3NjE4NzkwNTU1NjY4.X3IHQw.j0hxWHPHgyoKUtmj90hXOrr0mgI",
+                "permissions": 67584
+            }
+        },
+        "channel": {
+            "id": "760175242634592386"
+        }
+    },
+    "g123": {
+        "player": {
+            "id": "316401955417",
+            "deviceId": "GGUT1PSC",
+            "code": "SauC8E9t4lZMTV6beOZPWqbfL4MQ3KlOn50d3csMg2TVTBkfpxkfukyryXoT6Svw"
+        }
+    }
+}

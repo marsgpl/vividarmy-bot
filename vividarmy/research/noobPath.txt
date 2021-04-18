@@ -1,0 +1,894 @@
+building appeared:
+{"c":113,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":0,\"buildingId\":1801,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":18,\"y\":18,\"proCount\":0.0,\"state\":1,\"id\":\"1681763636605431814\",\"proTime\":0.0,\"proLastTime\":0.0}}","o":"298"}
+
+
+
+
+tutorial dialog
+{"c":814,"o":"98","p":{"text":"1"}}
+{"c":814,"o":"99","p":{"text":"2"}}
+
+merge initial
+{"c":203,"o":"103","p":{"delId":"1681617867999105029","targetId":"1681617867982327811"}}
+{"c":203,"o":"106","p":{"delId":"1681617867982327813","targetId":"1681617867982327814"}}
+{"c":203,"o":"108","p":{"delId":"1681617867999105030","targetId":"1681617867982327812"}}
+{"c":203,"o":"135","p":{"delId":"1681617867999105031","targetId":"1681617867982327812"}}
+
+tutorial dialog
+{"c":814,"o":"136","p":{"text":"3"}}
+
+buy next base land area (free?)
+{"c":117,"o":"137","p":{"id":805}}
+
+tutorial dialog
+{"c":814,"o":"139","p":{"text":"4"}}
+
+continue initial merge up to bike (lvl 4)
+{"c":203,"o":"148","p":{"delId":"1681617867982327811","targetId":"1681617867982327814"}}
+{"c":203,"o":"150","p":{"delId":"1681617867982327814","targetId":"1681617867982327812"}}
+
+???
+{"c":828,"o":"151","p":{"type":1,"itemid":"10004"}}
+<- {"c":828,"s":0,"d":"{\"result\":\"success\"}","o":"151"}
+
+fight for first land map area:
+{"c":420,"o":"159","p":{"pveId":101,"armyList":["1681617867982327812"],"areaId":805,"heroList":[],"trapList":[]}}
+
+tutorial dialog
+{"c":814,"o":"168","p":{"text":"5"}}
+{"c":814,"o":"170","p":{"text":"6"}}
+
+unlock tutorial building
+{"c":113,"o":"172","p":{"id":"1681617867898441729"}}
+{"c":113,"o":"174","p":{"id":"1681617867831332871"}}
+{"c":113,"o":"178","p":{"id":"1681617867814555655"}}
+
+tutorial dialog
+{"c":814,"o":"179","p":{"text":"99"}}
+
+tutorial end?
+{"c":312,"o":"182","p":{}}
+{"c":1024,"o":"183","p":{}}
+{"c":1401,"o":"184","p":{}}
+{"c":1004,"o":"185","p":{"worldId":596}}
+{"c":836,"o":"186","p":{}}
+{"c":1036,"o":"187","p":{}}
+{"c":306,"o":"188","p":{}}
+{"c":1050,"o":"189","p":{"func":2}}
+{"c":1387,"o":"190","p":{}}
+{"c":1398,"o":"191","p":{}}
+{"c":1379,"o":"192","p":{}}
+{"c":1702,"o":"193","p":{}}
+{"c":1353,"o":"194","p":{}}
+{"c":1673,"o":"195","p":{}}
+
+collect task: lvl 4 unit
+{"c":309,"o":"207","p":{"taskId":3}}
+
+build gold mines
+{"c":100,"o":"213","p":{"x":18,"y":26,"buildingId":1701}}
+{"c":100,"o":"216","p":{"x":20,"y":24,"buildingId":1701}}
+{"c":100,"o":"217","p":{"x":22,"y":22,"buildingId":1701}}
+{"c":100,"o":"219","p":{"x":24,"y":24,"buildingId":1701}}
+{"c":100,"o":"220","p":{"x":26,"y":22,"buildingId":1701}}
+{"c":100,"o":"221","p":{"x":14,"y":22,"buildingId":1701}}
+
+REVIVE TANK
+
+---
+
+merge gold mines 1 -> 2:
+
+collect gold
+{"c":102,"o":"224","p":{"id":"1681639868482539523"}}
+{"c":102,"o":"229","p":{"id":"1681639393855098880"}}
+{"c":102,"o":"232","p":{"id":"1681639603318640642"}}
+{"c":102,"o":"236","p":{"id":"1681639991744745475"}}
+
+merge
+{"c":116,"o":"225","p":{"delId":"1681639868482539523","targetId":"1681639728527003657","isNew":0}}
+{"c":116,"o":"230","p":{"delId":"1681639393855098880","targetId":"1681617867898441729","isNew":0}}
+{"c":116,"o":"233","p":{"delId":"1681639603318640642","targetId":"1681617867814555655","isNew":0}}
+{"c":116,"o":"237","p":{"delId":"1681639991744745475","targetId":"1681640118815379463","isNew":0}}
+
+merge gold mines 2 -> 3:
+
+collect gold
+{"c":102,"o":"241","p":{"id":"1681617867898441729"}}
+{"c":102,"o":"248","p":{"id":"1681639728527003657"}}
+
+merge
+{"c":116,"o":"242","p":{"delId":"1681617867898441729","targetId":"1681640118815379463","isNew":0}}
+{"c":116,"o":"249","p":{"delId":"1681639728527003657","targetId":"1681617867814555655","isNew":0}}
+
+merge gold mines 3 -> 4:
+
+collect gold
+{"c":102,"o":"252","p":{"id":"1681617867814555655"}}
+
+merge
+{"c":116,"o":"253","p":{"delId":"1681617867814555655","targetId":"1681640118815379463","isNew":0}}
+
+---
+
+collect task: lvl 3 gold mine
+{"c":309,"o":"257","p":{"taskId":1}}
+
+buy next base land area (-100 gold)
+{"c":117,"o":"263","p":{"id":705}}
+
+fight for opened area stage 1-2-3 (stage 1: tank, stage2: tank+cycle, stage3: tank+cycle)
+{"c":420,"o":"268","p":{"pveId":201,"armyList":["1681617867982327812"],"areaId":705,"heroList":[],"trapList":[]}}
+{"c":420,"o":"271","p":{"pveId":202,"armyList":["1681617867982327812"],"areaId":705,"heroList":[],"trapList":[]}}
+{"c":420,"o":"274","p":{"pveId":203,"armyList":["1681617867982327812"],"areaId":705,"heroList":[],"trapList":[]}}
+
+place units after we opened land
+{"c":202,"o":"298","p":{"armyId":10003,"x":23,"y":19}}
+{"c":202,"o":"299","p":{"armyId":10003,"x":22,"y":20}}
+{"c":202,"o":"300","p":{"armyId":10003,"x":22,"y":18}}
+{"c":202,"o":"301","p":{"armyId":10003,"x":21,"y":19}}
+
+remove stone blocker from base map
+{"c":109,"o":"308","p":{"x":20,"y":20,"id":1023}}
+
+complete task: open 2 base map areas
+{"c":309,"o":"312","p":{"taskId":5}}
+
+restore building: coins collector
+{"c":113,"o":"314","p":{"id":"1681617867797778439"}}
+
+click on dailuy box that appeared on base map (to remove it)
+{"c":109,"o":"319","p":{"x":20,"y":16,"id":1022}}
+open it
+{"c":846,"o":"324","p":{"aid":10,"tid":541,"type":0}}
+
+start repairing tank lvl 8 (3 minutes!)
+{"c":1652,"o":"327","p":{"type":2}}
+
+merge newly appeared units
+{"c":203,"o":"330","p":{"delId":"1681651589146300418","targetId":"1681651589364404227"}}
+{"c":203,"o":"332","p":{"delId":"1681651589045637126","targetId":"1681651589230186498"}}
+{"c":203,"o":"333","p":{"delId":"1681651589364404227","targetId":"1681651589230186498"}}
+
+unit lvl 5 appeared
+{"c":828,"o":"334","p":{"type":1,"itemid":"10005"}}
+
+activate 3minute tank
+{"c":1652,"o":"347","p":{"type":3}}
+
+complete quest army training 5/5
+{"c":309,"o":"356","p":{"taskId":2}}
+
+relocate tank closer to motorcycle
+{"c":110,"o":"368","p":{"x":21,"y":27,"id":"1681658547530190853"}}
+
+relocate tricycle closer to motorcycle and tank
+{"c":110,"o":"370","p":{"x":23,"y":27,"id":"1681651589230186498"}}
+
+buy next base land area (-2k gold)
+{"c":117,"o":"373","p":{"id":807}}
+
+fight for that area with tank and tricycle 1-2-3
+{"c":420,"o":"380","p":{"pveId":301,"armyList":["1681658547530190853","1681651589230186498"],"areaId":807,"heroList":[],"trapList":[]}}
+{"c":420,"o":"384","p":{"pveId":302,"armyList":["1681658547530190853","1681651589230186498"],"areaId":807,"heroList":[],"trapList":[]}}
+{"c":420,"o":"386","p":{"pveId":303,"armyList":["1681658547530190853","1681651589230186498"],"areaId":807,"heroList":[],"trapList":[]}}
+
+receive units x8 motorcycles
+{"c":202,"o":"388","p":{"armyId":10004,"x":27,"y":31}}
+{"c":202,"o":"389","p":{"armyId":10004,"x":26,"y":32}}
+{"c":202,"o":"390","p":{"armyId":10004,"x":25,"y":33}}
+{"c":202,"o":"391","p":{"armyId":10004,"x":24,"y":34}}
+{"c":202,"o":"392","p":{"armyId":10004,"x":26,"y":30}}
+{"c":202,"o":"393","p":{"armyId":10004,"x":23,"y":33}}
+{"c":202,"o":"394","p":{"armyId":10004,"x":25,"y":29}}
+{"c":202,"o":"395","p":{"armyId":10004,"x":22,"y":32}}
+
+unit received: {"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":27,\"y\":31,\"id\":\"1681665098412281863\",\"state\":0,\"march\":0}","o":null}
+
+repair science lab:
+{"c":113,"o":"404","p":{"id":"1681617867848110085"}}
+
+unlock science: land unit 5 -> 6
+{"c":816,"o":"408","p":{"scienceId":320006,"gold":0}}
+
+noob trial (with capsules) - ACTIVATE CHALLENGE
+{"c":1055,"o":"412","p":{}}
+{"c":1353,"o":"413","p":{}}
+{"c":841,"o":"414","p":{}}
+
+    daily:
+        soldier training 1/1
+            {"c":842,"o":"421","p":{"aid":30000,"tid":10066}}
+        battle hammers 0/20
+        alliance help 0/2
+        buy item 0/1
+        summon noob hero 0/5
+        summon skill 0/5
+        login 0/1
+
+    overall:
+        battle hammer 100
+        battle hammer 300
+        battle hammer 500
+        battle hammer 700
+        battle hammer 1000
+        purchase VIT 0/1
+        purchase VIT 0/5
+        purchase VIT 0/15
+        purchase VIT 0/20
+        build gold mine lvl 15
+        build gold mine lvl 20
+        build gold mine lvl 25
+        build gold mine lvl 30
+        build gold mine lvl 35
+        build gold mine lvl 40
+        tax levies 1
+        tax levies 10
+        tax levies 20
+        tax levies 50
+        10 white missions
+        10 green missions
+        5 blue missions
+        5 refugee
+        10 refugee
+        20 refugee
+
+activate another noob trial (component boxes)
+{"c":1055,"o":"466","p":{}}
+{"c":1353,"o":"467","p":{}}
+{"c":841,"o":"468","p":{}}
+
+    soldier training 1/1
+        {"c":842,"o":"484","p":{"aid":500049,"tid":10225}}
+    claim stage 1 prize
+        {"c":1642,"o":"486","p":{"id":500049,"score":20,"adv":0}}
+
+daily retention quest claim stage 1
+{"c":825,"o":"489","p":{}}
+
+merge bikes
+{"c":203,"o":"507","p":{"delId":"1681665103629996036","targetId":"1681665103479001088"}}
+{"c":203,"o":"508","p":{"delId":"1681665103562887177","targetId":"1681665103411892232"}}
+{"c":203,"o":"510","p":{"delId":"1681665103344783363","targetId":"1681665103260897289"}}
+{"c":203,"o":"511","p":{"delId":"1681665098412281863","targetId":"1681665103177011206"}}
+
+{"c":203,"o":"512","p":{"delId":"1681665103411892232","targetId":"1681665103177011206"}}
+{"c":203,"o":"513","p":{"delId":"1681665103479001088","targetId":"1681665103260897289"}}
+
+build barracks
+{"c":100,"o":"516","p":{"x":16,"y":24,"buildingId":1041}}
+{"c":100,"o":"518","p":{"x":18,"y":26,"buildingId":1041}}
+
+confirm levelup?
+{"c":841,"o":"519","p":{}}
+
+build barracks
+{"c":100,"o":"524","p":{"x":18,"y":22,"buildingId":1041}}
+    building appeared: {"c":100,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":0,\"buildingId\":1041,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":16,\"y\":24,\"proCount\":0.0,\"state\":1,\"id\":\"1681683541706493960\",\"proTime\":0.0,\"proLastTime\":0.0}}","o":"516"}
+
+complete quest: build 4/4 barracks
+{"c":309,"o":"527","p":{"taskId":4}}
+
+activate noob 7d trial
+{"c":1055,"o":"542","p":{}}
+{"c":1353,"o":"543","p":{}}
+{"c":841,"o":"544","p":{}}
+
+    reach lvl 5 (gives 300k!)
+    {"c":842,"o":"549","p":{"aid":194,"tid":6903}}
+
+merge barracks
+{"c":116,"o":"555","p":{"delId":"1681684613787373574","targetId":"1681683541706493960","isNew":0}}
+{"c":116,"o":"556","p":{"delId":"1681617867931996161","targetId":"1681683735600779270","isNew":0}}
+{"c":116,"o":"557","p":{"delId":"1681683735600779270","targetId":"1681683541706493960","isNew":0}}
+
+complete task: barracks lvl 3
+{"c":309,"o":"559","p":{"taskId":6}}
+
+complete task set: stage 1 done (+200k!!!)
+{"c":311,"o":"561","p":{}}
+
+complete stage2 tasks
+{"c":309,"o":"566","p":{"taskId":10}}
+{"c":309,"o":"567","p":{"taskId":11}}
+
+call world map
+{"c":1004,"o":"571","p":{"worldId":596}}
+{"c":1055,"o":"572","p":{}}
+{"c":1024,"o":"573","p":{}}
+{"c":903,"o":"574","p":{"province":1}} -- top left launch tower
+
+load map chunk
+{"c":901,"o":"577","p":{"x":31,"y":177,"k":596,"width":15,"height":30,"marchInfo":true}}
+    response: {"c":901,"s":0,"d":"{....}","o":"595"}
+
+apply bonus codes:
+{"c":695,"o":"635","p":{"code":"vividarmy621"}} -- 100 diamonds
+{"c":695,"o":"640","p":{"code":"TOPWAR-العربية"}} -- 150 diamonds
+{"c":695,"o":"643","p":{"code":"topwar888"}} -- 200 diamonds
+
+RELOGIN
+
+challenge with bird relogin 1/1
+{"c":842,"o":"137","p":{"aid":500049,"tid":10220}}
+
+7d challenge login 1/1 (+2 gold teleports)
+{"c":842,"o":"149","p":{"aid":194,"tid":6901}}
+
+battery challenge
+{"c":842,"o":"153","p":{"aid":30000,"tid":10065}}
+
+session length challenge collect (check timer)
+{"c":825,"o":"161","p":{}}
+
+unlock next area (buy for 3k)
+{"c":117,"o":"165","p":{"id":707}}
+
+send tank+quadrocycle
+{"c":420,"o":"168","p":{"pveId":401,"armyList":["1681658547530190853","1681665103260897289"],"areaId":707,"heroList":[],"trapList":[]}}
+send tank+2quad
+{"c":420,"o":"170","p":{"pveId":402,"armyList":["1681658547530190853","1681665103260897289","1681665103177011206"],"areaId":707,"heroList":[],"trapList":[]}}
+send tank+2quad
+{"c":420,"o":"172","p":{"pveId":403,"armyList":["1681658547530190853","1681665103260897289","1681665103177011206"],"areaId":707,"heroList":[],"trapList":[]}}
+
+reward tricycles:
+{"c":202,"o":"175","p":{"armyId":10005,"x":28,"y":30}}
+{"c":202,"o":"176","p":{"armyId":10005,"x":30,"y":26}}
+{"c":202,"o":"177","p":{"armyId":10005,"x":27,"y":29}}
+{"c":202,"o":"178","p":{"armyId":10005,"x":29,"y":25}}
+{"c":202,"o":"179","p":{"armyId":10005,"x":26,"y":28}}
+
+quest train army x5
+{"c":309,"o":"192","p":{"taskId":9}}
+
+
+
+buy 1 rose
+{"c":818,"o":"207","p":{"shopId":28,"amount":1}}
+
+battery challenge buy item 1/1
+{"c":842,"o":"212","p":{"aid":30000,"tid":10062}}
+
+set flag
+{"c":1344,"o":"236","p":{"flag":57}}
+
+set avatar
+{"c":1304,"o":"260","p":{"avatarurl":"hero_icon001"}}
+{"c":1304,"o":"246","p":{"avatarurl":"headIcon_1_1"}} ... {"c":1304,"o":"242","p":{"avatarurl":"headIcon_21_1"}}
+
+set name
+{"c":835,"o":"270","p":{"username":"Miyakado"}}
+
+set gender
+{"c":851,"o":"272","p":{"userGender":1}}
+
+set region
+{"c":832,"o":"274","p":{"province":38}}
+
+activate gold collector
+{"c":101,"o":"279","p":{"id":"1681617867797778439"}}
+
+collect gold from gold collector
+{"c":102,"o":"281","p":{"id":"1681617867797778439"}}
+
+restore building from opened map location
+{"c":113,"o":"284","p":{"id":"1681617867864887297"}}
+
+---
+GO TO LVL 10
+---
+
+science land units 6->7
+{"c":816,"o":"320","p":{"scienceId":320007,"gold":0}}
+science land units 7->8
+{"c":816,"o":"323","p":{"scienceId":320008,"gold":0}}
+science land units 8->9
+{"c":816,"o":"326","p":{"scienceId":320009,"gold":0}}
+
+confirm lvlups: {"c":841,"o":"327","p":{}}
+
+gold mine max lvl 5->6
+{"c":816,"o":"331","p":{"scienceId":310006,"gold":0}}
+gold mine max lvl 6->7
+{"c":816,"o":"334","p":{"scienceId":310007,"gold":0}}
+gold mine constr 1->2
+{"c":816,"o":"337","p":{"scienceId":300002,"gold":0}}
+
+7day trial reach lvl 8
+{"c":842,"o":"345","p":{"aid":194,"tid":6904}}
+
+open 100 blue science boxes
+{"c":815,"o":"348","p":{"itemid":1800001,"amount":100}}
+
+{"c":861,"o":"351","p":{}}
+
+free red recruitment
+{"c":862,"o":"354","p":{"extractId":2,"num":1,"useDiamond":false,"isFree":true,"useHaveNum":false}}
+
+free blue recruitment
+{"c":862,"o":"356","p":{"extractId":1,"num":1,"useDiamond":false,"isFree":true,"useHaveNum":false}}
+
+free skill recruitment
+{"c":862,"o":"358","p":{"extractId":4,"num":1,"useDiamond":false,"isFree":true,"useHaveNum":false}}
+
+bird challenge red recruitment 1/1
+{"c":842,"o":"364","p":{"aid":500049,"tid":10242}}
+
+bird challenge stage2 collect
+{"c":1642,"o":"366","p":{"id":500049,"score":50,"adv":0}}
+
+7d trial red recruitment 1/1
+{"c":842,"o":"372","p":{"aid":194,"tid":6909}}
+
+battery challenge red recruitment 1/1
+{"c":842,"o":"375","p":{"aid":30000,"tid":10082}}
+
+battery challenge stage 1 collect
+{"c":1642,"o":"377","p":{"id":30000,"score":100,"adv":0}}
+
+use 10x10 diamonds from inventory
+{"c":815,"o":"380","p":{"itemid":1000003,"amount":10}}
+
+receive lvl 8 tank
+{"c":1152,"o":"382","p":{"multiple":0}}
+
+auto join alliance
+{"c":1137,"o":"384","p":{}}
+    <-
+    {"c":1137,"s":0,"d":"{\"memberCount\":47,\"memberMax\":50,\"power\":5.3409330377817E13,\"basic\":{\"levelLimit\":0,\"symbolTotem\":1,\"joinType\":0,\"symbolColor\":1,\"name\":\"姫子連合\",\"tag\":\"MK13\",\"provinceLimit\":-1,\"type\":0,\"lang\":\"jp\",\"symbolBase\":0,\"starNum\":4},\"aid\":343907,\"leaderUid\":\"423796535892\"}","o":"384"}
+    ->
+    {"c":1114,"o":"385","p":{"allianceId":343907}}
+
+after join alliance:
+{"c":1170,"o":"386","p":{}}
+{"c":1200,"o":"387","p":{}}
+{"c":1210,"o":"388","p":{}}
+{"c":1207,"o":"389","p":{}}
+{"c":1209,"o":"390","p":{}}
+{"c":1026,"o":"391","p":{}}
+x3 {"c":934,"o":"392","p":{}}
+{"c":1182,"o":"395","p":{}}
+{"c":1138,"o":"396","p":{}}
+{"c":1143,"o":"397","p":{}}
+{"c":1148,"o":"398","p":{}}
+{"c":1149,"o":"399","p":{}}
+{"c":1200,"o":"400","p":{}}
+{"c":1210,"o":"401","p":{}}
+{"c":1207,"o":"402","p":{}}
+{"c":1209,"o":"403","p":{}}
+{"c":1154,"o":"404","p":{}}
+{"c":1175,"o":"405","p":{}}
+{"c":1182,"o":"406","p":{}}
+{"c":1160,"o":"407","p":{}}
+{"c":1710,"o":"408","p":{}}
+
+barracks construct 1->2
+{"c":816,"o":"432","p":{"scienceId":301002,"gold":0}}
+
+gold mine merge 7->8
+{"c":816,"o":"437","p":{"scienceId":310008,"gold":0}}
+
+barracks construct 2->3
+{"c":816,"o":"440","p":{"scienceId":301003,"gold":0}}
+
+barracks construct 5->6
+{"c":816,"o":"442","p":{"scienceId":311006,"gold":0}}
+
+land units 9->10
+{"c":816,"o":"444","p":{"scienceId":320010,"gold":0}}
+
+confirm lvl 10
+{"c":841,"o":"445","p":{}}
+
+leave alliance
+{"c":1128,"o":"464","p":{}}
+
+check alliance name is taken
+{"c":1102,"o":"492","p":{"name":"nakionnas"}}
+{"c":1102,"s":0,"d":"{\"statusCode\":0}","o":"491"} - free
+{"c":1102,"s":0,"d":"{\"statusCode\":2}","o":"492"} - taken
+
+check alliance tag is taken
+{"c":1103,"o":"512","p":{"tag":"WoBo"}}
+{"c":1103,"s":0,"d":"{\"statusCode\":0}","o":"511"} - free
+
+create alliance for 200 gems
+{"c":1100,"o":"518","p":{"name":"WombaBomba","tag":"WoBo","symbolTotem":2,"joinType":1,"levelLimit":0,"provinceLimit":-1,"lang":""}}
+    -> {"c":10001,"s":0,"d":"{\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"soil\":0.0,\"gold\":5.0,\"paid_gold\":0.0,\"free_gold\":5.0,\"coal\":0.0,\"wood\":20000.0,\"military\":0.0,\"expedition_coin\":0.0,\"oila\":0.0,\"jungong\":0.0,\"coin\":4229360.0}","o":null}
+    -> {"c":10056,"s":0,"d":"{\"buffs\":[]}","o":null}
+    -> {"c":11000,"s":0,"d":"{\"leave\":[],\"join\":[\"102_2_588_405176\"]}","o":null}
+    -> {"c":10445,"s":0,"d":"{\"uid\":\"478008812108\"}","o":null}
+    -> {"c":1100,"s":0,"d":"{\"allianceInfo\":{\"joinTime\":1601113996,\"memberCount\":1,\"memberMax\":50,\"serverId\":588,\"createTime\":1601113996,\"leaderName\":\"wy.478008812108\",\"rank\":5,\"power\":6723.0,\"basic\":{\"addMembersMax\":0,\"giftLevel\":0,\"symbolColor\":8,\"provinceLimit\":-1,\"giftExp\":0,\"type\":0,\"giftKey\":0,\"sid\":588,\"levelLimit\":0,\"maxMembers\":50,\"symbolTotem\":2,\"createTime\":1601113996,\"joinType\":0,\"members\":1,\"name\":\"KopateMako\",\"tag\":\"KoMa\",\"lang\":\"\",\"haveBadge\":\"1,2,100\",\"symbolBase\":0,\"starNum\":0},\"manifesto\":\"\",\"aid\":405176,\"leaderUid\":478008812108,\"slogan\":\"\",\"notice\":\"\",\"addmemberMax\":0},\"statusCode\":0}","o":"210"}
+    now request alliance info
+    -> {"c":1170,"o":"211","p":{}}
+    -> {"c":1138,"o":"212","p":{}}
+    -> {"c":1143,"o":"213","p":{}}
+    -> {"c":1148,"o":"214","p":{}}
+    -> {"c":1149,"o":"215","p":{}}
+    -> {"c":1200,"o":"216","p":{}}
+    -> {"c":1210,"o":"217","p":{}}
+    -> {"c":1207,"o":"218","p":{}}
+    -> {"c":1209,"o":"219","p":{}}
+    -> {"c":1154,"o":"220","p":{}}
+    -> {"c":1175,"o":"221","p":{}}
+    -> {"c":1182,"o":"222","p":{}}
+    -> {"c":1160,"o":"223","p":{}}
+    -> {"c":1710,"o":"224","p":{}}
+    resp
+    {"c":1170,"s":0,"d":"{\"allianceExchanges\":[]}","o":"211"}
+    {"c":1138,"s":0,"d":"{\"alhtdcnt\":0,\"alhdhonor\":0,\"selfCoinHelp\":{\"todayRequestCount\":0,\"alHelpCoinDailyHonor\":0,\"alHelpCoinDailyMaxHonor\":1000,\"requestMaxCount\":10,\"coin\":512000.0}}","o":"212"}
+    {"c":1143,"s":0,"d":"{\"scs\":[{\"lv\":0,\"recommend\":false,\"endTime\":0,\"exp\":0,\"aid\":405176,\"sid\":20400,\"status\":0},{\"lv\":0,\"recommend\":false,\"endTime\":0,\"exp\":0,\"aid\":405176,\"sid\":10100,\"status\":0},{\"lv\":0,\"recommend\":false,\"endTime\":0,\"exp\":0,\"aid\":405176,\"sid\":20100,\"status\":0},{\"lv\":0,\"recommend\":false,\"endTime\":0,\"exp\":0,\"aid\":405176,\"sid\":20700,\"status\":0}]}","o":"213"}
+    {"c":1148,"s":0,"d":"{\"alDonateDailyHonor\":0,\"alDiamondDonateNum\":0}","o":"214"}
+    {"c":1149,"s":0,"d":"{\"new\":true,\"end_time\":1601127434,\"items\":[{\"buyTimes\":0,\"shopId\":3},{\"buyTimes\":0,\"shopId\":4},{\"buyTimes\":0,\"shopId\":5},{\"buyTimes\":0,\"shopId\":23},{\"buyTimes\":0,\"shopId\":7},{\"buyTimes\":0,\"shopId\":8},{\"buyTimes\":0,\"shopId\":11},{\"buyTimes\":0,\"shopId\":13},{\"buyTimes\":0,\"shopId\":15}]}","o":"215"}
+    {"c":1200,"s":0,"d":"{\"assault\":[],\"covering\":[]}","o":"216"}
+    {"c":1210,"s":0,"d":"{\"recordList\":[]}","o":"217"}
+    {"c":1207,"s":0,"d":"{\"member\":[]}","o":"218"}
+    {"c":1209,"s":0,"d":"{\"reinforceList\":[]}","o":"219"}
+    {"c":1154,"s":0,"d":"{\"infos\":[{\"st\":0,\"lock\":{\"1\":1,\"2\":3484,\"3\":0,\"4\":1},\"id\":101,\"uuid\":0},{\"st\":0,\"lock\":{\"1\":1,\"2\":3484,\"3\":0,\"4\":0},\"id\":102,\"uuid\":0},{\"st\":0,\"lock\":{\"1\":1,\"2\":3484,\"3\":0,\"4\":0},\"id\":103,\"uuid\":0},{\"st\":0,\"lock\":{\"1\":1,\"2\":3484,\"3\":0,\"4\":0},\"id\":104,\"uuid\":0},{\"st\":0,\"lock\":{\"1\":1,\"2\":3484,\"3\":0,\"4\":0},\"id\":105,\"uuid\":0}]}","o":"220"}
+    {"c":1175,"s":0,"d":"{\"userInfo\":{\"alGiftRewards\":[],\"userGifts\":[]},\"alInfo\":{\"alDailyNGiftCnt\":0,\"giftLevel\":1,\"giftExp\":0,\"alDailyNGiftCntRefTime\":1601150400,\"giftKey\":0}}","o":"221"}
+    {"c":1182,"s":0,"d":"{\"tt\":1,\"at\":0,\"end\":0,\"idx\":0,\"open\":0}","o":"222"}
+    {"c":1160,"s":0,"d":"{\"allianceBoss\":{\"allianceId\":405176,\"level\":0,\"state\":0,\"exp\":0},\"todayFree\":1}","o":"223"}
+    {"c":1710,"s":0,"d":"{\"marchTime\":-1}","o":"224"}
+
+mass merge
+{"c":205,"o":"249","p":{"armyIds":["1682559263006339075","1682559263174111235","1682559262855344134","1682559263509655557","1682559263442546691","1682559263358660609","1682559263274774529","1682559263090225156","1682559262922452999","1682559257872510983","1682559257973174273","1682559262771458054"]}}
+    {"c":10204,"s":0,"d":"{\"delArmys\":[{\"warehouseId\":\"0\",\"armyId\":10007,\"x\":24,\"y\":12,\"id\":\"1682559263274774529\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10007,\"x\":25,\"y\":13,\"id\":\"1682559263090225156\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10007,\"x\":26,\"y\":14,\"id\":\"1682559262922452999\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10007,\"x\":27,\"y\":15,\"id\":\"1682559257872510983\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10007,\"x\":26,\"y\":16,\"id\":\"1682559257973174273\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10007,\"x\":25,\"y\":17,\"id\":\"1682559262771458054\",\"state\":0,\"march\":0}]}","o":null}
+    {"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":24,\"y\":12,\"li\":[]},{\"im\":false,\"x\":25,\"y\":13,\"li\":[]},{\"im\":false,\"x\":26,\"y\":14,\"li\":[]},{\"im\":false,\"x\":27,\"y\":15,\"li\":[]},{\"im\":false,\"x\":26,\"y\":16,\"li\":[]},{\"im\":false,\"x\":25,\"y\":17,\"li\":[]}]}","o":null}
+    {"c":10205,"s":0,"d":"{\"updateArmys\":[{\"warehouseId\":\"0\",\"armyId\":10008,\"x\":23,\"y\":17,\"id\":\"1682559263006339075\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10008,\"x\":22,\"y\":16,\"id\":\"1682559263174111235\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10008,\"x\":24,\"y\":18,\"id\":\"1682559262855344134\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10008,\"x\":21,\"y\":15,\"id\":\"1682559263509655557\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10008,\"x\":22,\"y\":14,\"id\":\"1682559263442546691\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10008,\"x\":23,\"y\":13,\"id\":\"1682559263358660609\",\"state\":0,\"march\":0}]}","o":null}
+    {"c":205,"s":0,"d":"{\"res\":\"suc\",\"targetIds\":[\"1682559263006339075\",\"1682559263174111235\",\"1682559262855344134\",\"1682559263509655557\",\"1682559263442546691\",\"1682559263358660609\"],\"armyId\":10008}","o":"249"}
+
+check point on map
+{"c":909,"o":"564","p":{"targetId":"477984436820"}}
+    <- {"c":909,"s":0,"d":"{\"point\":{\"p\":{\"plateId\":0,\"sBNum\":0,\"level\":10,\"shieldTime\":1601317035,\"fireTime\":0,\"playerInfo\":\"{\\\"nationalflag\\\":57,\\\"gender\\\":0,\\\"avatarurl\\\":\\\"headIcon_4_1\\\",\\\"nickname\\\":null,\\\"headimgurl\\\":null,\\\"usergender\\\":1,\\\"username\\\":\\\"Miyakado\\\"}\",\"castleEffectId\":0,\"pid\":477984436820,\"skinId\":0,\"language\":\"ja\",\"sml\":0,\"province\":38,\"w\":596,\"sskin\":0,\"power\":2205.0,\"fireState\":0,\"aid\":404723,\"countryRank\":0,\"sBId\":0,\"a_tag\":\"WoBo\"},\"x\":318,\"y\":42,\"k\":596,\"id\":10912,\"pointType\":1}}","o":"564"}
+
+build war hall
+{"c":100,"o":"578","p":{"x":18,"y":26,"buildingId":2501}}
+*/
+
+
+/*
+request nameplates {"c":881,"o":"227","p":{}}
+request skins {"c":854,"o":"228","p":{}}
+{"c":881,"s":0,"d":"{\"userPlateId\":0,\"nameplates\":[{\"plateId\":0,\"endTime\":-1}],\"effectiveIds\":[0,1,2,3,6,7,8,9,13,18,19,20,21,24,25]}","o":"227"}
+{"c":854,"s":0,"d":"{\"effectiveSkinIds\":[1752000,0,1711000,1719000,1727000,1710300,1710800,1714000,1730000,1710600,1725000,1733000,1741000,1710400,1712000,1720000,1728000,1736000,1744000,1710200,1715000,1731000,1739000,1718000,1710900,1713000,1721000,1729000,1710700,1716000,1732000,1740000,1710500,1749000,1757000,1747000,1750000,1753000,1756000],\"useId\":0,\"useSpecial\":0,\"list\":[{\"reward\":0,\"lastChangeTime\":0,\"skinId\":0,\"endTime\":-1,\"specialEndTime\":0}]}","o":"228"}
+*/
+
+/*
+world boss:
+
+click on his ava
+{"c":917,"o":"301","p":{}}
+{"c":917,"s":0,"d":"{\"finishTime\":1601067600000,\"alive\":1,\"bossId\":1,\"x\":237,\"y\":373,\"lv\":68,\"id\":1601064000000,\"power\":1.6893879450181485E15,\"initPower\":1.83024E15,\"pveId\":4001,\"costEnergy\":5}","o":"301"}
+
+request map tiles
+{"c":901,"o":"304","p":{"x":237,"y":373,"k":596,"width":7,"height":15,"marchInfo":true}}
+{"c":1001,"o":"305","p":{"x":237,"y":373,"k":596,"width":7,"height":15}}
+
+click on world boss on world map
+{"c":919,"o":"310","p":{}}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // every 10 seconds: send: {"c":0,"o":"92","p":{}} rcv: {"c":0,"s":0,"d":"{\"t\":1601058099899}","o":"92"}
+
+[{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":22,\"y\":28,\"id\":\"1681763636840312839\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":24,\"y\":26,\"id\":\"1681763636840312838\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":23,\"y\":27,\"id\":\"1681763636840312841\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":22,\"y\":26,\"id\":\"1681763636840312840\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":21,\"y\":27,\"id\":\"1681763636840312843\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":23,\"y\":25,\"id\":\"1681763636840312842\",\"state\":0,\"march\":0},{\"warehouseId\":\"0\",\"armyId\":10002,\"x\":22,\"y\":24,\"id\":\"1681763636840312844\",\"state\":0,\"march\":0}]
+
+merge 1->2
+{"c":203,"o":"37","p":{"delId":"1681763636840312843","targetId":"1681763636840312839"}}
+{"c":203,"o":"38","p":{"delId":"1681763636840312840","targetId":"1681763636840312841"}}
+{"c":203,"o":"39","p":{"delId":"1681763636840312842","targetId":"1681763636840312838"}}
+2->3
+{"c":203,"o":"42","p":{"delId":"1681763636840312844","targetId":"1681763636840312838"}}
+{"c":203,"o":"46","p":{"delId":"1681763636840312841","targetId":"1681763636840312839"}}
+3->4
+{"c":203,"o":"49","p":{"delId":"1681763636840312838","targetId":"1681763636840312839"}}
+
+tank built
+{"c":1652,"o":"110","p":{"type":3}}
+    {"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":99999,\"x\":24,\"y\":20,\"id\":\"1681774980838797320\",\"state\":0,\"march\":0}","o":null}
+tank move
+{"c":110,"o":"111","p":{"x":21,"y":27,"id":"1681774980838797320"}}
+    {"c":110,"s":0,"d":"{\"army\":{\"warehouseId\":\"0\",\"armyId\":99999,\"x\":21,\"y\":27,\"id\":\"1681774980838797320\",\"state\":0,\"march\":0},\"x\":24,\"y\":20}","o":"111"}
+
+build lvl 1 gold mines
+
+{"c":100,"o":"79","p":{"x":20,"y":24,"buildingId":1701}}
+    {"c":10101,"s":0,"d":"{\"broken\":0,\"proStartTime\":1601066923,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":20,\"y\":24,\"proCount\":0.0,\"state\":1,\"id\":\"1681770344622927876\",\"proTime\":1.601066933E9,\"proLastTime\":0.0}","o":null}
+
+    {"c":100,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":1601066923,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":20,\"y\":24,\"proCount\":0.0,\"state\":1,\"id\":\"1681770344622927876\",\"proTime\":1.601066933E9,\"proLastTime\":0.0}}","o":"79"}
+
+{"c":100,"o":"80","p":{"x":22,"y":22,"buildingId":1701}}
+    {"c":10101,"s":0,"d":"{\"broken\":0,\"proStartTime\":1601066926,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":22,\"y\":22,\"proCount\":0.0,\"state\":1,\"id\":\"1681770390709940227\",\"proTime\":1.601066936E9,\"proLastTime\":0.0}","o":null}
+
+    {"c":100,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":1601066926,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":22,\"y\":22,\"proCount\":0.0,\"state\":1,\"id\":\"1681770390709940227\",\"proTime\":1.601066936E9,\"proLastTime\":0.0}}","o":"80"}
+
+{"c":100,"o":"82","p":{"x":24,"y":24,"buildingId":1701}}
+    {"c":100,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":1601066928,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":24,\"y\":24,\"proCount\":0.0,\"state\":1,\"id\":\"1681770413191409670\",\"proTime\":1.601066938E9,\"proLastTime\":0.0}}","o":"82"}
+
+{"c":100,"o":"83","p":{"x":26,"y":22,"buildingId":1701}}
+    {"c":100,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":1601066929,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":26,\"y\":22,\"proCount\":0.0,\"state\":1,\"id\":\"1681770435035344899\",\"proTime\":1.601066939E9,\"proLastTime\":0.0}}","o":"83"}
+
+{"c":100,"o":"84","p":{"x":14,"y":22,"buildingId":1701}}
+    {"c":100,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":1601066931,\"buildingId\":1701,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":14,\"y\":22,\"proCount\":0.0,\"state\":1,\"id\":\"1681770462466093058\",\"proTime\":1.601066941E9,\"proLastTime\":0.0}}","o":"84"}
+
+merge gold mines 1->2
+{"c":116,"o":"121","p":{"delId":"1681770435035344899","targetId":"1681770413191409670","isNew":0}}
+{"c":116,"o":"124","p":{"delId":"1681770390709940227","targetId":"1681770344622927876","isNew":0}}
+{"c":116,"o":"126","p":{"delId":"1681770316135215110","targetId":"1681763636739649544","isNew":0}}
+{"c":116,"o":"128","p":{"delId":"1681763636622209025","targetId":"1681763636638986244","isNew":0}}
+
+merge gold mines 2->3
+{"c":116,"o":"130","p":{"delId":"1681770344622927876","targetId":"1681763636739649544","isNew":0}}
+{"c":116,"o":"132","p":{"delId":"1681770413191409670","targetId":"1681763636638986244","isNew":0}}
+
+merge gold mines 3->4
+{"c":116,"o":"135","p":{"delId":"1681763636739649544","targetId":"1681763636638986244","isNew":0}}
+    {"c":10109,"s":0,"d":"{\"buildings\":[{\"broken\":0,\"proStartTime\":1601067368,\"buildingId\":1704,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":16,\"y\":20,\"proCount\":0.0,\"state\":1,\"id\":\"1681763636638986244\",\"proTime\":1.601067393E9,\"proLastTime\":25.0}]}","o":null}
+
+units after location open
+{"c":202,"o":"298","p":{"armyId":10003,"x":23,"y":19}}
+{"c":202,"o":"299","p":{"armyId":10003,"x":22,"y":20}}
+{"c":202,"o":"300","p":{"armyId":10003,"x":22,"y":18}}
+{"c":202,"o":"301","p":{"armyId":10003,"x":21,"y":19}}
+    {"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10003,\"x\":23,\"y\":19,\"id\":\"1681781531955769347\",\"state\":0,\"march\":0}","o":null}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10003,\"x\":23,\"y\":19,\"id\":\"1681781531955769347\",\"state\":0,\"march\":0}","o":"245"}
+    {"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10003,\"x\":22,\"y\":20,\"id\":\"1681781532056432641\",\"state\":0,\"march\":0}","o":null}
+    {"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10003,\"x\":22,\"y\":18,\"id\":\"1681781532140318720\",\"state\":0,\"march\":0}","o":null}
+    {"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10003,\"x\":21,\"y\":19,\"id\":\"1681781532224204807\",\"state\":0,\"march\":0}","o":null}
+
+merge them
+{"c":203,"o":"256","p":{"delId":"1681781531955769347","targetId":"1681781532140318720"}}
+{"c":203,"o":"257","p":{"delId":"1681781532056432641","targetId":"1681781532224204807"}}
+{"c":203,"o":"259","p":{"delId":"1681781532140318720","targetId":"1681781532224204807"}}
+move them
+{"c":110,"o":"260","p":{"x":23,"y":27,"id":"1681781532224204807"}}
+
+units after location open
+{"c":202,"o":"271","p":{"armyId":10004,"x":27,"y":31}}
+{"c":202,"o":"272","p":{"armyId":10004,"x":26,"y":32}}
+{"c":202,"o":"273","p":{"armyId":10004,"x":25,"y":33}}
+{"c":202,"o":"274","p":{"armyId":10004,"x":24,"y":34}}
+{"c":202,"o":"275","p":{"armyId":10004,"x":26,"y":30}}
+{"c":202,"o":"276","p":{"armyId":10004,"x":23,"y":33}}
+{"c":202,"o":"277","p":{"armyId":10004,"x":25,"y":29}}
+{"c":202,"o":"278","p":{"armyId":10004,"x":22,"y":32}}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":27,\"y\":31,\"id\":\"1681784332442218498\",\"state\":0,\"march\":0}","o":"271"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":26,\"y\":32,\"id\":\"1681784332526104582\",\"state\":0,\"march\":0}","o":"272"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":25,\"y\":33,\"id\":\"1681784332593213447\",\"state\":0,\"march\":0}","o":"273"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":24,\"y\":34,\"id\":\"1681784332677099522\",\"state\":0,\"march\":0}","o":"274"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":26,\"y\":30,\"id\":\"1681784332760985600\",\"state\":0,\"march\":0}","o":"275"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":23,\"y\":33,\"id\":\"1681784332828094464\",\"state\":0,\"march\":0}","o":"276"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":25,\"y\":29,\"id\":\"1681784332911980550\",\"state\":0,\"march\":0}","o":"277"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10004,\"x\":22,\"y\":32,\"id\":\"1681784332979089412\",\"state\":0,\"march\":0}","o":"278"}
+merge
+{"c":203,"o":"287","p":{"delId":"1681784332979089412","targetId":"1681784332828094464"}}
+{"c":203,"o":"289","p":{"delId":"1681784332911980550","targetId":"1681784332760985600"}}
+{"c":203,"o":"290","p":{"delId":"1681784332677099522","targetId":"1681784332593213447"}}
+{"c":203,"o":"291","p":{"delId":"1681784332442218498","targetId":"1681784332526104582"}}
+{"c":203,"o":"295","p":{"delId":"1681784332828094464","targetId":"1681784332593213447"}}
+{"c":203,"o":"296","p":{"delId":"1681784332760985600","targetId":"1681784332526104582"}}
+
+relocate science center
+{"c":104,"o":"306","p":{"x":20,"y":16,"id":"1681763636655763456"}}
+
+relocate quadrocycle
+{"c":110,"o":"309","p":{"x":24,"y":34,"id":"1681784332526104582"}}
+
+{"c":117,"o":"314","p":{"id":707}}
+{"c":841,"o":"315","p":{}} - if level up: {"c":10041,"s":0,"d":"{\"level\":5,\"exp\":2950.0}","o":null}
+{"c":917,"o":"317","p":{}}
+{"c":420,"o":"318","p":{"pveId":401,"armyList":["1681774980838797320","1681784332526104582"],"areaId":707,"heroList":[],"trapList":[]}}
+{"c":420,"o":"319","p":{"pveId":402,"armyList":["1681774980838797320","1681784332526104582","1681784332593213447"],"areaId":707,"heroList":[],"trapList":[]}}
+{"c":420,"o":"320","p":{"pveId":403,"armyList":["1681774980838797320","1681784332526104582","1681784332593213447"],"areaId":707,"heroList":[],"trapList":[]}}
+
+after loc open
+{"c":202,"o":"322","p":{"armyId":10005,"x":28,"y":30}}
+{"c":202,"o":"323","p":{"armyId":10005,"x":30,"y":26}}
+{"c":202,"o":"324","p":{"armyId":10005,"x":27,"y":29}}
+{"c":202,"o":"325","p":{"armyId":10005,"x":29,"y":25}}
+{"c":202,"o":"326","p":{"armyId":10005,"x":26,"y":28}}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10005,\"x\":28,\"y\":30,\"id\":\"1681789942944575489\",\"state\":0,\"march\":0}","o":"322"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10005,\"x\":30,\"y\":26,\"id\":\"1681789943028461572\",\"state\":0,\"march\":0}","o":"323"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10005,\"x\":27,\"y\":29,\"id\":\"1681789943145902082\",\"state\":0,\"march\":0}","o":"324"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10005,\"x\":29,\"y\":25,\"id\":\"1681789943229788165\",\"state\":0,\"march\":0}","o":"325"}
+    {"c":202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10005,\"x\":26,\"y\":28,\"id\":\"1681789943296897029\",\"state\":0,\"march\":0}","o":"326"}
+
+heal building
+{"c":113,"o":"341","p":{"id":"1681763636672540675"}}
+    {"c":113,"s":0,"d":"{\"building\":{\"broken\":0,\"proStartTime\":0,\"buildingId\":2001,\"confirm\":0,\"helpAmount\":0,\"curProductNum\":0,\"productIds\":[],\"proId\":0,\"x\":28,\"y\":26,\"proCount\":0.0,\"state\":1,\"id\":\"1681763636672540675\",\"proTime\":0.0,\"proLastTime\":0.0}}","o":"341"}
+
+
+relocate building
+{"c":104,"o":"358","p":{"x":22,"y":18,"id":"1681763636672540675"}}
+
+merge units
+{"c":203,"o":"360","p":{"delId":"1681789943028461572","targetId":"1681789943229788165"}}
+{"c":203,"o":"362","p":{"delId":"1681789942944575489","targetId":"1681789943145902082"}}
+{"c":203,"o":"363","p":{"delId":"1681789943296897029","targetId":"1681781532224204807"}}
+
+DEL OLD BIKE LVL 4
+{"c":112,"o":"365","p":{"id":"1681763636840312839"}}
+
+relocate
+{"c":110,"o":"368","p":{"x":23,"y":33,"id":"1681789943229788165"}}
+{"c":110,"o":"369","p":{"x":24,"y":32,"id":"1681789943145902082"}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+incoming:
+
+---
+
+power increased:
+
+{"c":10012,"s":0,"d":"{\"power\":\"516.0\"}","o":null}
+
+exp increased:
+
+{"c":10041,"s":0,"d":"{\"level\":1,\"exp\":20.0}","o":null}
+
+---
+
+resource delta:
+
+{"c":10001,"s":0,"d":"{\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"soil\":0.0,\"gold\":0.0,\"paid_gold\":0.0,\"free_gold\":0.0,\"coal\":0.0,\"wood\":20000.0,\"military\":0.0,\"expedition_coin\":0.0,\"oila\":0.0,\"jungong\":0.0,\"coin\":800.0}","o":null}
+
+{"c":10031,"s":0,"d":"{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":0.0},\"build\":[],\"armys\":[{\"itemId\":10003,\"itemCount\":5}],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[],\"herosplit\":[],\"giftKey\":0,\"energy\":0}","o":null}
+
+{"c":420,"s":0,"d":"{\"reward\":{\"resource\":{\"gold\":0.0,\"oil\":0.0,\"voucher\":0.0,\"honor\":0.0,\"metal\":0.0,\"coal\":0.0,\"wood\":0.0,\"soil\":0.0,\"military\":0.0,\"expedition_coin\":0.0,\"jungong\":0.0,\"coin\":300.0},\"build\":[],\"armys\":[],\"hero\":[],\"exp\":0.0,\"giftExp\":0,\"items\":[{\"itemId\":300001,\"itemCount\":10}],\"herosplit\":[],\"giftKey\":0,\"energy\":0},\"battle\":{\"result\":1,\"ver\":1,\"process\":[{\"val\":1.0,\"selfVal\":0.0,\"t\":4,\"tl\":0,\"source\":\"0\"},{\"val\":2.0,\"selfVal\":0.0,\"t\":1,\"tl\":0,\"source\":\"1681617867982327812\"},{\"val\":1.0,\"selfVal\":0.0,\"t\":1,\"tl\":0,\"source\":\"1\"},{\"val\":2.0,\"selfVal\":0.0,\"t\":1,\"tl\":0,\"source\":\"2\"},{\"val\":3.0,\"selfVal\":0.0,\"t\":1,\"tl\":0,\"source\":\"3\"},{\"val\":2.0,\"selfVal\":0.0,\"t\":2,\"tl\":1800,\"actType\":2,\"source\":\"1\",\"power\":26.0,\"target\":\"1681617867982327812\"},{\"val\":5.0,\"selfVal\":0.0,\"t\":2,\"tl\":3000,\"actType\":3,\"source\":\"1681617867982327812\",\"power\":7.0,\"target\":\"2\"},{\"val\":5.0,\"selfVal\":0.0,\"t\":2,\"tl\":3000,\"actType\":3,\"source\":\"1681617867982327812\",\"target\":\"3\"},{\"val\":3.0,\"selfVal\":0.0,\"t\":2,\"tl\":3000,\"actType\":2,\"source\":\"1681617867982327812\",\"target\":\"1\"},{\"val\":6.0,\"selfVal\":0.0,\"t\":2,\"tl\":4200,\"actType\":2,\"source\":\"2\",\"power\":20.0,\"target\":\"1681617867982327812\"},{\"val\":7.0,\"selfVal\":0.0,\"t\":2,\"tl\":5400,\"actType\":2,\"source\":\"1681617867982327812\",\"target\":\"2\"}],\"attacker\":{\"uid\":477984436820,\"career\":0,\"effectBuffs\":[],\"activeSkill\":[],\"traceEffectBuffs\":[],\"allStandings\":{\"wounded\":0,\"total\":1,\"survival\":1,\"dead\":0},\"players\":[{\"heroList\":[],\"uid\":477984436820,\"traps\":[],\"career\":0,\"effectBuffs\":[],\"activeSkill\":[],\"traceEffectBuffs\":[],\"allStandings\":{\"wounded\":0,\"total\":1,\"survival\":1,\"dead\":0},\"buffs\":[],\"attackPointNum\":2,\"armyEquips\":[{\"itemId\":400002,\"pos\":1,\"armyType\":101},{\"itemId\":400001,\"pos\":0,\"armyType\":101},{\"itemId\":400004,\"pos\":1,\"armyType\":201},{\"itemId\":400005,\"pos\":0,\"armyType\":301},{\"itemId\":400003,\"pos\":0,\"armyType\":201},{\"itemId\":400006,\"pos\":1,\"armyType\":301}]}],\"buffs\":[],\"units\":[{\"uid\":477984436820,\"maxShield\":0.0,\"armyId\":10004,\"maxPower\":28.0,\"uuid\":\"1681617867982327812\",\"isDead\":0,\"uuids\":[{\"uuid\":\"1681617867982327812\",\"isDead\":0}]}],\"attackPointNum\":2},\"reportComparison\":1,\"fightType\":1,\"defender\":{\"uid\":0,\"career\":0,\"effectBuffs\":[],\"activeSkill\":[],\"traceEffectBuffs\":[],\"allStandings\":{\"wounded\":0,\"total\":3,\"survival\":0,\"dead\":3},\"players\":[{\"heroList\":[],\"uid\":0,\"traps\":[],\"career\":0,\"effectBuffs\":[],\"activeSkill\":[],\"traceEffectBuffs\":[],\"allStandings\":{\"wounded\":0,\"total\":3,\"survival\":0,\"dead\":3},\"buffs\":[],\"attackPointNum\":3,\"armyEquips\":[]}],\"buffs\":[],\"units\":[{\"uid\":0,\"maxShield\":0.0,\"armyId\":32001,\"maxPower\":2.0,\"uuid\":\"1\",\"isDead\":1,\"uuids\":[{\"uuid\":\"1\",\"isDead\":1}]},{\"uid\":0,\"maxShield\":0.0,\"armyId\":31002,\"maxPower\":12.0,\"uuid\":\"2\",\"isDead\":1,\"uuids\":[{\"uuid\":\"2\",\"isDead\":1}]},{\"uid\":0,\"maxShield\":0.0,\"armyId\":32002,\"maxPower\":4.0,\"uuid\":\"3\",\"isDead\":1,\"uuids\":[{\"uuid\":\"3\",\"isDead\":1}]}],\"attackPointNum\":3}},\"energy\":40}","o":"274"}
+
+---
+
+after unit merge:
+
+unit removed:
+{"c":10202,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":10001,\"x\":23,\"y\":25,\"id\":\"1681617867999105029\",\"state\":0,\"march\":0}","o":null}
+
+{"c":10201,"s":0,"d":"{\"warehouseId\":\"0\",\"armyId\":99999,\"x\":24,\"y\":20,\"id\":\"1681658547530190853\",\"state\":0,\"march\":0}","o":null}
+
+cell is free?:
+{"c":10102,"s":0,"d":"{\"data\":[{\"im\":false,\"x\":23,\"y\":25,\"li\":[]}]}","o":null}
+
+unit upgraded:
+{"c":203,"s":0,"d":"{\"res\":\"suc\",\"targetId\":\"1681617867982327811\",\"armyId\":10002}","o":"103"}
+
+---
+
+server broadcast message:
+
+{"c":10052,"s":0,"d":"{\"msg\":\"☣️EXON☣️が(136,508)付近で宝の洞窟を発見！\",\"rolltimes\":1,\"type\":0,\"params\":null}","o":null}
+
+---
+
+area opened!
+
+{"c":10104,"s":0,"d":"{\"areaId\":805}","o":null}
+{"c":10104,"s":0,"d":"{\"areaId\":705}","o":null}
+
+---
+
+received items
+
+{"c":10401,"s":0,"d":"{\"itemId\":300001,\"amount\":10}","o":null}
+
+---
+
+
+
+
+
+
+
+
+
+    // open daily box: {"c":846,"o":"118","p":{"aid":10,"tid":541,"type":0}}
+    // open sessionlen box {"c":825,"o":"128","p":{}}
+    // collect gold from mine1 {"c":102,"o":"132","p":{"id":"1681604490115478530"}}
+    // collect gold from mine2 {"c":102,"o":"133","p":{"id":"1681441792023131142"}}
+    // merge gold mine 1+2 {"c":116,"o":"138","p":{"delId":"1681441792023131142","targetId":"1681604490115478530","isNew":0}}
+    // open area 2 {"c":117,"o":"141","p":{"id":705}}
+    // fight area 2-1 with 1 motorcycle {"c":420,"o":"143","p":{"pveId":201,"armyList":["1681441792174126089"],"areaId":705,"heroList":[],"trapList":[]}}
+    // fight area 2-2 with 1 motorcycle {"c":420,"o":"146","p":{"pveId":202,"armyList":["1681441792174126089"],"areaId":705,"heroList":[],"trapList":[]}}
+    // fight area 2-3 with 1 motorcycle {"c":420,"o":"148","p":{"pveId":203,"armyList":["1681441792174126089"],"areaId":705,"heroList":[],"trapList":[]}}
+    // remove map land builder by tapping {"c":109,"o":"162","p":{"x":20,"y":20,"id":1023}}
+
+    // const gameData = ctx.gameWsReceived.find(packet => packet[cws.WS_GAME_IN_COMMAND] === cws.WS_GAME_COMMAND_AUTH);
+
+
+
+
+
+
+
+
+
+// if received: {"c":10264,"s":0,"d":"{\"reportId\":\"2606\",\"fromUser\":\"0\",\"title\":\"【｢水晶商店｣終了のお知らせ】\",\"fromUserInfo\":\"{}\",\"content\":\"司令官\\n\\nいつもビビッドアーミーをご利用いただき\\nありがとうございます。\\n\\nギフト商店内｢水晶商店｣につきまして、\\n本日9月24日00:30に\\n終了させていただきました。\\n\\n既に所持している水晶原石については\\n通常通り交易ロビーにて\\n使用することができます。\\n\\nこの度は混乱をお招きしてしまい\\n申し訳ございません。\\n今後ともビビッドアーミーを\\nよろしくお願いいたします。\\n\\n『ビビッドアーミー』運営チーム\",\"rewardStatus\":0,\"sendTime\":1601057835,\"toUser\":\"477984436820\",\"mailType\":2,\"rewardId\":0,\"toUserInfo\":\"{\\\"nationalflag\\\":114,\\\"gender\\\":0,\\\"avatarurl\\\":\\\"headIcon_1_1\\\",\\\"nickname\\\":null,\\\"headimgurl\\\":null,\\\"usergender\\\":0,\\\"username\\\":\\\"wy.477984436820\\\"}\",\"reward_limit\":0,\"isFavorites\":0,\"mailId\":\"1681617869072346113\",\"xmlId\":-2,\"status\":0}","o":null}
+// then send: {"c":934,"o":"43","p":{}}
+
+// then request these:
+// {"c":1318,"o":"47","p":{}}
+// {"c":671,"o":"48","p":{}}
+// {"c":128,"o":"49","p":{}}
+// {"c":861,"o":"50","p":{}}
+// {"c":847,"o":"51","p":{}}
+// {"c":1055,"o":"52","p":{}}
+// {"c":1394,"o":"53","p":{"activity":""}}
+// {"c":934,"o":"54","p":{}}
+// {"c":935,"o":"55","p":{"3":"1681617869072346113"}}
+// {"c":700,"o":"56","p":{"exchangeConfigVer":null}}
+// {"c":841,"o":"57","p":{}}
+// {"c":82,"o":"58","p":{}}
+// {"c":1484,"o":"59","p":{}}
+// {"c":873,"o":"62","p":{}}
+// {"c":1661,"o":"63","p":{}}
+// {"c":917,"o":"64","p":{}}
+// {"c":700,"o":"66","p":{"type":5,"exchangeConfigVer":null}}
+// {"c":1652,"o":"67","p":{"type":1}}
+
+///////
+
+// {"c":128,"o":"91","p":{}}
+// {"c":861,"o":"92","p":{}}
+// {"c":1394,"o":"93","p":{"activity":""}}
+// {"c":700,"o":"94","p":{"exchangeConfigVer":"0b2d845e096225aae937ab1729e0f56d"}}
+// {"c":934,"o":"95","p":{}}
+// {"c":841,"o":"96","p":{}}
+// {"c":82,"o":"97","p":{}}
+// {"c":312,"o":"98","p":{}}
+// {"c":1024,"o":"99","p":{}}
+// {"c":1401,"o":"100","p":{}}
+// {"c":1004,"o":"101","p":{"worldId":596}}
+// {"c":836,"o":"102","p":{}}
+// {"c":1036,"o":"103","p":{}}
+// {"c":306,"o":"104","p":{}}
+// {"c":1050,"o":"105","p":{"func":2}}
+// {"c":1387,"o":"106","p":{}}
+// {"c":1398,"o":"107","p":{}}
+// {"c":1379,"o":"108","p":{}}
+// {"c":1702,"o":"109","p":{}}
+// {"c":1353,"o":"110","p":{}}
+// {"c":1673,"o":"111","p":{}}
+// {"c":1484,"o":"112","p":{}}

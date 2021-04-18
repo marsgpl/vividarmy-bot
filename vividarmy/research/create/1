@@ -1,0 +1,31 @@
+GET https://h5.g123.jp/game/vividarmy
+
+- req hdr
+
+:authority: h5.g123.jp
+:method: GET
+:path: /game/vividarmy
+:scheme: https
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9
+dnt: 1
+sec-fetch-dest: document
+sec-fetch-mode: navigate
+sec-fetch-site: none
+upgrade-insecure-requests: 1
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36
+
+- resp hdr
+
+age: 381
+content-encoding: gzip
+content-type: text/html; charset=utf-8
+date: Fri, 18 Sep 2020 13:40:06 GMT
+status: 200
+vary: Accept-Encoding
+via: 1.1 e72e0d477a3b173c0d7c54332be184a5.cloudfront.net (CloudFront)
+x-amz-cf-id: fa3mIejG6Zvw8pB51jL7O8CbruxqNkZwm9rFhnxjwlhXWBKv1RposA==
+x-amz-cf-pop: NRT12-C3
+x-cache: Hit from cloudfront
+x-response-time: 1ms

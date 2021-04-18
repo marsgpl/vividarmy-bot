@@ -1,0 +1,17 @@
+{
+  "name": "vividarmy-botfarm-bot",
+  "version": "1.0.0",
+  "description": "vividarmy bot farm node",
+  "main": "src/vividarmy-botfarm-master.js",
+  "scripts": {
+    "test": "NODE_PATH=src VIVIDARMY_BOT_CONF_PATH=conf/dev.json VIVIDARMY_BOT_COMMAND=test VIVIDARMY_ACCOUNT_ID=test node src/vividarmy-bot.js"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "md5": "^2.3.0",
+    "mongodb": "^3.6.2",
+    "socks-proxy-agent": "^5.0.0",
+    "ws": "^7.3.1"
+  }
+}
